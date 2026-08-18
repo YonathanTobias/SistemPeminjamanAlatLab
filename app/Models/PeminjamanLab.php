@@ -11,8 +11,8 @@ class PeminjamanLab extends Model
 
     protected $guarded = ['id'];
 
-    public function alat()
+    public function details()
     {
-        return $this->belongsTo(AlatLab::class, 'alat_lab_id');
+        return $this->hasMany(PeminjamanLabDetail::class, 'peminjaman_lab_id');
     }
 }

@@ -40,7 +40,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/laporan', [LabController::class, 'adminLaporan'])->name('admin.laporan.index');
     Route::get('/laporan/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.laporan.pdf');
 
-    //4. Cetak PDF
+    // 4. Cetak PDF
     Route::get('/peminjaman/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.peminjaman.pdf');
+
+    // 5. Halaman Pengaturan Sistem & Profil Lab Prodi
+    Route::get('/pengaturan', [LabController::class, 'adminPengaturan'])->name('admin.pengaturan.index');
+    Route::post('/pengaturan', [LabController::class, 'updatePengaturan'])->name('admin.pengaturan.update');
 
 });

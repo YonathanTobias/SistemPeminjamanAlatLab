@@ -19,9 +19,9 @@ class AlatLab extends Model
         'kondisi',
     ];
 
-    // Relasi ke tabel peminjaman_labs
-    public function peminjaman()
+    // Relasi ke tabel peminjaman_lab_details
+    public function peminjamanDetails()
     {
-        return $this->hasMany(PeminjamanLab::class, 'alat_lab_id');
+        return $this->hasMany(PeminjamanLabDetail::class, 'alat_lab_id');
     }
 }
