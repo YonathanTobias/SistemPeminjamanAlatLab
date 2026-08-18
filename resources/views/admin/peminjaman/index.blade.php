@@ -198,93 +198,6 @@
                                 </button>
                             </td>
                         </tr>
-
-                        <!-- Modal Detail & Proses Status Peminjaman -->
-                        <div class="modal fade" id="modalDetailStatus{{ $p->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content">
-                                    <form action="{{ route('admin.peminjaman.status', $p->id) }}" method="POST">
-                                        @csrf
-                                        <div class="modal-header bg-light">
-                                            <div>
-                                                <h5 class="modal-title fw-bold text-dark mb-0">
-                                                    Verifikasi Peminjaman [{{ $p->kode_transaksi ?? ('TRX-' . $p->id) }}]
-                                                </h5>
-                                                <small class="text-muted">{{ $p->nama_peminjam }} &bull; {{ $p->nim_nip }} ({{ $p->prodi }})</small>
-                                            </div>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        
-                                        <div class="modal-body p-4">
-                                            <div class="mb-3 p-3 bg-light rounded-3 border">
-                                                <div class="row g-2 small">
-                                                    <div class="col-sm-6">
-                                                        <span class="text-muted">Keperluan:</span>
-                                                        <strong class="d-block text-dark">{{ $p->keperluan ?? 'Praktikum' }}</strong>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <span class="text-muted">Jadwal Praktikum:</span>
-                                                        <strong class="d-block text-dark">{{ $p->tgl_pinjam }} s/d {{ $p->tgl_kembali_rencana }}</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <h6 class="fw-bold text-dark mb-2">Rincian Paket Alat yang Diajukan:</h6>
-                                            <div class="table-responsive border rounded-3 mb-3">
-                                                <table class="table table-sm align-middle mb-0">
-                                                    <thead class="table-light small">
-                                                        <tr>
-                                                            <th>Kode</th>
-                                                            <th>Nama Peralatan</th>
-                                                            <th class="text-center">Kondisi</th>
-                                                            <th class="text-center">Stok Tersedia</th>
-                                                            <th class="text-center">Jumlah Pinjam</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($p->details as $d)
-                                                            <tr>
-                                                                <td><span class="badge badge-soft-primary">{{ $d->alat->kode_alat ?? '-' }}</span></td>
-                                                                <td class="fw-bold">{{ $d->alat->nama_alat ?? 'Alat Dihapus' }}</td>
-                                                                <td class="text-center"><span class="badge-soft badge-soft-success">{{ $d->alat->kondisi ?? '-' }}</span></td>
-                                                                <td class="text-center">
-                                                                    <span class="fw-bold {{ ($d->alat->stok_tersedia ?? 0) >= $d->jumlah_pinjam ? 'text-success' : 'text-danger' }}">
-                                                                        {{ $d->alat->stok_tersedia ?? 0 }} Unit
-                                                                    </span>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <span class="badge bg-primary fs-6">{{ $d->jumlah_pinjam }} Unit</span>
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold small text-dark">Ubah Status Transaksi:</label>
-                                                <select name="status" class="form-select" required>
-                                                    <option value="Menunggu" {{ $p->status == 'Menunggu' ? 'selected' : '' }}>⏳ Menunggu Konfirmasi</option>
-                                                    <option value="Disetujui" {{ $p->status == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui (Kurangi Stok Alat)</option>
-                                                    <option value="Dikembalikan" {{ $p->status == 'Dikembalikan' ? 'selected' : '' }}>📦 Dikembalikan (Kembalikan Stok Alat)</option>
-                                                    <option value="Ditolak" {{ $p->status == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
-                                                </select>
-                                            </div>
-
-                                            <div>
-                                                <label class="form-label small text-muted">Catatan Laboran (Opsional):</label>
-                                                <textarea name="catatan" class="form-control" rows="2" placeholder="Tuliskan catatan kondisi alat atau alasan jika ditolak...">{{ $p->catatan }}</textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer bg-light">
-                                            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Tutup</button>
-                                            <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="6" class="text-center py-5 text-muted">
@@ -304,4 +217,93 @@
         </div>
     @endif
 </div>
+
+<!-- Modal Detail & Proses Status Peminjaman (Diluar Tabel) -->
+@foreach($peminjaman as $p)
+    <div class="modal fade" id="modalDetailStatus{{ $p->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <form action="{{ route('admin.peminjaman.status', $p->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-header bg-light">
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark mb-0">
+                                Verifikasi Peminjaman [{{ $p->kode_transaksi ?? ('TRX-' . $p->id) }}]
+                            </h5>
+                            <small class="text-muted">{{ $p->nama_peminjam }} &bull; {{ $p->nim_nip }} ({{ $p->prodi }})</small>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <div class="modal-body p-4">
+                        <div class="mb-3 p-3 bg-light rounded-3 border">
+                            <div class="row g-2 small">
+                                <div class="col-sm-6">
+                                    <span class="text-muted">Keperluan:</span>
+                                    <strong class="d-block text-dark">{{ $p->keperluan ?? 'Praktikum' }}</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted">Jadwal Praktikum:</span>
+                                    <strong class="d-block text-dark">{{ $p->tgl_pinjam }} s/d {{ $p->tgl_kembali_rencana }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-dark mb-2">Rincian Paket Alat yang Diajukan:</h6>
+                        <div class="table-responsive border rounded-3 mb-3">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light small">
+                                    <tr>
+                                        <th>Kode</th>
+                                        <th>Nama Peralatan</th>
+                                        <th class="text-center">Kondisi</th>
+                                        <th class="text-center">Stok Tersedia</th>
+                                        <th class="text-center">Jumlah Pinjam</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($p->details as $d)
+                                        <tr>
+                                            <td><span class="badge badge-soft-primary">{{ $d->alat->kode_alat ?? '-' }}</span></td>
+                                            <td class="fw-bold">{{ $d->alat->nama_alat ?? 'Alat Dihapus' }}</td>
+                                            <td class="text-center"><span class="badge-soft badge-soft-success">{{ $d->alat->kondisi ?? '-' }}</span></td>
+                                            <td class="text-center">
+                                                <span class="fw-bold {{ ($d->alat->stok_tersedia ?? 0) >= $d->jumlah_pinjam ? 'text-success' : 'text-danger' }}">
+                                                    {{ $d->alat->stok_tersedia ?? 0 }} Unit
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-primary fs-6">{{ $d->jumlah_pinjam }} Unit</span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-dark">Ubah Status Transaksi:</label>
+                            <select name="status" class="form-select" required>
+                                <option value="Menunggu" {{ $p->status == 'Menunggu' ? 'selected' : '' }}>⏳ Menunggu Konfirmasi</option>
+                                <option value="Disetujui" {{ $p->status == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui (Kurangi Stok Alat)</option>
+                                <option value="Dikembalikan" {{ $p->status == 'Dikembalikan' ? 'selected' : '' }}>📦 Dikembalikan (Kembalikan Stok Alat)</option>
+                                <option value="Ditolak" {{ $p->status == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="form-label small text-muted">Catatan Laboran (Opsional):</label>
+                            <textarea name="catatan" class="form-control" rows="2" placeholder="Tuliskan catatan kondisi alat atau alasan jika ditolak...">{{ $p->catatan }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endforeach
 @endsection
