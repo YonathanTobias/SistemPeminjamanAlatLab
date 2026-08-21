@@ -86,10 +86,11 @@
 <!-- Grid Katalog Alat -->
 <div class="row g-4 mb-4">
     @forelse($alats as $alat)
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 rounded-4 shadow-sm hover-shadow transition">
-                <div class="card-body p-4 d-flex flex-column justify-content-between">
-                    <div>
+        <div class="col-12 col-md-6 col-lg-4 d-flex align-items-stretch">
+            <div class="card w-100 border-0 rounded-4 shadow-sm hover-shadow transition d-flex flex-column">
+                <div class="card-body p-4 d-flex flex-column h-100">
+                    <!-- Bagian Atas: Badge, Judul, & Kategori -->
+                    <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <span class="badge badge-soft-primary">
                                 <i class="bi bi-tag-fill"></i> {{ $alat->kode_alat }}
@@ -105,11 +106,12 @@
                             @endif
                         </div>
                         
-                        <h5 class="card-title fw-bold text-dark mb-2 lh-sm">{{ $alat->nama_alat }}</h5>
-                        <p class="text-muted small mb-3">Peralatan Laboratorium Keperawatan STIKES Panti Waluya</p>
+                        <h5 class="card-title fw-bold text-dark mb-1 lh-base" style="font-size: 1.05rem; min-height: 2.7rem;" title="{{ $alat->nama_alat }}">{{ $alat->nama_alat }}</h5>
+                        <p class="text-muted small mb-0">{{ $pengaturan->unit_laboratorium ?? 'Peralatan Laboratorium Keperawatan' }}</p>
                     </div>
                     
-                    <div>
+                    <!-- Bagian Bawah: Indikator Stok & Tombol Pinjam (Tersusun Sejajar di Bawah) -->
+                    <div class="mt-auto pt-2">
                         <!-- Stock Status Box -->
                         <div class="bg-light p-3 rounded-3 mb-3 border">
                             <div class="d-flex justify-content-between align-items-center mb-1">
@@ -127,16 +129,14 @@
                         </div>
 
                         @if($alat->stok_tersedia > 0)
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-primary flex-grow-1 rounded-3 py-2 fw-semibold btn-add-cart" 
-                                    data-id="{{ $alat->id }}"
-                                    data-kode="{{ $alat->kode_alat }}"
-                                    data-nama="{{ $alat->nama_alat }}"
-                                    data-stok="{{ $alat->stok_tersedia }}"
-                                    onclick="addToCart(this)">
-                                    <i class="bi bi-cart-plus-fill"></i> + Keranjang Pinjam
-                                </button>
-                            </div>
+                            <button type="button" class="btn btn-primary w-100 rounded-3 py-2 fw-semibold btn-add-cart" 
+                                data-id="{{ $alat->id }}"
+                                data-kode="{{ $alat->kode_alat }}"
+                                data-nama="{{ $alat->nama_alat }}"
+                                data-stok="{{ $alat->stok_tersedia }}"
+                                onclick="addToCart(this)">
+                                <i class="bi bi-cart-plus-fill"></i> + Keranjang Pinjam
+                            </button>
                         @else
                             <button type="button" class="btn btn-secondary w-100 rounded-3 py-2 fw-semibold" disabled>
                                 <i class="bi bi-slash-circle"></i> Stok Habis Dipinjam
