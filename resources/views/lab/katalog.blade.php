@@ -70,15 +70,44 @@
     </div>
 </div>
 
-@if(request('search'))
-    <div class="d-flex align-items-center justify-content-between mb-4 bg-white p-3 rounded-3 border">
-        <div>
-            <span class="text-muted small">Hasil pencarian untuk:</span>
-            <strong class="text-dark">"{{ request('search') }}"</strong>
-            <span class="badge bg-secondary ms-2">{{ $alats->total() }} Ditemukan</span>
+<!-- Kategori Pill Tabs Bar -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 overflow-auto pb-2" style="white-space: nowrap;">
+        <span class="text-muted small fw-bold me-2 d-none d-md-inline"><i class="bi bi-funnel"></i> Kategori:</span>
+        @php
+            $currentKategori = request('kategori', 'Semua Alat');
+            $categories = [
+                'Semua Alat' => 'bi-grid-fill',
+                'KDM & Tanda Vital' => 'bi-heart-pulse-fill',
+                'Simulasi & Manikin' => 'bi-person-arms-up',
+                'Elektromedis & Terapi' => 'bi-lightning-charge-fill',
+                'Instrumen Bedah Minor' => 'bi-scissors',
+                'Mobilisasi & Rehabilitasi' => 'bi-universal-access',
+            ];
+        @endphp
+        @foreach($categories as $kat => $icon)
+            <a href="{{ route('lab.katalog', array_merge(request()->except('kategori', 'page'), $kat === 'Semua Alat' ? [] : ['kategori' => $kat])) }}" 
+               class="btn btn-sm rounded-pill px-3 py-2 fw-semibold {{ $currentKategori === $kat ? 'btn-primary shadow-sm' : 'btn-outline-secondary border-opacity-25 bg-white' }}">
+                <i class="bi {{ $icon }} me-1"></i> {{ $kat }}
+            </a>
+        @endforeach
+    </div>
+</div>
+
+@if(request('search') || (request('kategori') && request('kategori') !== 'Semua Alat'))
+    <div class="d-flex align-items-center justify-content-between mb-4 bg-white p-3 rounded-4 border shadow-xs">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="text-muted small">Menampilkan:</span>
+            @if(request('search'))
+                <span class="badge bg-primary">Pencarian: "{{ request('search') }}"</span>
+            @endif
+            @if(request('kategori'))
+                <span class="badge bg-info text-dark">Kategori: {{ request('kategori') }}</span>
+            @endif
+            <span class="badge bg-secondary">{{ $alats->total() }} Alat Ditemukan</span>
         </div>
-        <a href="{{ route('lab.katalog') }}" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-arrow-counterclockwise"></i> Tampilkan Semua Alat
+        <a href="{{ route('lab.katalog') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset Filter
         </a>
     </div>
 @endif
@@ -87,30 +116,50 @@
 <div class="row g-4 mb-4">
     @forelse($alats as $alat)
         <div class="col-12 col-md-6 col-lg-4 d-flex align-items-stretch">
-            <div class="card w-100 border-0 rounded-4 shadow-sm hover-shadow transition d-flex flex-column">
-                <div class="card-body p-4 d-flex flex-column h-100">
-                    <!-- Bagian Atas: Badge, Judul, & Kategori -->
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge badge-soft-primary">
-                                <i class="bi bi-tag-fill"></i> {{ $alat->kode_alat }}
-                            </span>
-                            @if($alat->kondisi == 'Baik')
-                                <span class="badge badge-soft-success">
-                                    <i class="bi bi-check2-circle"></i> Kondisi: Baik
-                                </span>
+            <div class="card w-100 border-0 rounded-4 shadow-sm hover-shadow transition d-flex flex-column overflow-hidden">
+                <!-- Thumbnail Gambar / Icon Placeholder -->
+                <div class="position-relative bg-light border-bottom d-flex align-items-center justify-content-center" style="height: 160px; background: linear-gradient(135deg, rgba(2,132,199,0.05) 0%, rgba(15,118,110,0.08) 100%);">
+                    @if($alat->gambar && file_exists(public_path($alat->gambar)))
+                        <img src="{{ asset($alat->gambar) }}" alt="{{ $alat->nama_alat }}" class="w-100 h-100" style="object-fit: cover;">
+                    @else
+                        <div class="text-center text-primary opacity-75">
+                            @if(str_contains($alat->kode_alat, 'KDM'))
+                                <i class="bi bi-heart-pulse display-4"></i>
+                            @elseif(str_contains($alat->kode_alat, 'SIM'))
+                                <i class="bi bi-person-standing display-4"></i>
+                            @elseif(str_contains($alat->kode_alat, 'ELK'))
+                                <i class="bi bi-lightning-charge display-4"></i>
+                            @elseif(str_contains($alat->kode_alat, 'BED'))
+                                <i class="bi bi-scissors display-4"></i>
                             @else
-                                <span class="badge badge-soft-warning">
-                                    <i class="bi bi-exclamation-triangle"></i> {{ $alat->kondisi }}
-                                </span>
+                                <i class="bi bi-box-seam display-4"></i>
                             @endif
                         </div>
+                    @endif
+                    
+                    <span class="position-absolute top-0 start-0 m-3 badge badge-soft-primary shadow-xs">
+                        <i class="bi bi-tag-fill"></i> {{ $alat->kode_alat }}
+                    </span>
+
+                    <span class="position-absolute top-0 end-0 m-3 badge {{ $alat->kondisi == 'Baik' ? 'badge-soft-success' : 'badge-soft-warning' }} shadow-xs">
+                        <i class="bi {{ $alat->kondisi == 'Baik' ? 'bi-check2-circle' : 'bi-exclamation-triangle' }}"></i> {{ $alat->kondisi }}
+                    </span>
+                </div>
+
+                <div class="card-body p-4 d-flex flex-column h-100">
+                    <!-- Bagian Atas: Kategori & Judul -->
+                    <div class="mb-3">
+                        <span class="badge bg-light text-secondary border rounded-pill mb-2 small" style="font-size: 0.72rem;">
+                            <i class="bi bi-bookmark-fill text-primary"></i> {{ $alat->kategori ?? 'KDM & Tanda Vital' }}
+                        </span>
                         
-                        <h5 class="card-title fw-bold text-dark mb-1 lh-base" style="font-size: 1.05rem; min-height: 2.7rem;" title="{{ $alat->nama_alat }}">{{ $alat->nama_alat }}</h5>
+                        <h5 class="card-title fw-bold text-dark mb-1 lh-base" style="font-size: 1.05rem; min-height: 2.7rem;" title="{{ $alat->nama_alat }}">
+                            {{ $alat->nama_alat }}
+                        </h5>
                         <p class="text-muted small mb-0">{{ $pengaturan->unit_laboratorium ?? 'Peralatan Laboratorium Keperawatan' }}</p>
                     </div>
                     
-                    <!-- Bagian Bawah: Indikator Stok & Tombol Pinjam (Tersusun Sejajar di Bawah) -->
+                    <!-- Bagian Bawah: Indikator Stok & Tombol Pinjam -->
                     <div class="mt-auto pt-2">
                         <!-- Stock Status Box -->
                         <div class="bg-light p-3 rounded-3 mb-3 border">
@@ -153,10 +202,10 @@
                     <i class="bi bi-search text-muted opacity-50" style="font-size: 3.5rem;"></i>
                 </div>
                 <h5 class="fw-bold text-dark mb-1">Tidak Ada Data Alat Ditemukan</h5>
-                <p class="text-muted small mb-3">Silakan coba dengan kata kunci lain atau bersihkan filter pencarian.</p>
+                <p class="text-muted small mb-3">Silakan coba dengan kategori lain atau bersihkan kata kunci pencarian.</p>
                 <div>
-                    <a href="{{ route('lab.katalog') }}" class="btn btn-outline-primary btn-sm px-3">
-                        <i class="bi bi-arrow-counterclockwise"></i> Reset Pencarian
+                    <a href="{{ route('lab.katalog') }}" class="btn btn-outline-primary btn-sm px-3 rounded-pill">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Filter
                     </a>
                 </div>
             </div>
@@ -296,172 +345,6 @@
 @endsection
 
 @push('scripts')
-<script>
-    // State Keranjang Praktikum disimpan di localStorage
-    const CART_STORAGE_KEY = 'stikes_lab_cart_items';
-
-    function getCart() {
-        try {
-            return JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function saveCart(cart) {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-        updateCartUI();
-    }
-
-    function addToCart(btn) {
-        const id = parseInt(btn.getAttribute('data-id'));
-        const kode = btn.getAttribute('data-kode');
-        const nama = btn.getAttribute('data-nama');
-        const stok = parseInt(btn.getAttribute('data-stok'));
-
-        let cart = getCart();
-        const existingIndex = cart.findIndex(item => item.id === id);
-
-        if (existingIndex > -1) {
-            if (cart[existingIndex].jumlah < stok) {
-                cart[existingIndex].jumlah += 1;
-            } else {
-                alert(`Maksimal peminjaman untuk ${nama} adalah ${stok} unit (sesuai stok tersedia).`);
-                return;
-            }
-        } else {
-            cart.push({
-                id: id,
-                kode: kode,
-                nama: nama,
-                stok: stok,
-                jumlah: 1
-            });
-        }
-
-        saveCart(cart);
-
-        // Feedback visual tombol
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="bi bi-check-lg"></i> Ditambahkan!';
-        btn.classList.replace('btn-primary', 'btn-success');
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.classList.replace('btn-success', 'btn-primary');
-        }, 1000);
-    }
-
-    function updateQty(id, delta) {
-        let cart = getCart();
-        const item = cart.find(i => i.id === id);
-        if (item) {
-            const newQty = item.jumlah + delta;
-            if (newQty >= 1 && newQty <= item.stok) {
-                item.jumlah = newQty;
-                saveCart(cart);
-            } else if (newQty > item.stok) {
-                alert(`Maksimal ${item.stok} unit.`);
-            }
-        }
-    }
-
-    function setQtyDirect(id, val) {
-        let cart = getCart();
-        const item = cart.find(i => i.id === id);
-        if (item) {
-            let num = parseInt(val);
-            if (isNaN(num) || num < 1) num = 1;
-            if (num > item.stok) num = item.stok;
-            item.jumlah = num;
-            saveCart(cart);
-        }
-    }
-
-    function removeFromCart(id) {
-        let cart = getCart();
-        cart = cart.filter(i => i.id !== id);
-        saveCart(cart);
-    }
-
-    function clearCart() {
-        if (confirm('Yakin ingin mengosongkan keranjang praktikum?')) {
-            localStorage.removeItem(CART_STORAGE_KEY);
-            updateCartUI();
-        }
-    }
-
-    function updateCartUI() {
-        const cart = getCart();
-        const fab = document.getElementById('floatingCartBtn');
-        const badge = document.getElementById('cartCountBadge');
-        const listCount = document.getElementById('cartListCount');
-        const tbody = document.getElementById('cartTableBody');
-        const emptyWarning = document.getElementById('cartEmptyWarning');
-        const btnSubmit = document.getElementById('btnSubmitCheckout');
-
-        const totalItems = cart.reduce((sum, item) => sum + item.jumlah, 0);
-
-        if (cart.length > 0) {
-            fab.style.display = 'block';
-            badge.innerText = `${totalItems} Unit (${cart.length} Alat)`;
-            listCount.innerText = cart.length;
-            emptyWarning.style.display = 'none';
-            btnSubmit.removeAttribute('disabled');
-        } else {
-            fab.style.display = 'none';
-            badge.innerText = '0';
-            listCount.innerText = '0';
-            emptyWarning.style.display = 'block';
-            btnSubmit.setAttribute('disabled', 'disabled');
-        }
-
-        // Render Table Rows
-        tbody.innerHTML = '';
-        cart.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <div class="fw-bold text-dark">${item.nama}</div>
-                    <div class="small text-muted d-flex align-items-center gap-2">
-                        <span class="badge badge-soft-primary">${item.kode}</span>
-                        <span>Tersedia: <strong>${item.stok} Unit</strong></span>
-                    </div>
-                    <input type="hidden" name="items[${index}][alat_lab_id]" value="${item.id}">
-                </td>
-                <td class="text-center">
-                    <div class="input-group input-group-sm justify-content-center" style="max-width: 120px; margin: auto;">
-                        <button type="button" class="btn btn-outline-secondary" onclick="updateQty(${item.id}, -1)">-</button>
-                        <input type="number" name="items[${index}][jumlah]" class="form-control text-center fw-bold px-1" value="${item.jumlah}" min="1" max="${item.stok}" onchange="setQtyDirect(${item.id}, this.value)">
-                        <button type="button" class="btn btn-outline-secondary" onclick="updateQty(${item.id}, 1)">+</button>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-outline-danger btn-sm rounded-circle p-1" style="width: 28px; height: 28px;" onclick="removeFromCart(${item.id})" title="Hapus">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function validateCartSubmission() {
-        const cart = getCart();
-        if (cart.length === 0) {
-            alert('Keranjang praktikum masih kosong! Silakan pilih alat terlebih dahulu.');
-            return false;
-        }
-        // Bersihkan keranjang saat formulir sukses dikirim
-        setTimeout(() => {
-            localStorage.removeItem(CART_STORAGE_KEY);
-            updateCartUI();
-        }, 500);
-        return true;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        updateCartUI();
-    });
-</script>
+<script src="{{ asset('js/cart.js') }}"></script>
 @endpush
 

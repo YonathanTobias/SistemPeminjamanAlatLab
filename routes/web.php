@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 // Halaman Katalog Alat Lab (Publik)
 Route::get('/', [LabController::class, 'indexPublik'])->name('lab.katalog');
 Route::post('/lab/pinjam', [LabController::class, 'storePeminjamanPublik'])->name('lab.pinjam.store');
+Route::get('/lacak', [LabController::class, 'lacakPeminjaman'])->name('lab.lacak');
 
 // Auth (Register publik ditutup)
 Auth::routes([
@@ -34,11 +35,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // 2. Halaman Kelola Alat Lab
     Route::get('/alat', [LabController::class, 'adminAlat'])->name('admin.alat.index');
     Route::post('/alat/store', [LabController::class, 'storeAlat'])->name('admin.alat.store');
+    Route::put('/alat/{id}', [LabController::class, 'updateAlat'])->name('admin.alat.update');
     Route::delete('/alat/{id}', [LabController::class, 'destroyAlat'])->name('admin.alat.destroy');
 
     // 3. Halaman Kelola Laporan
     Route::get('/laporan', [LabController::class, 'adminLaporan'])->name('admin.laporan.index');
     Route::get('/laporan/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.laporan.pdf');
+    Route::get('/laporan/export-csv', [LabController::class, 'exportLaporanCsv'])->name('admin.laporan.csv');
 
     // 4. Cetak PDF
     Route::get('/peminjaman/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.peminjaman.pdf');

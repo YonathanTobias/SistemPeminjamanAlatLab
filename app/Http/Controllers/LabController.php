@@ -27,6 +27,10 @@ class LabController extends Controller
             });
         }
 
+        if ($request->filled('kategori') && $request->kategori !== 'Semua Alat') {
+            $query->where('kategori', $request->kategori);
+        }
+
         $alats = $query->latest()->paginate(12)->withQueryString();
 
         $stats = [
@@ -35,10 +39,36 @@ class LabController extends Controller
             'kondisi_baik' => AlatLab::where('kondisi', 'Baik')->count(),
         ];
 
-        // Ambil semua alat yang tersedia untuk katalog keranjang
-        $allAlats = AlatLab::where('stok_tersedia', '>', 0)->get(['id', 'kode_alat', 'nama_alat', 'stok_tersedia', 'kondisi']);
+        $kategoriList = [
+            'Semua Alat',
+            'KDM & Tanda Vital',
+            'Simulasi & Manikin',
+            'Elektromedis & Terapi',
+            'Instrumen Bedah Minor',
+            'Mobilisasi & Rehabilitasi',
+        ];
 
-        return view('lab.katalog', compact('alats', 'stats', 'allAlats'));
+        // Ambil semua alat yang tersedia untuk katalog keranjang
+        $allAlats = AlatLab::where('stok_tersedia', '>', 0)->get(['id', 'kode_alat', 'nama_alat', 'kategori', 'stok_tersedia', 'kondisi', 'gambar']);
+
+        return view('lab.katalog', compact('alats', 'stats', 'allAlats', 'kategoriList'));
+    }
+
+    // Lacak Status Peminjaman Publik (Tracking Stepper)
+    public function lacakPeminjaman(Request $request)
+    {
+        $search = $request->query('q') ?? $request->query('search');
+        $peminjamans = collect();
+
+        if ($search) {
+            $peminjamans = PeminjamanLab::with('details.alat')
+                ->where('kode_transaksi', 'like', '%' . trim($search) . '%')
+                ->orWhere('nim_nip', 'like', '%' . trim($search) . '%')
+                ->latest()
+                ->get();
+        }
+
+        return view('lab.lacak', compact('peminjamans', 'search'));
     }
 
     // Form Pengajuan Pinjam Multi-Alat Publik (Keranjang Praktikum)
@@ -123,24 +153,75 @@ class LabController extends Controller
     }
 
     // Admin: Tambah Alat Lab
-   // Admin: Simpan Alat Baru
+    // Admin: Simpan Alat Baru
     public function storeAlat(Request $request)
     {
         $request->validate([
             'kode_alat'  => 'required|unique:alat_labs,kode_alat',
             'nama_alat'  => 'required|string|max:255',
+            'kategori'   => 'required|string',
             'stok_total' => 'required|integer|min:1',
+            'kondisi'    => 'required|string',
+            'gambar'     => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        AlatLab::create([
+        $data = [
             'kode_alat'     => $request->kode_alat,
             'nama_alat'     => $request->nama_alat,
+            'kategori'      => $request->kategori,
             'stok_total'    => $request->stok_total,
             'stok_tersedia' => $request->stok_total,
             'kondisi'       => $request->kondisi ?? 'Baik',
-        ]);
+        ];
+
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $fileName = 'alat-' . time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/alat'), $fileName);
+            $data['gambar'] = 'images/alat/' . $fileName;
+        }
+
+        AlatLab::create($data);
 
         return back()->with('success', 'Data alat lab berhasil ditambahkan!');
+    }
+
+    // Admin: Update Alat Lab
+    public function updateAlat(Request $request, $id)
+    {
+        $alat = AlatLab::findOrFail($id);
+
+        $request->validate([
+            'kode_alat'  => 'required|unique:alat_labs,kode_alat,' . $id,
+            'nama_alat'  => 'required|string|max:255',
+            'kategori'   => 'required|string',
+            'stok_total' => 'required|integer|min:1',
+            'kondisi'    => 'required|string',
+            'gambar'     => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $selisih = $request->stok_total - $alat->stok_total;
+        $stokTersediaBaru = max(0, $alat->stok_tersedia + $selisih);
+
+        $data = [
+            'kode_alat'     => $request->kode_alat,
+            'nama_alat'     => $request->nama_alat,
+            'kategori'      => $request->kategori,
+            'stok_total'    => $request->stok_total,
+            'stok_tersedia' => $stokTersediaBaru,
+            'kondisi'       => $request->kondisi,
+        ];
+
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $fileName = 'alat-' . time() . '-' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images/alat'), $fileName);
+            $data['gambar'] = 'images/alat/' . $fileName;
+        }
+
+        $alat->update($data);
+
+        return back()->with('success', "Data alat [{$alat->nama_alat}] berhasil diperbarui!");
     }
 
     // Admin: Setujui / Tolak / Kembalikan Paket Alat
@@ -215,6 +296,7 @@ class LabController extends Controller
 
         return back()->with('success', 'Data alat lab berhasil dihapus!');
     }
+
     // Admin: Halaman Kelola Peminjaman Alat
     public function adminPeminjaman(Request $request)
     {
@@ -252,10 +334,39 @@ class LabController extends Controller
             'ditolak' => PeminjamanLab::where('status', 'Ditolak')->count(),
         ];
 
-        return view('admin.peminjaman.index', compact('peminjaman', 'stats'));
+        // 1. Data Analitik Chart: Distribusi per Prodi
+        $prodiStats = PeminjamanLab::select('prodi', DB::raw('count(*) as total'))
+            ->groupBy('prodi')
+            ->pluck('total', 'prodi')
+            ->toArray();
+
+        // 2. Data Analitik Chart: Tren 7 Hari Terakhir
+        $weeklyLabels = [];
+        $weeklyData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $weeklyLabels[] = $date->format('d M');
+            $weeklyData[] = PeminjamanLab::whereDate('tgl_pinjam', $date)->count();
+        }
+
+        // 3. Top 5 Alat Paling Sering Dipinjam
+        $topAlat = PeminjamanLabDetail::select('alat_lab_id', DB::raw('sum(jumlah_pinjam) as total_dipinjam'))
+            ->with('alat')
+            ->groupBy('alat_lab_id')
+            ->orderByDesc('total_dipinjam')
+            ->limit(5)
+            ->get();
+
+        // 4. Peminjaman Terlambat (Overdue)
+        $overdueLoans = PeminjamanLab::with('details.alat')
+            ->where('status', 'Disetujui')
+            ->whereDate('tgl_kembali_rencana', '<', Carbon::today())
+            ->get();
+
+        return view('admin.peminjaman.index', compact('peminjaman', 'stats', 'prodiStats', 'weeklyLabels', 'weeklyData', 'topAlat', 'overdueLoans'));
     }
 
-    // Admin: Halaman Kelola Inventaris Alat Lab (Halaman Sendiri)
+    // Admin: Halaman Kelola Inventaris Alat Lab
     public function adminAlat(Request $request)
     {
         $query = AlatLab::query();
@@ -263,6 +374,10 @@ class LabController extends Controller
         if ($request->filled('search')) {
             $query->where('nama_alat', 'like', '%' . $request->search . '%')
                   ->orWhere('kode_alat', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
         }
 
         $alats = $query->latest()->paginate(10)->withQueryString();
@@ -275,7 +390,15 @@ class LabController extends Controller
             'kondisi_rusak' => AlatLab::where('kondisi', '!=', 'Baik')->count(),
         ];
 
-        return view('admin.alat.index', compact('alats', 'stats'));
+        $kategoriList = [
+            'KDM & Tanda Vital',
+            'Simulasi & Manikin',
+            'Elektromedis & Terapi',
+            'Instrumen Bedah Minor',
+            'Mobilisasi & Rehabilitasi',
+        ];
+
+        return view('admin.alat.index', compact('alats', 'stats', 'kategoriList'));
     }
 
     public function adminLaporan(Request $request)
@@ -308,6 +431,83 @@ class LabController extends Controller
         ];
 
         return view('admin.laporan.index', compact('peminjaman', 'stats'));
+    }
+
+    // Export Laporan ke Excel CSV Resmi (dengan UTF-8 BOM)
+    public function exportLaporanCsv(Request $request)
+    {
+        $query = PeminjamanLab::with('details.alat');
+
+        if ($request->filled('tgl_mulai')) {
+            $query->whereDate('tgl_pinjam', '>=', $request->tgl_mulai);
+        }
+        if ($request->filled('tgl_selesai')) {
+            $query->whereDate('tgl_pinjam', '<=', $request->tgl_selesai);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $peminjaman = $query->latest()->get();
+
+        $filename = 'Rekap_Peminjaman_Lab_' . date('Ymd_His') . '.csv';
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename={$filename}",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($peminjaman) {
+            $file = fopen('php://output', 'w');
+            // Menambahkan UTF-8 BOM agar terbaca sempurna di Microsoft Excel
+            fputs($file, "\xEF\xBB\xBF");
+
+            // Header Kolom
+            fputcsv($file, [
+                'No',
+                'Kode Transaksi',
+                'Nama Peminjam',
+                'NIM / NIP',
+                'Program Studi',
+                'Keperluan',
+                'Daftar Peralatan Medis (Qty)',
+                'Total Unit',
+                'Tgl Pinjam',
+                'Tgl Rencana Kembali',
+                'Tgl Realisasi Kembali',
+                'Status',
+                'Catatan Laboran'
+            ]);
+
+            foreach ($peminjaman as $idx => $p) {
+                $alatItems = [];
+                foreach ($p->details as $d) {
+                    $alatItems[] = ($d->alat->nama_alat ?? 'Alat Dihapus') . ' (' . $d->jumlah_pinjam . 'x)';
+                }
+
+                fputcsv($file, [
+                    $idx + 1,
+                    $p->kode_transaksi ?? ('TRX-' . $p->id),
+                    $p->nama_peminjam,
+                    $p->nim_nip,
+                    $p->prodi,
+                    $p->keperluan,
+                    implode('; ', $alatItems),
+                    $p->details->sum('jumlah_pinjam'),
+                    $p->tgl_pinjam ? Carbon::parse($p->tgl_pinjam)->format('d/m/Y') : '-',
+                    $p->tgl_kembali_rencana ? Carbon::parse($p->tgl_kembali_rencana)->format('d/m/Y') : '-',
+                    $p->tgl_kembali_realisasi ? Carbon::parse($p->tgl_kembali_realisasi)->format('d/m/Y') : '-',
+                    $p->status,
+                    $p->catatan ?? '-'
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function cetakLaporanPdf(Request $request)

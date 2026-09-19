@@ -7,8 +7,11 @@
         <h2 class="fw-bold text-dark mb-1">Laporan & Rekap Peminjaman</h2>
         <p class="text-muted small mb-0">Rekapitulasi data transaksi peminjaman alat {{ $pengaturan->unit_laboratorium ?? 'Laboratorium' }} {{ $pengaturan->nama_institusi ?? 'STIKES Panti Waluya' }}.</p>
     </div>
-    <div>
-        <a href="{{ route('admin.laporan.pdf', request()->query()) }}" target="_blank" class="btn btn-danger shadow-sm px-4">
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ route('admin.laporan.csv', request()->query()) }}" class="btn btn-success shadow-sm px-3">
+            <i class="bi bi-file-earmark-excel-fill"></i> Export Excel (.csv)
+        </a>
+        <a href="{{ route('admin.laporan.pdf', request()->query()) }}" target="_blank" class="btn btn-danger shadow-sm px-3">
             <i class="bi bi-file-earmark-pdf-fill"></i> Cetak Laporan PDF
         </a>
     </div>

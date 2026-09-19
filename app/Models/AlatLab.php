@@ -14,9 +14,11 @@ class AlatLab extends Model
     protected $fillable = [
         'kode_alat',
         'nama_alat',
+        'kategori',
         'stok_total',
         'stok_tersedia',
         'kondisi',
+        'gambar',
     ];
 
     // Relasi ke tabel peminjaman_lab_details

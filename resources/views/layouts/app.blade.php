@@ -16,332 +16,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons 1.11.3 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <style>
-        :root {
-            --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --primary: #0284c7;
-            --primary-dark: #0369a1;
-            --primary-light: #e0f2fe;
-            --secondary: #0f766e;
-            --accent: #14b8a6;
-            --dark-blue: #0f172a;
-            --surface: #ffffff;
-            --bg-body: #f8fafc;
-            --border-color: #e2e8f0;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-        }
-
-        body {
-            font-family: var(--font-family);
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        #app {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Modern Glass Navbar */
-        .navbar-custom {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.85rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-brand {
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-        }
-
-        .brand-icon-box {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
-            color: #fff;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
-        }
-
-        .nav-link-custom {
-            color: #94a3b8 !important;
-            font-size: 0.9rem;
-            font-weight: 600;
-            padding: 0.5rem 0.9rem !important;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .nav-link-custom:hover {
-            color: #ffffff !important;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .nav-link-custom.active {
-            color: #ffffff !important;
-            background: rgba(2, 132, 199, 0.25);
-            border: 1px solid rgba(2, 132, 199, 0.4);
-        }
-
-        /* Card Enhancements */
-        .card {
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
-            background-color: #ffffff;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card-header-clean {
-            background-color: #ffffff;
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.1rem 1.5rem;
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--dark-blue);
-        }
-
-        /* Buttons */
-        .btn {
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 0.55rem 1.15rem;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.45rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            border: none;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
-            transform: translateY(-1px);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border: none;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            transform: translateY(-1px);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-            border: none;
-            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
-            transform: translateY(-1px);
-        }
-
-        /* Form Controls */
-        .form-control, .form-select {
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            padding: 0.6rem 0.9rem;
-            font-size: 0.92rem;
-            color: #1e293b;
-            transition: all 0.2s ease;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #0284c7;
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-        }
-
-        .form-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 0.4rem;
-        }
-
-        /* Soft Badge Pills */
-        .badge-soft {
-            font-weight: 600;
-            font-size: 0.78rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .badge-soft-success {
-            background-color: #dcfce7;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
-
-        .badge-soft-warning {
-            background-color: #fef3c7;
-            color: #b45309;
-            border: 1px solid #fde68a;
-        }
-
-        .badge-soft-danger {
-            background-color: #ffe4e6;
-            color: #be123c;
-            border: 1px solid #fecdd3;
-        }
-
-        .badge-soft-info {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-        }
-
-        .badge-soft-primary {
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-        }
-
-        .badge-soft-secondary {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* Modern Tables */
-        .table-custom {
-            margin-bottom: 0;
-        }
-
-        .table-custom thead th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            font-weight: 700;
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.9rem 1rem;
-            white-space: nowrap;
-        }
-
-        .table-custom tbody td {
-            padding: 1rem 1rem;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-
-        .table-custom tbody tr:hover {
-            background-color: #f8fafc;
-        }
-
-        /* Stat KPI Card */
-        .stat-card {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
-        }
-
-        .stat-icon.primary { background: #e0f2fe; color: #0284c7; }
-        .stat-icon.success { background: #dcfce7; color: #16a34a; }
-        .stat-icon.warning { background: #fef3c7; color: #d97706; }
-        .stat-icon.danger { background: #ffe4e6; color: #e11d48; }
-        .stat-icon.info { background: #e0e7ff; color: #4f46e5; }
-
-        /* Modern Modals */
-        .modal-content {
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.18);
-        }
-
-        .modal-header {
-            border-bottom: 1px solid var(--border-color);
-            padding: 1.25rem 1.5rem;
-        }
-
-        .modal-body {
-            padding: 1.5rem;
-        }
-
-        .modal-footer {
-            border-top: 1px solid var(--border-color);
-            padding: 1rem 1.5rem;
-        }
-
-        /* Footer */
-        .footer-custom {
-            background-color: #0f172a;
-            color: #94a3b8;
-            padding: 2rem 0;
-            margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            font-size: 0.85rem;
-        }
-
-        .footer-custom a {
-            color: #cbd5e1;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .footer-custom a:hover {
-            color: #38bdf8;
-        }
-    </style>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Custom STIKES Lab CSS (External & Browser-Cached) -->
+    <link rel="stylesheet" href="{{ asset('css/stikes-lab.css') }}">
 </head>
 <body>
     <div id="app">
@@ -366,6 +44,11 @@
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request()->routeIs('lab.katalog') ? 'active' : '' }}" href="{{ route('lab.katalog') }}">
                                 <i class="bi bi-grid"></i> Katalog Alat
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom {{ request()->routeIs('lab.lacak') ? 'active' : '' }}" href="{{ route('lab.lacak') }}">
+                                <i class="bi bi-search-heart"></i> Lacak Peminjaman
                             </a>
                         </li>
                         @auth
@@ -397,12 +80,20 @@
                         @endauth
                     </ul>
 
-                    <!-- Right Nav (Auth & Profile) -->
-                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <!-- Right Nav (Theme Toggle, Auth & Profile) -->
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-2">
+                        <!-- Dark / Light Mode Toggle Button -->
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3 d-flex align-items-center gap-2 border-opacity-25" onclick="toggleTheme()" title="Ubah Tema Gelap / Terang">
+                                <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                                <span class="small d-none d-lg-inline">Mode</span>
+                            </button>
+                        </li>
+
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="btn btn-outline-light btn-sm px-3 rounded-pill" href="{{ route('login') }}">
+                                    <a class="btn btn-primary btn-sm px-3 rounded-pill shadow-xs" href="{{ route('login') }}">
                                         <i class="bi bi-box-arrow-in-right"></i> Login Laboran
                                     </a>
                                 </li>
@@ -501,6 +192,17 @@
 
     <!-- Bootstrap 5.3.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- HTML5-QRCode Scanner -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <!-- Custom App JS -->
+    <script src="{{ asset('js/stikes-lab.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

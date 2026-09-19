@@ -4,15 +4,42 @@
 <!-- Page Header -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-        <h2 class="fw-bold text-dark mb-1">Kelola Peminjaman Alat Praktikum</h2>
+        <h2 class="fw-bold text-dark mb-1">Dashboard & Kelola Peminjaman</h2>
         <p class="text-muted small mb-0">Verifikasi pengajuan paket multi-alat, pantau masa peminjaman, dan konfirmasi pengembalian alat.</p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
+        <button type="button" class="btn btn-dark shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#modalScanQr">
+            <i class="bi bi-qr-code-scan"></i> Scan QR Pengembalian
+        </button>
         <a href="{{ route('admin.laporan.pdf', request()->query()) }}" target="_blank" class="btn btn-danger shadow-sm">
             <i class="bi bi-file-earmark-pdf-fill"></i> Cetak Laporan PDF
         </a>
     </div>
 </div>
+
+@if(isset($overdueLoans) && $overdueLoans->isNotEmpty())
+    <!-- Peringatan Transaksi Overdue (Jatuh Tempo) -->
+    <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4 p-4 d-flex align-items-start gap-3">
+        <div class="bg-danger text-white rounded-circle p-2 fs-4 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+            <i class="bi bi-exclamation-octagon-fill"></i>
+        </div>
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
+                <h5 class="fw-bold text-danger mb-0">Perhatian: {{ $overdueLoans->count() }} Peminjaman Melewati Batas Waktu Pengembalian (Overdue)</h5>
+                <span class="badge bg-danger">Segera Hubungi Peminjam</span>
+            </div>
+            <p class="small text-muted mb-2">Peralatan medis di bawah ini belum dikembalikan melewati tanggal rencana kembali:</p>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($overdueLoans as $ol)
+                    <span class="badge bg-white text-danger border border-danger border-opacity-25 py-2 px-3 shadow-xs">
+                        <strong>{{ $ol->kode_transaksi }}</strong> - {{ $ol->nama_peminjam }} (NIM: {{ $ol->nim_nip }}) 
+                        &bull; Jatuh Tempo: {{ \Carbon\Carbon::parse($ol->tgl_kembali_rencana)->format('d/m/Y') }}
+                    </span>
+                @endforeach
+            </div>
+        </div>
+    </div>
+@endif
 
 <!-- KPI Summary Cards -->
 <div class="row g-3 mb-4">
@@ -65,6 +92,40 @@
                 <div class="stat-icon bg-success bg-opacity-10 text-success">
                     <i class="bi bi-check2-all"></i>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Chart.js & Analytics Section -->
+<div class="row g-4 mb-4">
+    <!-- Chart 1: Tren Peminjaman 7 Hari -->
+    <div class="col-lg-7">
+        <div class="card border-0 rounded-4 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up text-primary"></i> Tren Peminjaman (7 Hari Terakhir)</h6>
+                    <small class="text-muted">Aktivitas peminjaman laboratorium harian</small>
+                </div>
+                <span class="badge bg-primary bg-opacity-10 text-primary">Live Data</span>
+            </div>
+            <div style="height: 220px; position: relative;">
+                <canvas id="chartTrenMingguan"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart 2 & Top Equipment -->
+    <div class="col-lg-5">
+        <div class="card border-0 rounded-4 shadow-sm h-100 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-pie-chart-fill text-info"></i> Distribusi per Prodi</h6>
+                    <small class="text-muted">Peminjaman berdasarkan program studi</small>
+                </div>
+            </div>
+            <div style="height: 220px; position: relative;" class="d-flex justify-content-center">
+                <canvas id="chartProdi"></canvas>
             </div>
         </div>
     </div>
@@ -297,13 +358,57 @@
                         </div>
                     </div>
 
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
+@endforeach
+
+<!-- MODAL SCANNER QR CODE PENGEMBALIAN / VERIFIKASI -->
+<div class="modal fade" id="modalScanQr" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header bg-dark text-white">
+                <div>
+                    <h5 class="modal-title fw-bold mb-0">
+                        <i class="bi bi-qr-code-scan me-1"></i> Scan QR Code Bukti Mahasiswa
+                    </h5>
+                    <small class="text-white-50">Arahkan kamera ke QR Code transaksi peminjaman</small>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="stopQrScanner()"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div id="qr-reader" class="rounded-3 overflow-hidden border mb-3" style="width: 100%; min-height: 250px; background: #0f172a;"></div>
+                <div id="qr-reader-results" class="fw-bold text-success mb-2"></div>
+                
+                <div class="p-3 bg-light rounded-3 border">
+                    <label class="form-label small text-muted mb-1">Atau Masukkan Kode Transaksi Manual:</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="manualTrxInput" class="form-control" placeholder="Contoh: TRX-20260818-001">
+                        <button class="btn btn-primary" type="button" onclick="submitManualTrx('{{ route('admin.peminjaman.index') }}')">
+                            <i class="bi bi-search"></i> Cari
+                        </button>
                     </div>
-                </form>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal" onclick="stopQrScanner()">Tutup</button>
             </div>
         </div>
     </div>
-@endforeach
+</div>
+
+@push('scripts')
+<script src="{{ asset('js/admin-dashboard.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Init Charts
+        initDashboardCharts(
+            {!! json_encode($weeklyLabels ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']) !!},
+            {!! json_encode($weeklyData ?? [1, 3, 2, 5, 4, 6, 3]) !!},
+            {!! json_encode(array_keys($prodiStats ?? [])) !!},
+            {!! json_encode(array_values($prodiStats ?? [])) !!}
+        );
+
+        // Init QR Scanner
+        initQrScanner("{{ route('admin.peminjaman.index') }}");
+    });
+</script>
+@endpush
 @endsection
