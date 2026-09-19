@@ -153,7 +153,7 @@ function updateCartUI() {
         if (btnSubmit) btnSubmit.setAttribute('disabled', 'disabled');
     }
 
-    // Render Table Rows
+    // 1. Render Table Rows (jika ada tampilan table)
     if (tbody) {
         tbody.innerHTML = '';
         cart.forEach((item, index) => {
@@ -183,6 +183,49 @@ function updateCartUI() {
             tbody.appendChild(tr);
         });
     }
+
+    // 2. Render Offcanvas Drawer Cards (jika ada offcanvas cart)
+    const offcanvasList = document.getElementById('cartOffcanvasList');
+    if (offcanvasList) {
+        offcanvasList.innerHTML = '';
+        if (cart.length === 0) {
+            offcanvasList.innerHTML = `
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-cart-x fs-1 opacity-50 d-block mb-2"></i>
+                    <p class="mb-0">Keranjang praktikum masih kosong.</p>
+                    <small>Silakan pilih peralatan medis di katalog.</small>
+                </div>
+            `;
+        } else {
+            cart.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'cart-item-card shadow-xs';
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <div class="fw-bold text-dark fs-6">${item.nama}</div>
+                            <span class="badge badge-soft-primary" style="font-size: 0.72rem;">${item.kode}</span>
+                            <span class="small text-muted ms-1">Tersedia: ${item.stok}</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-link text-danger p-0 text-decoration-none" onclick="removeFromCart(${item.id})" title="Hapus dari keranjang">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between pt-1 border-top">
+                        <small class="text-muted">Jumlah unit:</small>
+                        <div class="input-group input-group-sm" style="max-width: 110px;">
+                            <button type="button" class="btn btn-outline-secondary py-0" onclick="updateQty(${item.id}, -1)">-</button>
+                            <input type="number" class="form-control text-center fw-bold p-0" value="${item.jumlah}" min="1" max="${item.stok}" onchange="setQtyDirect(${item.id}, this.value)">
+                            <button type="button" class="btn btn-outline-secondary py-0" onclick="updateQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                    <input type="hidden" name="items[${index}][alat_lab_id]" value="${item.id}">
+                    <input type="hidden" name="items[${index}][jumlah]" value="${item.jumlah}">
+                `;
+                offcanvasList.appendChild(div);
+            });
+        }
+    }
 }
 
 function validateCartSubmission() {
@@ -207,6 +250,64 @@ function validateCartSubmission() {
     return true;
 }
 
+// Live Instant Search & Filter Katalog
+function filterKatalogRealtime() {
+    const query = (document.getElementById('searchInputKatalog')?.value || '').toLowerCase().trim();
+    const kategori = (document.getElementById('filterKategoriKatalog')?.value || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('.alat-grid-item');
+    let foundCount = 0;
+
+    cards.forEach(card => {
+        const nama = (card.getAttribute('data-nama') || '').toLowerCase();
+        const kode = (card.getAttribute('data-kode') || '').toLowerCase();
+        const kat = (card.getAttribute('data-kategori') || '').toLowerCase();
+
+        const matchQuery = !query || nama.includes(query) || kode.includes(query);
+        const matchKategori = !kategori || kat === kategori;
+
+        if (matchQuery && matchKategori) {
+            card.style.display = '';
+            foundCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    const noResultEl = document.getElementById('noKatalogResults');
+    if (noResultEl) {
+        noResultEl.style.display = (foundCount === 0 && cards.length > 0) ? 'block' : 'none';
+    }
+}
+
+// Quick Detail Modal Helper
+function openQuickDetail(alat) {
+    document.getElementById('detailAlatNama').innerText = alat.nama_alat || '-';
+    document.getElementById('detailAlatKode').innerText = alat.kode_alat || '-';
+    document.getElementById('detailAlatKategori').innerText = alat.kategori || 'Umum';
+    document.getElementById('detailAlatStok').innerText = `${alat.stok || 0} Unit Tersedia`;
+    document.getElementById('detailAlatKondisi').innerText = alat.kondisi || 'Baik';
+    document.getElementById('detailAlatLokasi').innerText = alat.lokasi || 'Lemari Alat Medis Lt. 2';
+    document.getElementById('detailAlatDeskripsi').innerText = alat.deskripsi || 'Tidak ada deskripsi tambahan.';
+    
+    const imgEl = document.getElementById('detailAlatFoto');
+    if (imgEl) {
+        imgEl.src = alat.foto ? `/storage/${alat.foto}` : 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80';
+    }
+
+    const detailModal = new bootstrap.Modal(document.getElementById('modalDetailAlat'));
+    detailModal.show();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     updateCartUI();
+    
+    // Bind search input jika ada
+    const searchInput = document.getElementById('searchInputKatalog');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterKatalogRealtime);
+    }
+    const filterKat = document.getElementById('filterKategoriKatalog');
+    if (filterKat) {
+        filterKat.addEventListener('change', filterKatalogRealtime);
+    }
 });

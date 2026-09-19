@@ -32,11 +32,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/peminjaman', [LabController::class, 'adminPeminjaman'])->name('admin.peminjaman.index');
     Route::post('/peminjaman/{id}/status', [LabController::class, 'updateStatusPeminjaman'])->name('admin.peminjaman.status');
 
-    // 2. Halaman Kelola Alat Lab
+    // 2. Halaman Kelola Alat Lab & Kategori Praktikum
     Route::get('/alat', [LabController::class, 'adminAlat'])->name('admin.alat.index');
     Route::post('/alat/store', [LabController::class, 'storeAlat'])->name('admin.alat.store');
     Route::put('/alat/{id}', [LabController::class, 'updateAlat'])->name('admin.alat.update');
     Route::delete('/alat/{id}', [LabController::class, 'destroyAlat'])->name('admin.alat.destroy');
+
+    // 2.1 Kelola Kategori Praktikum
+    Route::get('/kategori', [LabController::class, 'adminKategori'])->name('admin.kategori.index');
+    Route::post('/kategori/store', [LabController::class, 'storeKategori'])->name('admin.kategori.store');
+    Route::put('/kategori/{id}', [LabController::class, 'updateKategori'])->name('admin.kategori.update');
+    Route::delete('/kategori/{id}', [LabController::class, 'destroyKategori'])->name('admin.kategori.destroy');
 
     // 3. Halaman Kelola Laporan
     Route::get('/laporan', [LabController::class, 'adminLaporan'])->name('admin.laporan.index');

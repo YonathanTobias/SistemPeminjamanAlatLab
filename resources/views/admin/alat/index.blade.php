@@ -6,9 +6,12 @@
         <h2 class="fw-bold text-dark mb-1">Inventaris Alat Laboratorium</h2>
         <p class="text-muted small mb-0">Manajemen master data peralatan medis, kategori praktikum, foto alat, dan ketersediaan unit.</p>
     </div>
-    <div>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a href="{{ route('admin.kategori.index') }}" class="btn btn-outline-primary shadow-xs">
+            <i class="bi bi-grid-3x3-gap"></i> Kelola Kategori Praktikum
+        </a>
         <button type="button" class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambahAlat">
-            <i class="bi bi-plus-lg"></i> + Tambah Alat Baru
+            <i class="bi bi-plus-lg"></i> Tambah Alat Baru
         </button>
     </div>
 </div>
@@ -222,7 +225,7 @@
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <form action="{{ route('admin.alat.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-header text-white" style="background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);">
+                <div class="modal-header hero-banner-prodi text-white">
                     <div>
                         <h5 class="modal-title fw-bold mb-0" id="modalTambahAlatLabel">
                             <i class="bi bi-plus-circle me-1"></i> Tambah Peralatan Lab Baru
@@ -299,7 +302,7 @@
                     @csrf
                     @method('PUT')
                     
-                    <div class="modal-header text-white" style="background: linear-gradient(135deg, #0f172a 0%, #0f766e 100%);">
+                    <div class="modal-header hero-banner-prodi text-white">
                         <div>
                             <h5 class="modal-title fw-bold mb-0">
                                 <i class="bi bi-pencil-square me-1"></i> Edit Alat [{{ $alat->kode_alat }}]

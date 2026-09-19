@@ -20,7 +20,7 @@
                         <span class="input-group-text bg-white border-end-0 text-primary">
                             <i class="bi bi-search"></i>
                         </span>
-                        <input type="text" name="q" class="form-control border-start-0 border-end-0" placeholder="Ketik Kode Transaksi (contoh: TRX-20260818-001) atau NIM Anda..." value="{{ $search ?? '' }}" required autofocus>
+                        <input type="text" name="q" class="form-control border-start-0 border-end-0" placeholder="Ketik Kode Transaksi (contoh: {{ $pengaturan->prodi_prefix ?? 'LAB' }}-{{ date('Ymd') }}-001) atau NIM Anda..." value="{{ $search ?? '' }}" required autofocus>
                         <button class="btn btn-primary px-4 fw-bold" type="submit">
                             <i class="bi bi-arrow-right-circle-fill"></i> Lacak Sekarang
                         </button>
@@ -43,7 +43,7 @@
                 @foreach($peminjamans as $item)
                     <div class="card border-0 rounded-4 shadow-sm mb-4 overflow-hidden">
                         <!-- Card Header Status -->
-                        <div class="p-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom" style="background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%); color: white;">
+                        <div class="p-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom hero-banner-prodi text-white">
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge bg-white text-dark fw-bold px-3 py-2 fs-6">
                                     {{ $item->kode_transaksi ?? ('TRX-' . $item->id) }}
@@ -73,50 +73,67 @@
 
                         <div class="card-body p-4">
                             <!-- Visual Stepper Progress Tracker -->
-                            <div class="mb-4 p-3 bg-light rounded-4 border">
-                                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-bezier2 text-primary"></i> Progres Transaksi Peminjaman:</h6>
-                                <div class="row text-center g-2 position-relative">
-                                    <!-- Step 1: Pengajuan -->
-                                    <div class="col-3">
-                                        <div class="p-2 rounded-3 bg-success bg-opacity-10 text-success border border-success border-opacity-25 mb-1">
-                                            <i class="bi bi-send-check-fill fs-4 d-block"></i>
-                                            <span class="fw-bold small">1. Diajukan</span>
+                            <div class="mb-4 p-4 bg-light rounded-4 border">
+                                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-bezier2 text-primary"></i> Progres Status Peminjaman:</h6>
+                                
+                                @php
+                                    $status = $item->status;
+                                    $step1Class = 'completed';
+                                    $step2Class = ($status == 'Ditolak') ? 'rejected' : (($status == 'Menunggu') ? 'active' : 'completed');
+                                    $step3Class = ($status == 'Disetujui') ? 'active' : (($status == 'Dikembalikan') ? 'completed' : '');
+                                    $step4Class = ($status == 'Dikembalikan') ? 'completed' : '';
+                                    
+                                    $lineWidth = '0%';
+                                    if ($status == 'Menunggu') $lineWidth = '25%';
+                                    elseif ($status == 'Disetujui') $lineWidth = '65%';
+                                    elseif ($status == 'Dikembalikan') $lineWidth = '100%';
+                                    elseif ($status == 'Ditolak') $lineWidth = '33%';
+                                @endphp
+
+                                <div class="stepper-wrapper">
+                                    <div class="stepper-progress-line" style="width: {{ $lineWidth }}; {{ $status == 'Ditolak' ? 'background: #ef4444;' : '' }}"></div>
+                                    
+                                    <!-- Step 1 -->
+                                    <div class="stepper-step {{ $step1Class }}">
+                                        <div class="stepper-circle">
+                                            <i class="bi bi-send-check"></i>
                                         </div>
-                                        <small class="text-muted d-block" style="font-size: 0.72rem;">Form Terkirim</small>
+                                        <div class="stepper-title">1. Diajukan</div>
+                                        <div class="stepper-sub">Form Terkirim</div>
                                     </div>
 
-                                    <!-- Step 2: Verifikasi -->
-                                    <div class="col-3">
-                                        <div class="p-2 rounded-3 {{ $item->status != 'Ditolak' ? 'bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25' : 'bg-danger bg-opacity-10 text-danger border' }} mb-1">
-                                            <i class="bi {{ $item->status == 'Ditolak' ? 'bi-x-circle-fill' : 'bi-shield-check' }} fs-4 d-block"></i>
-                                            <span class="fw-bold small">{{ $item->status == 'Ditolak' ? '2. Ditolak' : '2. Verifikasi' }}</span>
+                                    <!-- Step 2 -->
+                                    <div class="stepper-step {{ $step2Class }}">
+                                        <div class="stepper-circle">
+                                            <i class="bi {{ $status == 'Ditolak' ? 'bi-x-lg' : 'bi-shield-check' }}"></i>
                                         </div>
-                                        <small class="text-muted d-block" style="font-size: 0.72rem;">{{ $item->status == 'Menunggu' ? 'Sedang Diperiksa' : 'Selesai Dicek' }}</small>
+                                        <div class="stepper-title">{{ $status == 'Ditolak' ? '2. Ditolak' : '2. Verifikasi' }}</div>
+                                        <div class="stepper-sub">{{ $status == 'Menunggu' ? 'Sedang Diperiksa' : ($status == 'Ditolak' ? 'Permohonan Ditolak' : 'Disetujui Laboran') }}</div>
                                     </div>
 
-                                    <!-- Step 3: Pengambilan -->
-                                    <div class="col-3">
-                                        <div class="p-2 rounded-3 {{ in_array($item->status, ['Disetujui', 'Dikembalikan']) ? 'bg-success bg-opacity-10 text-success border border-success border-opacity-25' : 'bg-secondary bg-opacity-10 text-muted border border-opacity-25' }} mb-1">
-                                            <i class="bi bi-box-seam fs-4 d-block"></i>
-                                            <span class="fw-bold small">3. Ambil di Lab</span>
+                                    <!-- Step 3 -->
+                                    <div class="stepper-step {{ $step3Class }}">
+                                        <div class="stepper-circle">
+                                            <i class="bi bi-box-seam"></i>
                                         </div>
-                                        <small class="text-muted d-block" style="font-size: 0.72rem;">{{ $item->status == 'Disetujui' ? 'Siap Diambil' : ($item->status == 'Dikembalikan' ? 'Selesai Dipakai' : 'Menunggu Approval') }}</small>
+                                        <div class="stepper-title">3. Dipakai</div>
+                                        <div class="stepper-sub">{{ $status == 'Disetujui' ? 'Siap Diambil' : ($status == 'Dikembalikan' ? 'Selesai Dipakai' : 'Menunggu') }}</div>
                                     </div>
 
-                                    <!-- Step 4: Selesai -->
-                                    <div class="col-3">
-                                        <div class="p-2 rounded-3 {{ $item->status == 'Dikembalikan' ? 'bg-info bg-opacity-10 text-info border border-info border-opacity-25' : 'bg-secondary bg-opacity-10 text-muted border border-opacity-25' }} mb-1">
-                                            <i class="bi bi-check2-all fs-4 d-block"></i>
-                                            <span class="fw-bold small">4. Selesai</span>
+                                    <!-- Step 4 -->
+                                    <div class="stepper-step {{ $step4Class }}">
+                                        <div class="stepper-circle">
+                                            <i class="bi bi-check2-all"></i>
                                         </div>
-                                        <small class="text-muted d-block" style="font-size: 0.72rem;">{{ $item->status == 'Dikembalikan' ? 'Alat Dikembalikan' : 'Belum Kembali' }}</small>
+                                        <div class="stepper-title">4. Selesai</div>
+                                        <div class="stepper-sub">{{ $status == 'Dikembalikan' ? 'Alat Kembali' : 'Belum Kembali' }}</div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row g-4 align-items-center">
                                 <!-- Data Identitas & Paket Alat -->
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     <div class="row g-3 mb-3">
                                         <div class="col-sm-6">
                                             <span class="text-muted small d-block">Nama Peminjam:</span>
@@ -157,22 +174,32 @@
                                     </div>
                                 </div>
 
-                                <!-- E-Receipt QR Code Card -->
-                                <div class="col-md-4 text-center">
-                                    <div class="p-3 bg-white border rounded-4 shadow-sm position-relative">
-                                        <span class="badge bg-dark rounded-pill mb-2 px-3 py-1 text-uppercase" style="font-size: 0.7rem;">Bukti Digital (QR)</span>
-                                        
-                                        <!-- Container QR Code -->
-                                        <div class="d-flex justify-content-center my-2">
-                                            <div id="qrcode-{{ $item->id }}" class="qr-code-canvas p-2 bg-white rounded border" data-qr-text="{{ $item->kode_transaksi }}"></div>
+                                <!-- E-Receipt Medical Pass Card -->
+                                <div class="col-md-5 text-center">
+                                    <div class="medical-pass-card shadow-sm position-relative text-start">
+                                        <div class="medical-pass-header d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge bg-white text-primary rounded-pill px-2 py-1 small fw-bold" style="font-size: 0.68rem;">E-KARCIS PRAKTIKUM</span>
+                                                <div class="fw-bold mt-1 text-white small">{{ $pengaturan->nama_institusi ?? 'STIKES Panti Waluya Malang' }}</div>
+                                            </div>
+                                            <i class="bi bi-qr-code fs-3 text-white-50"></i>
                                         </div>
                                         
-                                        <strong class="d-block text-dark small">{{ $item->kode_transaksi }}</strong>
-                                        <small class="text-muted d-block mb-2" style="font-size: 0.72rem;">Tunjukkan QR Code ini ke petugas laboran saat mengambil alat.</small>
-                                        
-                                        <button type="button" class="btn btn-sm btn-outline-primary w-100 rounded-pill" onclick="window.print()">
-                                            <i class="bi bi-printer"></i> Cetak Bukti
-                                        </button>
+                                        <div class="p-3 text-center">
+                                            <!-- Container QR Code -->
+                                            <div class="d-flex justify-content-center my-2">
+                                                <div id="qrcode-{{ $item->id }}" class="qr-code-canvas p-2 bg-white rounded-3 border shadow-xs" data-qr-text="{{ $item->kode_transaksi }}"></div>
+                                            </div>
+                                            
+                                            <strong class="d-block text-dark fs-6 font-monospace mb-1">{{ $item->kode_transaksi }}</strong>
+                                            <small class="text-muted d-block mb-3" style="font-size: 0.72rem;">Tunjukkan QR Code ini ke petugas laboran saat mengambil & mengembalikan alat.</small>
+                                            
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-primary w-100 rounded-pill" onclick="window.print()">
+                                                    <i class="bi bi-printer"></i> Cetak Karcis
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

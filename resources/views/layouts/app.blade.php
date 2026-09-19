@@ -20,17 +20,92 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Custom STIKES Lab CSS (External & Browser-Cached) -->
     <link rel="stylesheet" href="{{ asset('css/stikes-lab.css') }}">
+
+    <!-- Dynamic Theme Palette per Program Studi -->
+    @php
+        $theme = $pengaturan->theme_colors ?? [
+            'name' => 'blue',
+            'primary' => '#0284c7',
+            'primary_dark' => '#0369a1',
+            'primary_light' => '#e0f2fe',
+            'gradient' => 'linear-gradient(135deg, #082f49 0%, #0369a1 40%, #0284c7 80%, #38bdf8 100%)',
+            'navbar_bg' => 'rgba(15, 23, 42, 0.96)',
+            'navbar_border' => 'rgba(2, 132, 199, 0.2)',
+            'badge_soft' => 'rgba(2, 132, 199, 0.15)',
+        ];
+    @endphp
+    <style>
+        :root {
+            --primary: {{ $theme['primary'] }};
+            --primary-dark: {{ $theme['primary_dark'] }};
+            --primary-light: {{ $theme['primary_light'] }};
+        }
+        .navbar-custom {
+            background: {{ $theme['navbar_bg'] }} !important;
+            border-bottom: 1px solid {{ $theme['navbar_border'] }} !important;
+        }
+        .footer-custom {
+            background: {{ $theme['navbar_bg'] }} !important;
+            border-top: 1px solid {{ $theme['navbar_border'] }} !important;
+            padding: 2.5rem 0;
+            margin-top: auto;
+        }
+        .hero-banner-prodi {
+            background: {{ $theme['gradient'] }} !important;
+        }
+        .auth-brand-side {
+            background: {{ $theme['gradient'] }} !important;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, {{ $theme['primary'] }} 0%, {{ $theme['primary_dark'] }} 100%) !important;
+            border-color: {{ $theme['primary'] }} !important;
+        }
+        .btn-outline-primary {
+            color: {{ $theme['primary'] }} !important;
+            border-color: {{ $theme['primary'] }} !important;
+        }
+        .btn-outline-primary:hover {
+            background-color: {{ $theme['primary'] }} !important;
+            color: #ffffff !important;
+        }
+        .badge-soft-primary {
+            background-color: {{ $theme['badge_soft'] }} !important;
+            color: {{ $theme['primary'] }} !important;
+        }
+        .text-primary {
+            color: {{ $theme['primary'] }} !important;
+        }
+        .nav-link-custom.active {
+            background: {{ $theme['badge_soft'] }} !important;
+            border: 1px solid {{ $theme['primary'] }} !important;
+            color: #ffffff !important;
+        }
+        .medical-pass-header {
+            background: linear-gradient(135deg, {{ $theme['primary_dark'] }}, {{ $theme['primary'] }}) !important;
+        }
+        .brand-icon-box {
+            background: linear-gradient(135deg, {{ $theme['primary'] }} 0%, {{ $theme['primary_dark'] }} 100%) !important;
+        }
+        .stepper-progress-line {
+            background: linear-gradient(90deg, {{ $theme['primary'] }}, #10b981) !important;
+        }
+        .stepper-step.active .stepper-circle {
+            background-color: {{ $theme['primary'] }} !important;
+            border-color: {{ $theme['primary'] }} !important;
+            box-shadow: 0 0 16px {{ $theme['badge_soft'] }} !important;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <!-- Modern Sticky Glass Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{ asset($pengaturan->logo_path ?? 'images/logo-stikes.png') }}" alt="Logo" height="42" class="me-2" style="object-fit: contain;">
+        <nav class="navbar navbar-expand-xl navbar-dark navbar-custom sticky-top">
+            <div class="container-fluid px-lg-4">
+                <a class="navbar-brand d-flex align-items-center me-3" href="{{ url('/') }}" title="{{ $pengaturan->nama_sistem ?? 'SIM-LAB STIKES' }}">
+                    <img src="{{ asset($pengaturan->logo_path ?? 'images/logo-stikes.png') }}" alt="Logo" height="38" class="me-2 flex-shrink-0" style="object-fit: contain;">
                     <div>
-                        <div class="fw-bold lh-1 text-white">{{ $pengaturan->nama_sistem ?? 'SIM-LAB' }}</div>
-                        <small class="text-white-50" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;">{{ strtoupper($pengaturan->nama_prodi ?? 'STIKES PANTI WALUYA') }}</small>
+                        <div class="fw-bold lh-1 text-white" style="font-size: 0.92rem;">SIM-LAB STIKES</div>
+                        <small class="text-white-50 d-block" style="font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap;">{{ strtoupper($pengaturan->nama_prodi ?? 'STIKES PANTI WALUYA') }}</small>
                     </div>
                 </a>
 
@@ -39,43 +114,69 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Nav (Public links) -->
-                    <ul class="navbar-nav me-auto ms-lg-4 mb-2 mb-lg-0">
+                    <!-- Left Nav (Public & Admin links) -->
+                    <ul class="navbar-nav me-auto mb-2 mb-xl-0 gap-1 align-items-xl-center">
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request()->routeIs('lab.katalog') ? 'active' : '' }}" href="{{ route('lab.katalog') }}">
-                                <i class="bi bi-grid"></i> Katalog Alat
+                                <i class="bi bi-grid"></i> Katalog
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request()->routeIs('lab.lacak') ? 'active' : '' }}" href="{{ route('lab.lacak') }}">
-                                <i class="bi bi-search-heart"></i> Lacak Peminjaman
+                                <i class="bi bi-search-heart"></i> Lacak
                             </a>
                         </li>
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link-custom {{ request()->routeIs('admin.peminjaman.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">
+                                <a class="nav-link-custom {{ request()->routeIs('admin.peminjaman.*') || request()->routeIs('admin.lab.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">
                                     <i class="bi bi-clipboard-check"></i> Peminjaman
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link-custom {{ request()->routeIs('admin.alat.*') ? 'active' : '' }}" href="{{ route('admin.alat.index') }}">
-                                    <i class="bi bi-box-seam"></i> Inventaris Alat
+
+                            <!-- Dropdown Menu Inventaris -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link-custom dropdown-toggle {{ request()->routeIs('admin.alat.*') || request()->routeIs('admin.kategori.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-box-seam"></i> Inventaris
                                 </a>
+                                <ul class="dropdown-menu shadow-lg border-0 rounded-3 mt-1 p-2">
+                                    <li>
+                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.alat.*') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.alat.index') }}">
+                                            <i class="bi bi-boxes"></i> Daftar Peralatan Lab
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.kategori.*') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.kategori.index') }}">
+                                            <i class="bi bi-tags"></i> Kategori Praktikum
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link-custom {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}" href="{{ route('admin.laporan.index') }}">
                                     <i class="bi bi-file-earmark-bar-graph"></i> Laporan
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link-custom {{ request()->routeIs('admin.pengaturan.*') ? 'active' : '' }}" href="{{ route('admin.pengaturan.index') }}">
+
+                            <!-- Dropdown Menu Pengaturan & Pengguna -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link-custom dropdown-toggle {{ request()->routeIs('admin.pengaturan.*') || request()->routeIs('admin.users.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-gear-fill"></i> Pengaturan
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link-custom {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                                    <i class="bi bi-people-fill"></i> Kelola Pengguna
-                                </a>
+                                <ul class="dropdown-menu shadow-lg border-0 rounded-3 mt-1 p-2">
+                                    <li>
+                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.pengaturan.*') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.pengaturan.index') }}">
+                                            <i class="bi bi-sliders"></i> Profil & Tema Lab
+                                        </a>
+                                    </li>
+                                    @if((Auth::user()->role ?? '') === 'admin_it')
+                                        <li>
+                                            <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.users.*') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.users.index') }}">
+                                                <i class="bi bi-people-fill"></i> Kelola Pengguna
+                                            </a>
+                                        </li>
+                                    @endif
+                                </ul>
                             </li>
                         @endauth
                     </ul>
@@ -175,7 +276,7 @@
                         <img src="{{ asset($pengaturan->logo_path ?? 'images/logo-stikes.png') }}" alt="Logo" height="48" style="object-fit: contain;">
                         <div>
                             <div class="d-flex align-items-center gap-2 mb-1">
-                                <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 px-2 py-1 rounded-pill small">
+                                <span class="badge badge-soft-primary border border-opacity-25 px-2 py-1 rounded-pill small">
                                     <i class="bi bi-hospital"></i> {{ $pengaturan->unit_laboratorium ?? 'Unit Laboratorium' }}
                                 </span>
                             </div>

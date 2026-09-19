@@ -98,36 +98,18 @@
 </div>
 
 <!-- Interactive Chart.js & Analytics Section -->
-<div class="row g-4 mb-4">
-    <!-- Chart 1: Tren Peminjaman 7 Hari -->
-    <div class="col-lg-7">
-        <div class="card border-0 rounded-4 shadow-sm h-100 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up text-primary"></i> Tren Peminjaman (7 Hari Terakhir)</h6>
-                    <small class="text-muted">Aktivitas peminjaman laboratorium harian</small>
-                </div>
-                <span class="badge bg-primary bg-opacity-10 text-primary">Live Data</span>
-            </div>
-            <div style="height: 220px; position: relative;">
-                <canvas id="chartTrenMingguan"></canvas>
-            </div>
+<div class="card border-0 rounded-4 shadow-sm mb-4 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up text-primary"></i> Tren Peminjaman Laboratorium (7 Hari Terakhir)</h6>
+            <small class="text-muted">Aktivitas peminjaman harian pada {{ $pengaturan->nama_prodi ?? 'Program Studi' }}</small>
         </div>
+        <span class="badge badge-soft-primary px-3 py-1 rounded-pill small">
+            <i class="bi bi-activity"></i> Live Data
+        </span>
     </div>
-
-    <!-- Chart 2 & Top Equipment -->
-    <div class="col-lg-5">
-        <div class="card border-0 rounded-4 shadow-sm h-100 p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-pie-chart-fill text-info"></i> Distribusi per Prodi</h6>
-                    <small class="text-muted">Peminjaman berdasarkan program studi</small>
-                </div>
-            </div>
-            <div style="height: 220px; position: relative;" class="d-flex justify-content-center">
-                <canvas id="chartProdi"></canvas>
-            </div>
-        </div>
+    <div style="height: 200px; position: relative;">
+        <canvas id="chartTrenMingguan"></canvas>
     </div>
 </div>
 
@@ -139,7 +121,7 @@
                 <label class="form-label small text-muted mb-1">Cari Kode / Peminjam</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="TRX-..., Nama, NIM" value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Kode Pinjam, Nama, NIM" value="{{ request('search') }}">
                 </div>
             </div>
             <div class="col-md-3">
@@ -199,12 +181,20 @@
                 </thead>
                 <tbody>
                     @forelse($peminjaman as $index => $p)
-                        <tr>
+                        @php
+                            $isOverdue = in_array($p->status, ['Menunggu', 'Disetujui']) && strtotime($p->tgl_kembali_rencana) < strtotime(date('Y-m-d'));
+                        @endphp
+                        <tr class="{{ $isOverdue ? 'table-overdue-row' : '' }}">
                             <td class="ps-4 fw-bold text-muted">{{ $peminjaman->firstItem() + $index }}</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2 mb-1">
                                     <span class="badge badge-soft-primary fw-bold">{{ $p->kode_transaksi ?? ('TRX-' . $p->id) }}</span>
                                     <small class="badge bg-light text-secondary border">{{ $p->prodi }}</small>
+                                    @if($isOverdue)
+                                        <span class="badge bg-danger badge-pulse-danger text-white py-1 px-2" style="font-size: 0.68rem;">
+                                            <i class="bi bi-alarm-fill"></i> TERLAMBAT
+                                        </span>
+                                    @endif
                                 </div>
                                 <div class="fw-bold text-dark">{{ $p->nama_peminjam }}</div>
                                 <div class="small text-muted">
@@ -231,7 +221,7 @@
                             <td>
                                 <div class="small">
                                     <div class="text-muted"><i class="bi bi-calendar-arrow-right text-success"></i> {{ date('d M Y', strtotime($p->tgl_pinjam)) }}</div>
-                                    <div class="text-muted"><i class="bi bi-calendar-check text-danger"></i> {{ date('d M Y', strtotime($p->tgl_kembali_rencana)) }}</div>
+                                    <div class="{{ $isOverdue ? 'text-danger fw-bold' : 'text-muted' }}"><i class="bi bi-calendar-check {{ $isOverdue ? 'text-danger' : 'text-primary' }}"></i> {{ date('d M Y', strtotime($p->tgl_kembali_rencana)) }}</div>
                                 </div>
                             </td>
                             <td class="text-center">
@@ -357,7 +347,16 @@
                             <textarea name="catatan" class="form-control" rows="2" placeholder="Tuliskan catatan kondisi alat atau alasan jika ditolak...">{{ $p->catatan }}</textarea>
                         </div>
                     </div>
-
+                    <div class="modal-footer bg-light d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                            <i class="bi bi-save"></i> Simpan Status
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endforeach
 
 <!-- MODAL SCANNER QR CODE PENGEMBALIAN / VERIFIKASI -->
@@ -380,7 +379,7 @@
                 <div class="p-3 bg-light rounded-3 border">
                     <label class="form-label small text-muted mb-1">Atau Masukkan Kode Transaksi Manual:</label>
                     <div class="input-group input-group-sm">
-                        <input type="text" id="manualTrxInput" class="form-control" placeholder="Contoh: TRX-20260818-001">
+                        <input type="text" id="manualTrxInput" class="form-control" placeholder="Contoh: {{ $pengaturan->prodi_prefix ?? 'LAB' }}-{{ date('Ymd') }}-001">
                         <button class="btn btn-primary" type="button" onclick="submitManualTrx('{{ route('admin.peminjaman.index') }}')">
                             <i class="bi bi-search"></i> Cari
                         </button>
@@ -401,9 +400,7 @@
         // Init Charts
         initDashboardCharts(
             {!! json_encode($weeklyLabels ?? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']) !!},
-            {!! json_encode($weeklyData ?? [1, 3, 2, 5, 4, 6, 3]) !!},
-            {!! json_encode(array_keys($prodiStats ?? [])) !!},
-            {!! json_encode(array_values($prodiStats ?? [])) !!}
+            {!! json_encode($weeklyData ?? [0, 0, 0, 0, 0, 0, 0]) !!}
         );
 
         // Init QR Scanner

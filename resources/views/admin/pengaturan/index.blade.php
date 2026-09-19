@@ -14,30 +14,39 @@
     </div>
 </div>
 
-<!-- Quick Presets Box -->
+@if((Auth::user()->role ?? '') === 'admin_it')
+<!-- Quick Presets Box (Khusus Admin IT) -->
 <div class="card border-0 rounded-4 shadow-sm mb-4 bg-primary bg-opacity-10 border border-primary border-opacity-25">
     <div class="card-body p-4">
-        <div class="d-flex align-items-center gap-2 mb-2">
-            <i class="bi bi-magic text-primary fs-5"></i>
-            <h6 class="fw-bold text-dark mb-0">Template Cepat (Quick Preset Prodi):</h6>
+        <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-magic text-primary fs-5"></i>
+                <h6 class="fw-bold text-dark mb-0">Template Cepat (Quick Preset Prodi):</h6>
+            </div>
+            <span class="badge bg-danger rounded-pill px-2 py-1 small">
+                <i class="bi bi-shield-lock-fill me-1"></i> Khusus Admin IT
+            </span>
         </div>
         <p class="text-muted small mb-3">Klik salah satu tombol di bawah untuk mengisi formulir secara otomatis sesuai program studi yang menggunakan sistem ini:</p>
         <div class="d-flex flex-wrap gap-2">
-            <button type="button" class="btn btn-sm btn-white bg-white text-dark border shadow-xs" onclick="applyPreset('s1_kep')">
-                <i class="bi bi-award text-primary me-1"></i> S1 Ilmu Keperawatan
+            <!-- 1. S1 Keperawatan & Profesi Ners: Orange -->
+            <button type="button" class="btn btn-sm shadow-xs fw-semibold" style="background: #fff7ed; color: #c2410c; border: 1.5px solid #f97316;" onclick="applyPreset('s1_kep_ners')">
+                <i class="bi bi-award-fill" style="color: #ea580c;"></i> S1 Keperawatan & Profesi Ners
             </button>
-            <button type="button" class="btn btn-sm btn-white bg-white text-dark border shadow-xs" onclick="applyPreset('d3_kep')">
-                <i class="bi bi-award text-success me-1"></i> D3 Keperawatan
+
+            <!-- 2. S1 Farmasi: Hijau -->
+            <button type="button" class="btn btn-sm shadow-xs fw-semibold" style="background: #ecfdf5; color: #065f46; border: 1.5px solid #10b981;" onclick="applyPreset('s1_farmasi')">
+                <i class="bi bi-capsule" style="color: #059669;"></i> S1 Farmasi
             </button>
-            <button type="button" class="btn btn-sm btn-white bg-white text-dark border shadow-xs" onclick="applyPreset('ners')">
-                <i class="bi bi-award text-info me-1"></i> Profesi Ners
-            </button>
-            <button type="button" class="btn btn-sm btn-white bg-white text-dark border shadow-xs" onclick="applyPreset('farmasi')">
-                <i class="bi bi-award text-warning me-1"></i> D3 Farmasi
+
+            <!-- 3. D4 MIK: Ungu -->
+            <button type="button" class="btn btn-sm shadow-xs fw-semibold" style="background: #faf5ff; color: #6b21a8; border: 1.5px solid #a855f7;" onclick="applyPreset('d4_mik')">
+                <i class="bi bi-file-earmark-medical-fill" style="color: #9333ea;"></i> D4 MIK
             </button>
         </div>
     </div>
 </div>
+@endif
 
 <!-- Main Settings Form -->
 <form action="{{ route('admin.pengaturan.update') }}" method="POST" enctype="multipart/form-data">

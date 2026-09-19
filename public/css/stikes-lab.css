@@ -27,6 +27,7 @@
     --text-main: #f1f5f9;
     --text-muted: #94a3b8;
     --border-color: #334155;
+    color-scheme: dark;
 }
 
 [data-bs-theme="dark"] body {
@@ -34,55 +35,237 @@
     color: #f1f5f9 !important;
 }
 
+/* Headings & Text Elements */
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] h4,
+[data-bs-theme="dark"] h5,
+[data-bs-theme="dark"] h6,
+[data-bs-theme="dark"] .h1,
+[data-bs-theme="dark"] .h2,
+[data-bs-theme="dark"] .h3,
+[data-bs-theme="dark"] .h4,
+[data-bs-theme="dark"] .h5,
+[data-bs-theme="dark"] .h6,
+[data-bs-theme="dark"] .card-title,
+[data-bs-theme="dark"] .text-dark,
+[data-bs-theme="dark"] strong,
+[data-bs-theme="dark"] b {
+    color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .text-muted,
+[data-bs-theme="dark"] .text-secondary,
+[data-bs-theme="dark"] .form-text,
+[data-bs-theme="dark"] small {
+    color: #94a3b8 !important;
+}
+
+[data-bs-theme="dark"] label,
+[data-bs-theme="dark"] .form-label {
+    color: #e2e8f0 !important;
+}
+
+/* Surfaces & Cards */
 [data-bs-theme="dark"] .card {
     background-color: #1e293b !important;
     border-color: #334155 !important;
     color: #f1f5f9 !important;
 }
 
-[data-bs-theme="dark"] .table-custom {
+[data-bs-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-header-clean {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .card-footer,
+[data-bs-theme="dark"] .card-footer.bg-white {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
     color: #f1f5f9 !important;
 }
 
-[data-bs-theme="dark"] .table-custom thead th {
+[data-bs-theme="dark"] .bg-white {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
     background-color: #0f172a !important;
-    color: #94a3b8 !important;
-    border-bottom-color: #334155 !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
 }
 
-[data-bs-theme="dark"] .table-custom tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.04) !important;
-}
-
+/* Form Controls & Inputs */
 [data-bs-theme="dark"] .form-control, 
 [data-bs-theme="dark"] .form-select {
     background-color: #0f172a !important;
     border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus, 
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: #0f172a !important;
+    border-color: var(--primary, #0284c7) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(2, 132, 199, 0.25) !important;
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+    color: #64748b !important;
+}
+
+[data-bs-theme="dark"] .input-group-text,
+[data-bs-theme="dark"] .input-group-text.bg-white {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+
+/* Tables */
+[data-bs-theme="dark"] .table,
+[data-bs-theme="dark"] .table-custom {
+    color: #f1f5f9 !important;
+    border-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .table thead th,
+[data-bs-theme="dark"] .table-custom thead th {
+    background-color: #0f172a !important;
+    color: #cbd5e1 !important;
+    border-bottom-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .table td,
+[data-bs-theme="dark"] .table-custom td {
+    color: #f1f5f9 !important;
+    border-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover,
+[data-bs-theme="dark"] .table-custom tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Badges */
+[data-bs-theme="dark"] .badge.bg-white {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .badge.bg-light {
+    background-color: #0f172a !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+/* Buttons */
+[data-bs-theme="dark"] .btn-outline-secondary,
+[data-bs-theme="dark"] .btn-outline-secondary.bg-white {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .btn-light {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+/* Modals & Offcanvas */
+[data-bs-theme="dark"] .modal-content {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
     color: #f1f5f9 !important;
 }
 
-[data-bs-theme="dark"] .text-dark {
+[data-bs-theme="dark"] .modal-header {
+    border-bottom-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .modal-body {
+    background-color: #1e293b !important;
     color: #f1f5f9 !important;
 }
 
-[data-bs-theme="dark"] .bg-light,
-[data-bs-theme="dark"] .card-header-clean {
+[data-bs-theme="dark"] .modal-footer,
+[data-bs-theme="dark"] .modal-footer.bg-light {
+    background-color: #0f172a !important;
+    border-top-color: #334155 !important;
+}
+
+[data-bs-theme="dark"] .offcanvas {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+[data-bs-theme="dark"] .offcanvas-header,
+[data-bs-theme="dark"] .offcanvas-footer {
     background-color: #0f172a !important;
     border-color: #334155 !important;
 }
 
+[data-bs-theme="dark"] .cart-item-card {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+/* Dropdown */
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-bs-theme="dark"] .dropdown-item {
+    color: #cbd5e1 !important;
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .dropdown-menu .border-bottom {
+    border-color: #334155 !important;
+}
+
+/* Stats Card & Thumbnails */
 [data-bs-theme="dark"] .stat-card {
     background-color: #1e293b !important;
     border-color: #334155 !important;
 }
 
-[data-bs-theme="dark"] .modal-content {
+[data-bs-theme="dark"] .card-alat-img {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+/* Medical Pass (E-Karcis) */
+[data-bs-theme="dark"] .medical-pass-card {
     background-color: #1e293b !important;
+    border-color: #475569 !important;
     color: #f1f5f9 !important;
 }
 
-[data-bs-theme="dark"] .modal-footer.bg-light {
-    background-color: #0f172a !important;
+[data-bs-theme="dark"] .stepper-title {
+    color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .stepper-sub {
+    color: #94a3b8 !important;
 }
 
 /* ==========================================================================
@@ -96,12 +279,15 @@ body {
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
 #app {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* ==========================================================================
@@ -112,12 +298,12 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 0.85rem 0;
+    padding: 0.75rem 0;
     transition: all 0.3s ease;
 }
 
 .navbar-brand {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     display: flex;
@@ -140,14 +326,15 @@ body {
 
 .nav-link-custom {
     color: #94a3b8 !important;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    padding: 0.5rem 0.9rem !important;
+    padding: 0.45rem 0.65rem !important;
     border-radius: 8px;
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
+    white-space: nowrap;
 }
 
 .nav-link-custom:hover {
@@ -414,3 +601,240 @@ body {
 .footer-custom a:hover {
     color: #38bdf8;
 }
+
+/* ==========================================================================
+   Micro-interactions & Image Hover
+   ========================================================================== */
+.card-alat-img {
+    position: relative;
+    overflow: hidden;
+    background: #f1f5f9;
+    border-radius: 12px 12px 0 0;
+}
+
+.card-alat-img img {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover .card-alat-img img {
+    transform: scale(1.06);
+}
+
+/* ==========================================================================
+   Horizontal Stepper Progress Tracker (Tracking Page)
+   ========================================================================== */
+.stepper-wrapper {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+}
+
+.stepper-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 48px;
+    right: 48px;
+    height: 4px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.stepper-progress-line {
+    position: absolute;
+    top: 24px;
+    left: 48px;
+    height: 4px;
+    background: linear-gradient(90deg, #0284c7, #10b981);
+    z-index: 2;
+    transition: width 0.5s ease;
+}
+
+.stepper-step {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+}
+
+.stepper-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+[data-bs-theme="dark"] .stepper-circle {
+    background-color: #1e293b;
+    border-color: #475569;
+}
+
+.stepper-step.completed .stepper-circle {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+}
+
+.stepper-step.active .stepper-circle {
+    background-color: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(2, 132, 199, 0.45);
+    animation: pulse-active 2s infinite;
+}
+
+.stepper-step.rejected .stepper-circle {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.45);
+}
+
+.stepper-title {
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+
+.stepper-sub {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+}
+
+@keyframes pulse-active {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.6); }
+    70% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(2, 132, 199, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+}
+
+/* ==========================================================================
+   Medical Pass Digital Receipt Card (E-Karcis)
+   ========================================================================== */
+.medical-pass-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 2px dashed #cbd5e1;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-bs-theme="dark"] .medical-pass-card {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+.medical-pass-header {
+    background: linear-gradient(135deg, #0369a1, #0284c7);
+    color: #ffffff;
+    padding: 1.25rem;
+    border-radius: 18px 18px 0 0;
+}
+
+/* ==========================================================================
+   Overdue Pulse Animation & Alert Badges
+   ========================================================================== */
+.badge-pulse-danger {
+    animation: pulse-badge 1.5s infinite;
+}
+
+@keyframes pulse-badge {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.table-overdue-row {
+    background-color: rgba(239, 68, 68, 0.06) !important;
+    border-left: 4px solid #ef4444 !important;
+}
+
+/* ==========================================================================
+   Modern Side Offcanvas Drawer (Cart)
+   ========================================================================== */
+.offcanvas-cart {
+    width: 440px !important;
+    max-width: 90vw;
+    border-radius: 24px 0 0 24px;
+    border-left: 1px solid var(--border-color);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+}
+
+[data-bs-theme="dark"] .offcanvas-cart {
+    background-color: #1e293b;
+    border-left-color: #334155;
+}
+
+.cart-item-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 0.85rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+[data-bs-theme="dark"] .cart-item-card {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.cart-item-card:hover {
+    border-color: #0284c7;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+}
+
+/* ==========================================================================
+   Auth Split-Screen Layout
+   ========================================================================== */
+.auth-split-wrapper {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.auth-split-card {
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.12);
+}
+
+.auth-brand-side {
+    background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);
+    color: #ffffff;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-brand-side::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+}
+

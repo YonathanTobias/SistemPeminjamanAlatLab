@@ -4,8 +4,8 @@
  */
 
 // 1. Helper Inisialisasi Grafik Chart.js
-function initDashboardCharts(weeklyLabels, weeklyData, prodiLabels, prodiData) {
-    // Grafik 1: Tren Mingguan
+function initDashboardCharts(weeklyLabels, weeklyData) {
+    // Grafik: Tren Mingguan
     const ctxTren = document.getElementById('chartTrenMingguan');
     if (ctxTren && typeof Chart !== 'undefined') {
         new Chart(ctxTren, {
@@ -38,43 +38,44 @@ function initDashboardCharts(weeklyLabels, weeklyData, prodiLabels, prodiData) {
             }
         });
     }
-
-    // Grafik 2: Distribusi Prodi
-    const ctxProdi = document.getElementById('chartProdi');
-    if (ctxProdi && typeof Chart !== 'undefined') {
-        new Chart(ctxProdi, {
-            type: 'doughnut',
-            data: {
-                labels: prodiLabels && prodiLabels.length > 0 ? prodiLabels : ['S1 Keperawatan', 'D3 Keperawatan', 'Profesi Ners'],
-                datasets: [{
-                    data: prodiData && prodiData.length > 0 ? prodiData : [1, 1, 1],
-                    backgroundColor: [
-                        '#0284c7',
-                        '#0d9488',
-                        '#f59e0b',
-                        '#8b5cf6',
-                        '#ec4899'
-                    ],
-                    borderWidth: 2,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { boxWidth: 12, font: { size: 11 } }
-                    }
-                }
-            }
-        });
-    }
 }
 
-// 2. Helper Scanner QR Code
+// 2. Helper Scanner QR Code & Audio Chime
 let html5QrcodeScanner = null;
+
+function playScanSuccessAudio() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        // Tone 1
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, ctx.currentTime); // A5
+        gain1.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(ctx.currentTime);
+        osc1.stop(ctx.currentTime + 0.12);
+
+        // Tone 2 (Higher harmony)
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1320, ctx.currentTime + 0.08); // E6
+        gain2.gain.setValueAtTime(0.2, ctx.currentTime + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(ctx.currentTime + 0.08);
+        osc2.stop(ctx.currentTime + 0.25);
+    } catch (e) {
+        console.log("Audio not supported or blocked: ", e);
+    }
+}
 
 function initQrScanner(searchUrl) {
     const modalScan = document.getElementById('modalScanQr');
@@ -87,10 +88,13 @@ function initQrScanner(searchUrl) {
                     false
                 );
                 html5QrcodeScanner.render((decodedText) => {
+                    playScanSuccessAudio();
                     const resultEl = document.getElementById('qr-reader-results');
                     if (resultEl) resultEl.innerText = `Ditemukan: ${decodedText}`;
                     stopQrScanner();
-                    window.location.href = `${searchUrl}?search=${encodeURIComponent(decodedText)}`;
+                    setTimeout(() => {
+                        window.location.href = `${searchUrl}?search=${encodeURIComponent(decodedText)}`;
+                    }, 400);
                 }, (err) => {
                     // silent on frame scanning
                 });
@@ -118,3 +122,4 @@ function submitManualTrx(searchUrl) {
         window.location.href = `${searchUrl}?search=${encodeURIComponent(input.value.trim())}`;
     }
 }
+

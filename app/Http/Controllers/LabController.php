@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AlatLab;
+use App\Models\KategoriAlat;
 use App\Models\PeminjamanLab;
 use App\Models\PeminjamanLabDetail;
 use App\Models\PengaturanLab;
@@ -39,14 +40,8 @@ class LabController extends Controller
             'kondisi_baik' => AlatLab::where('kondisi', 'Baik')->count(),
         ];
 
-        $kategoriList = [
-            'Semua Alat',
-            'KDM & Tanda Vital',
-            'Simulasi & Manikin',
-            'Elektromedis & Terapi',
-            'Instrumen Bedah Minor',
-            'Mobilisasi & Rehabilitasi',
-        ];
+        // Ambil daftar kategori dinamis dari database
+        $kategoriList = KategoriAlat::orderBy('nama_kategori')->get();
 
         // Ambil semua alat yang tersedia untuk katalog keranjang
         $allAlats = AlatLab::where('stok_tersedia', '>', 0)->get(['id', 'kode_alat', 'nama_alat', 'kategori', 'stok_tersedia', 'kondisi', 'gambar']);
@@ -113,9 +108,11 @@ class LabController extends Controller
                 }
             }
 
-            // 2. Generate kode transaksi unik: TRX-YYYYMMDD-XXX
+            // 2. Generate kode transaksi unik sesuai Prodi: KEP-YYYYMMDD-XXX / FAR-YYYYMMDD-XXX / MIK-YYYYMMDD-XXX
+            $pengaturan = PengaturanLab::getPengaturan();
+            $prefix = $pengaturan->prodi_prefix ?? 'LAB';
             $countToday = PeminjamanLab::whereDate('created_at', Carbon::today())->count() + 1;
-            $kodeTransaksi = 'TRX-' . date('Ymd') . '-' . str_pad($countToday, 3, '0', STR_PAD_LEFT);
+            $kodeTransaksi = $prefix . '-' . date('Ymd') . '-' . str_pad($countToday, 3, '0', STR_PAD_LEFT);
 
             // 3. Buat header peminjaman
             $peminjaman = PeminjamanLab::create([
@@ -334,13 +331,7 @@ class LabController extends Controller
             'ditolak' => PeminjamanLab::where('status', 'Ditolak')->count(),
         ];
 
-        // 1. Data Analitik Chart: Distribusi per Prodi
-        $prodiStats = PeminjamanLab::select('prodi', DB::raw('count(*) as total'))
-            ->groupBy('prodi')
-            ->pluck('total', 'prodi')
-            ->toArray();
-
-        // 2. Data Analitik Chart: Tren 7 Hari Terakhir
+        // 1. Data Analitik Chart: Tren 7 Hari Terakhir
         $weeklyLabels = [];
         $weeklyData = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -349,7 +340,7 @@ class LabController extends Controller
             $weeklyData[] = PeminjamanLab::whereDate('tgl_pinjam', $date)->count();
         }
 
-        // 3. Top 5 Alat Paling Sering Dipinjam
+        // 2. Top 5 Alat Paling Sering Dipinjam
         $topAlat = PeminjamanLabDetail::select('alat_lab_id', DB::raw('sum(jumlah_pinjam) as total_dipinjam'))
             ->with('alat')
             ->groupBy('alat_lab_id')
@@ -357,13 +348,13 @@ class LabController extends Controller
             ->limit(5)
             ->get();
 
-        // 4. Peminjaman Terlambat (Overdue)
+        // 3. Peminjaman Terlambat (Overdue)
         $overdueLoans = PeminjamanLab::with('details.alat')
             ->where('status', 'Disetujui')
             ->whereDate('tgl_kembali_rencana', '<', Carbon::today())
             ->get();
 
-        return view('admin.peminjaman.index', compact('peminjaman', 'stats', 'prodiStats', 'weeklyLabels', 'weeklyData', 'topAlat', 'overdueLoans'));
+        return view('admin.peminjaman.index', compact('peminjaman', 'stats', 'weeklyLabels', 'weeklyData', 'topAlat', 'overdueLoans'));
     }
 
     // Admin: Halaman Kelola Inventaris Alat Lab
@@ -390,13 +381,8 @@ class LabController extends Controller
             'kondisi_rusak' => AlatLab::where('kondisi', '!=', 'Baik')->count(),
         ];
 
-        $kategoriList = [
-            'KDM & Tanda Vital',
-            'Simulasi & Manikin',
-            'Elektromedis & Terapi',
-            'Instrumen Bedah Minor',
-            'Mobilisasi & Rehabilitasi',
-        ];
+        // Ambil daftar kategori dinamis dari database
+        $kategoriList = KategoriAlat::orderBy('nama_kategori')->pluck('nama_kategori')->toArray();
 
         return view('admin.alat.index', compact('alats', 'stats', 'kategoriList'));
     }
@@ -670,5 +656,72 @@ class LabController extends Controller
         $user->delete();
 
         return back()->with('success', 'Akun pengguna berhasil dihapus dari sistem.');
+    }
+
+    // ==========================================
+    // Master Kategori Praktikum CRUD
+    // ==========================================
+    public function adminKategori(Request $request)
+    {
+        $kategoris = KategoriAlat::withCount('alats')->orderBy('nama_kategori')->get();
+        return view('admin.kategori.index', compact('kategoris'));
+    }
+
+    public function storeKategori(Request $request)
+    {
+        $request->validate([
+            'nama_kategori' => 'required|string|max:100|unique:kategori_alats,nama_kategori',
+            'ikon'          => 'nullable|string|max:50',
+            'deskripsi'     => 'nullable|string|max:500',
+        ]);
+
+        KategoriAlat::create([
+            'nama_kategori' => trim($request->nama_kategori),
+            'ikon'          => $request->ikon ?: 'bi-grid-fill',
+            'deskripsi'     => $request->deskripsi,
+        ]);
+
+        return redirect()->route('admin.kategori.index')->with('success', 'Kategori praktikum baru berhasil ditambahkan!');
+    }
+
+    public function updateKategori(Request $request, $id)
+    {
+        $kategori = KategoriAlat::findOrFail($id);
+
+        $request->validate([
+            'nama_kategori' => 'required|string|max:100|unique:kategori_alats,nama_kategori,' . $id,
+            'ikon'          => 'nullable|string|max:50',
+            'deskripsi'     => 'nullable|string|max:500',
+        ]);
+
+        $oldName = $kategori->nama_kategori;
+        $newName = trim($request->nama_kategori);
+
+        $kategori->update([
+            'nama_kategori' => $newName,
+            'ikon'          => $request->ikon ?: 'bi-grid-fill',
+            'deskripsi'     => $request->deskripsi,
+        ]);
+
+        // Jika nama kategori berubah, update juga alat-alat yang menggunakan kategori lama
+        if ($oldName !== $newName) {
+            AlatLab::where('kategori', $oldName)->update(['kategori' => $newName]);
+        }
+
+        return redirect()->route('admin.kategori.index')->with('success', 'Data kategori praktikum berhasil diperbarui!');
+    }
+
+    public function destroyKategori($id)
+    {
+        $kategori = KategoriAlat::withCount('alats')->findOrFail($id);
+
+        // Proteksi jika kategori masih digunakan oleh alat
+        if ($kategori->alats_count > 0) {
+            return redirect()->route('admin.kategori.index')->with('error', 'Kategori tidak dapat dihapus karena masih digunakan oleh ' . $kategori->alats_count . ' unit peralatan lab!');
+        }
+
+        $kategori->delete();
+
+        return redirect()->route('admin.kategori.index')->with('success', 'Kategori praktikum berhasil dihapus!');
     }
 }

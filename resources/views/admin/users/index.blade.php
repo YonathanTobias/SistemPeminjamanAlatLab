@@ -186,7 +186,7 @@
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
-                <div class="modal-header text-white" style="background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%);">
+                <div class="modal-header hero-banner-prodi text-white">
                     <div>
                         <h5 class="modal-title fw-bold mb-0">
                             <i class="bi bi-person-plus-fill me-1"></i> Tambah Pengguna Baru
@@ -247,7 +247,7 @@
                     @csrf
                     @method('PUT')
                     
-                    <div class="modal-header text-white" style="background: linear-gradient(135deg, #0f172a 0%, #0f766e 100%);">
+                    <div class="modal-header hero-banner-prodi text-white">
                         <div>
                             <h5 class="modal-title fw-bold mb-0">
                                 <i class="bi bi-pencil-square me-1"></i> Edit Akun [{{ $u->name }}]
