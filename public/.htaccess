@@ -1,9 +1,43 @@
-<IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
+# ==============================================================================
+# SISTEM KEAMANAN & ANTI-BACKDOOR SERVER - STIKES PANTI WALUYA
+# ==============================================================================
 
+# 1. NONAKTIFKAN DIRECTORY LISTING (Mencegah peretas melihat daftar file)
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+# 2. BLOKIR AKSES KE FILE TERSEMBUNYI (.env, .git, .htaccess, .htpasswd, dll)
+<FilesMatch "^\.|\.(env|git|yml|yaml|ini|sql|log|sh|bak|swp|dist)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 3. HEADER KEAMANAN TINGKAT LANJUT
+<IfModule mod_headers.c>
+    # Mencegah MIME-Type Sniffing (Mencegah file backdoor PHP yang disamarkan jadi gambar)
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Mencegah Serangan Clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Mengaktifkan filter browser XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# 4. FILTER QUERY STRING BERBAHAYA (ANTI BACKDOOR & RCE)
+<IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Blokir upaya Remote Code Execution & Web Shell (eval, base64_decode, passthru, system, shell_exec, dll)
+    RewriteCond %{QUERY_STRING} (eval\(|base64_decode\(|passthru\(|shell_exec\(|system\(|popen\(|proc_open\(|exec\() [NC,OR]
+    RewriteCond %{QUERY_STRING} (GLOBALS|mosConfig_|_REQUEST|_SERVER|_ENV) [NC,OR]
+    RewriteCond %{QUERY_STRING} (\.\./|\.\.\\|\%2e\%2e|/etc/passwd|/proc/self/environ) [NC,OR]
+    RewriteCond %{QUERY_STRING} (boot\.ini|cmd\.exe|/bin/sh|/bin/bash|wget|curl) [NC]
+    RewriteRule ^.*$ - [F,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

@@ -389,6 +389,11 @@
                                     <i class="bi bi-gear-fill"></i> Pengaturan
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link-custom {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                                    <i class="bi bi-people-fill"></i> Kelola Pengguna
+                                </a>
+                            </li>
                         @endauth
                     </ul>
 
@@ -405,15 +410,25 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle text-white d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.85rem; font-weight: 700;">
+                                    <div class="{{ (Auth::user()->role ?? '') === 'admin_it' ? 'bg-danger' : 'bg-primary' }} text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 0.85rem; font-weight: 700;">
                                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
                                     </div>
-                                    <span class="fw-semibold">{{ Auth::user()->name }}</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-semibold">{{ Auth::user()->name }}</span>
+                                        <span class="badge {{ (Auth::user()->role ?? '') === 'admin_it' ? 'bg-danger' : 'bg-primary' }} rounded-pill" style="font-size: 0.65rem; font-weight: 700;">
+                                            {{ (Auth::user()->role ?? '') === 'admin_it' ? 'Admin IT' : 'Laboran' }}
+                                        </span>
+                                    </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2" aria-labelledby="navbarDropdown">
                                     <div class="px-3 py-2 border-bottom mb-1">
                                         <div class="small text-muted">Masuk sebagai:</div>
                                         <div class="fw-bold text-dark">{{ Auth::user()->email }}</div>
+                                        <div class="mt-1">
+                                            <span class="badge {{ (Auth::user()->role ?? '') === 'admin_it' ? 'bg-danger' : 'bg-primary' }}">
+                                                {{ (Auth::user()->role ?? '') === 'admin_it' ? 'Hak Akses: Admin IT' : 'Hak Akses: Petugas Laboran' }}
+                                            </span>
+                                        </div>
                                     </div>
                                     <a class="dropdown-item rounded-3 py-2 text-danger d-flex align-items-center gap-2" href="{{ route('logout') }}"
                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

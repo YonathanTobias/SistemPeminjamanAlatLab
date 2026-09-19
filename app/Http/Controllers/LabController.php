@@ -6,8 +6,10 @@ use App\Models\AlatLab;
 use App\Models\PeminjamanLab;
 use App\Models\PeminjamanLabDetail;
 use App\Models\PengaturanLab;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
@@ -374,5 +376,99 @@ class LabController extends Controller
         $pengaturan->update($data);
 
         return back()->with('success', 'Pengaturan nama sistem dan profil laboratorium berhasil diperbarui!');
+    }
+
+    // Admin: Halaman Kelola Pengguna / User Management
+    public function adminUsers(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+
+        $stats = [
+            'total'     => User::count(),
+            'admin_it'  => User::where('role', 'admin_it')->count(),
+            'laboran'   => User::where('role', 'laboran')->count(),
+        ];
+
+        return view('admin.users.index', compact('users', 'stats'));
+    }
+
+    // Admin: Tambah User Baru
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role'     => 'required|in:admin_it,laboran',
+        ]);
+
+        User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => $request->role,
+        ]);
+
+        return back()->with('success', 'Akun pengguna baru berhasil ditambahkan!');
+    }
+
+    // Admin: Update User
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role'     => 'required|in:admin_it,laboran',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $data = [
+            'name'  => $request->name,
+            'email' => $request->email,
+            'role'  => $request->role,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return back()->with('success', 'Data akun pengguna berhasil diperbarui!');
+    }
+
+    // Admin: Hapus User
+    public function destroyUser($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Proteksi: Tidak boleh menghapus akun yang sedang login
+        if (auth()->id() == $user->id) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif!');
+        }
+
+        // Proteksi: Minimal harus tersisa 1 Admin IT
+        if ($user->role === 'admin_it' && User::where('role', 'admin_it')->count() <= 1) {
+            return back()->with('error', 'Tidak dapat menghapus akun Admin IT terakhir di sistem!');
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'Akun pengguna berhasil dihapus dari sistem.');
     }
 }

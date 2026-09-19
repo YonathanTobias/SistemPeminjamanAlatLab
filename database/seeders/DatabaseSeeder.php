@@ -20,12 +20,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Akun Admin Laboran
-        User::firstOrCreate(
+        // 1. Akun Admin IT (Super Admin)
+        User::updateOrCreate(
+            ['email' => 'it@stikes.ac.id'],
+            [
+                'name' => 'Administrator IT Kampus',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin_it',
+            ]
+        );
+
+        // 2. Akun Petugas Laboran
+        User::updateOrCreate(
             ['email' => 'laboran@stikes.ac.id'],
             [
-                'name' => 'Laboran STIKES Panti Waluya',
+                'name' => 'Petugas Laboran Keperawatan',
                 'password' => Hash::make('admin123'),
+                'role' => 'laboran',
             ]
         );
 

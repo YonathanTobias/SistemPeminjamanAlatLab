@@ -47,4 +47,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/pengaturan', [LabController::class, 'adminPengaturan'])->name('admin.pengaturan.index');
     Route::post('/pengaturan', [LabController::class, 'updatePengaturan'])->name('admin.pengaturan.update');
 
+    // 6. Halaman Kelola Pengguna / User Management (Admin IT)
+    Route::get('/users', [LabController::class, 'adminUsers'])->name('admin.users.index');
+    Route::post('/users', [LabController::class, 'storeUser'])->name('admin.users.store');
+    Route::put('/users/{id}', [LabController::class, 'updateUser'])->name('admin.users.update');
+    Route::delete('/users/{id}', [LabController::class, 'destroyUser'])->name('admin.users.destroy');
+
 });

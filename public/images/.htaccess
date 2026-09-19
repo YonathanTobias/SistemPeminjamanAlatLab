@@ -1,0 +1,28 @@
+# ==============================================================================
+# ANTI-BACKDOOR & ANTI-WEBSHELL UPLOAD FOLDER PROTECTION
+# Mencegah eksekusi script PHP/CGI/Perl/Python/Shell apapun di dalam folder ini
+# ==============================================================================
+
+# 1. Nonaktifkan engine PHP agar file .php TIDAK BISA DIJALANKAN sama sekali
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# 2. Hapus handler script eksekusi
+RemoveHandler .php .phtml .php3 .php4 .php5 .php6 .php7 .php8 .phar .shtml .cgi .pl .py .sh .exe .bat .cmd .asp .aspx .jsp
+RemoveType .php .phtml .php3 .php4 .php5 .php6 .php7 .php8 .phar .shtml .cgi .pl .py .sh .exe .bat .cmd .asp .aspx .jsp
+
+# 3. Blokir total akses ke file berekstensi script/backdoor
+<FilesMatch "\.(php|phtml|php3|php4|php5|php6|php7|php8|phar|shtml|cgi|pl|py|sh|exe|bat|cmd|asp|aspx|jsp|cgi|htaccess|htpasswd)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# 4. Nonaktifkan directory browsing & script execution options
+Options -Indexes -ExecCGI

@@ -22,7 +22,24 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
+    /**
+     * Helper to check if user is IT Admin.
+     */
+    public function isAdminIt(): bool
+    {
+        return $this->role === 'admin_it';
+    }
+
+    /**
+     * Helper to check if user is Laboran.
+     */
+    public function isLaboran(): bool
+    {
+        return $this->role === 'laboran';
+    }
 
     /**
      * The attributes that should be hidden for serialization.
