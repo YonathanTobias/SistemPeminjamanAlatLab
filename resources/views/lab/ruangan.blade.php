@@ -162,7 +162,7 @@
 
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Jam Selesai <span class="text-danger">*</span></label>
-                                <input type="time" name="jam_selesai" class="form-control rounded-3 @error('jam_selesai', '10:00') }}" required>
+                                <input type="time" name="jam_selesai" class="form-control rounded-3 @error('jam_selesai') is-invalid @enderror" value="{{ old('jam_selesai', '10:00') }}" required>
                                 @error('jam_selesai')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
