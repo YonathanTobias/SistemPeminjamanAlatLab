@@ -3,12 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LabController;
+use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\Auth\RegisterController;
 
 // Halaman Katalog Alat Lab (Publik)
 Route::get('/', [LabController::class, 'indexPublik'])->name('lab.katalog');
 Route::post('/lab/pinjam', [LabController::class, 'storePeminjamanPublik'])->name('lab.pinjam.store');
 Route::get('/lacak', [LabController::class, 'lacakPeminjaman'])->name('lab.lacak');
+
+// Halaman Peminjaman Ruangan (Publik)
+Route::get('/ruangan', [RuanganController::class, 'indexPublik'])->name('lab.ruangan');
+Route::post('/ruangan/pinjam', [RuanganController::class, 'storeBookingPublik'])->name('lab.ruangan.store');
 
 // Auth (Register publik ditutup)
 Auth::routes([
@@ -28,9 +33,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Halaman Utama Admin Dashboard (/admin/lab)
     Route::get('/lab', [LabController::class, 'adminPeminjaman'])->name('admin.lab.index');
 
-    // 1. Halaman Kelola Peminjaman
+    // 1. Halaman Kelola Peminjaman Alat
     Route::get('/peminjaman', [LabController::class, 'adminPeminjaman'])->name('admin.peminjaman.index');
     Route::post('/peminjaman/{id}/status', [LabController::class, 'updateStatusPeminjaman'])->name('admin.peminjaman.status');
+
+    // 1.1 Halaman Kelola Ruangan & Peminjaman Ruangan
+    Route::get('/ruangan', [RuanganController::class, 'adminRuangan'])->name('admin.ruangan.index');
+    Route::post('/ruangan/store', [RuanganController::class, 'storeRuangan'])->name('admin.ruangan.store');
+    Route::put('/ruangan/{id}', [RuanganController::class, 'updateRuangan'])->name('admin.ruangan.update');
+    Route::delete('/ruangan/{id}', [RuanganController::class, 'destroyRuangan'])->name('admin.ruangan.destroy');
+
+    Route::get('/peminjaman-ruangan', [RuanganController::class, 'adminPeminjamanRuangan'])->name('admin.ruangan.peminjaman');
+    Route::post('/peminjaman-ruangan/{id}/status', [RuanganController::class, 'updateStatusPeminjaman'])->name('admin.ruangan.peminjaman.status');
 
     // 2. Halaman Kelola Alat Lab & Kategori Praktikum
     Route::get('/alat', [LabController::class, 'adminAlat'])->name('admin.alat.index');

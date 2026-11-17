@@ -118,7 +118,12 @@
                     <ul class="navbar-nav me-auto mb-2 mb-xl-0 gap-1 align-items-xl-center">
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request()->routeIs('lab.katalog') ? 'active' : '' }}" href="{{ route('lab.katalog') }}">
-                                <i class="bi bi-grid"></i> Katalog
+                                <i class="bi bi-grid"></i> Alat Lab
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link-custom {{ request()->routeIs('lab.ruangan') ? 'active' : '' }}" href="{{ route('lab.ruangan') }}">
+                                <i class="bi bi-door-open"></i> Ruangan Lab
                             </a>
                         </li>
                         <li class="nav-item">
@@ -127,21 +132,39 @@
                             </a>
                         </li>
                         @auth
-                            <li class="nav-item">
-                                <a class="nav-link-custom {{ request()->routeIs('admin.peminjaman.*') || request()->routeIs('admin.lab.*') ? 'active' : '' }}" href="{{ route('admin.peminjaman.index') }}">
+                            <!-- Dropdown Menu Peminjaman -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link-custom dropdown-toggle {{ request()->routeIs('admin.peminjaman.*') || request()->routeIs('admin.ruangan.peminjaman') || request()->routeIs('admin.lab.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-clipboard-check"></i> Peminjaman
                                 </a>
+                                <ul class="dropdown-menu shadow-lg border-0 rounded-3 mt-1 p-2">
+                                    <li>
+                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.peminjaman.*') || request()->routeIs('admin.lab.*') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.peminjaman.index') }}">
+                                            <i class="bi bi-box-seam"></i> Peminjaman Alat
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.ruangan.peminjaman') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.ruangan.peminjaman') }}">
+                                            <i class="bi bi-door-open"></i> Peminjaman Ruangan
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
 
                             <!-- Dropdown Menu Inventaris -->
                             <li class="nav-item dropdown">
-                                <a class="nav-link-custom dropdown-toggle {{ request()->routeIs('admin.alat.*') || request()->routeIs('admin.kategori.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link-custom dropdown-toggle {{ request()->routeIs('admin.alat.*') || request()->routeIs('admin.kategori.*') || request()->routeIs('admin.ruangan.index') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-box-seam"></i> Inventaris
                                 </a>
                                 <ul class="dropdown-menu shadow-lg border-0 rounded-3 mt-1 p-2">
                                     <li>
                                         <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.alat.*') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.alat.index') }}">
                                             <i class="bi bi-boxes"></i> Daftar Peralatan Lab
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2 {{ request()->routeIs('admin.ruangan.index') ? 'fw-bold text-primary' : '' }}" href="{{ route('admin.ruangan.index') }}">
+                                            <i class="bi bi-building"></i> Data Ruangan Lab
                                         </a>
                                     </li>
                                     <li>
