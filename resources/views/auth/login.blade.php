@@ -70,7 +70,7 @@
                                         <span class="input-group-text bg-light border-end-0 text-muted">
                                             <i class="bi bi-person"></i>
                                         </span>
-                                        <input id="email" type="email" class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" placeholder="nama@stikespantiwaluya.ac.id" required autocomplete="email" autofocus>
+                                        <input id="email" type="email" class="form-control border-start-0 ps-0 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                     </div>
                                     @error('email')
                                         <span class="text-danger small mt-1 d-block" role="alert">
@@ -94,7 +94,7 @@
                                         <span class="input-group-text bg-light border-end-0 text-muted">
                                             <i class="bi bi-lock"></i>
                                         </span>
-                                        <input id="password" type="password" class="form-control border-start-0 border-end-0 ps-0 @error('password') is-invalid @enderror" name="password" placeholder="••••••••" required autocomplete="current-password">
+                                        <input id="password" type="password" class="form-control border-start-0 border-end-0 ps-0 @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                                         <button class="btn btn-light bg-white border border-start-0 text-muted" type="button" onclick="togglePasswordVisibility('password', this)" title="Lihat Sandi">
                                             <i class="bi bi-eye"></i>
                                         </button>
