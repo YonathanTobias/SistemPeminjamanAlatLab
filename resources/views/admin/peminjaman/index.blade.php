@@ -58,10 +58,10 @@
 <!-- KPI Summary Cards -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
-        <div class="card stat-card border-0 rounded-4 shadow-sm p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small fw-medium">Total Transaksi</div>
+        <div class="card stat-card border-0 rounded-4 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <div class="flex-grow-1 overflow-hidden pe-1">
+                    <div class="text-muted small fw-medium text-truncate" title="Total Transaksi">Total Transaksi</div>
                     <div class="fs-4 fw-bold text-dark mt-1">{{ $stats['total'] ?? 0 }}</div>
                 </div>
                 <div class="stat-icon bg-primary bg-opacity-10 text-primary">
@@ -71,10 +71,10 @@
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card stat-card border-0 rounded-4 shadow-sm p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small fw-medium">Menunggu Verifikasi</div>
+        <div class="card stat-card border-0 rounded-4 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <div class="flex-grow-1 overflow-hidden pe-1">
+                    <div class="text-muted small fw-medium text-truncate" title="Menunggu Verifikasi">Menunggu Verifikasi</div>
                     <div class="fs-4 fw-bold text-warning mt-1">{{ $stats['menunggu'] ?? 0 }}</div>
                 </div>
                 <div class="stat-icon bg-warning bg-opacity-10 text-warning">
@@ -84,10 +84,10 @@
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card stat-card border-0 rounded-4 shadow-sm p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small fw-medium">Sedang Dipinjam</div>
+        <div class="card stat-card border-0 rounded-4 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <div class="flex-grow-1 overflow-hidden pe-1">
+                    <div class="text-muted small fw-medium text-truncate" title="Sedang Dipinjam">Sedang Dipinjam</div>
                     <div class="fs-4 fw-bold text-primary mt-1">{{ $stats['disetujui'] ?? 0 }}</div>
                 </div>
                 <div class="stat-icon bg-info bg-opacity-10 text-info">
@@ -97,10 +97,10 @@
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="card stat-card border-0 rounded-4 shadow-sm p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small fw-medium">Telah Dikembalikan</div>
+        <div class="card stat-card border-0 rounded-4 shadow-sm p-3 h-100">
+            <div class="d-flex align-items-center justify-content-between gap-2">
+                <div class="flex-grow-1 overflow-hidden pe-1">
+                    <div class="text-muted small fw-medium text-truncate" title="Telah Dikembalikan">Telah Dikembalikan</div>
                     <div class="fs-4 fw-bold text-success mt-1">{{ $stats['dikembalikan'] ?? 0 }}</div>
                 </div>
                 <div class="stat-icon bg-success bg-opacity-10 text-success">

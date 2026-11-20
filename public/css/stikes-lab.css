@@ -18,9 +18,7 @@
     --text-muted: #64748b;
 }
 
-/* ==========================================================================
-   Dark Mode Theme Overrides
-   ========================================================================== */
+/* --- Dark Mode Theme Overrides --- */
 [data-bs-theme="dark"] {
     --bg-body: #0b1120;
     --surface: #1e293b;
@@ -393,9 +391,7 @@
     color: #cbd5e1 !important;
 }
 
-/* ==========================================================================
-   Global Layout & Typography
-   ========================================================================== */
+/* --- Global Layout & Typography --- */
 body {
     font-family: var(--font-family);
     background-color: var(--bg-body);
@@ -415,9 +411,7 @@ body {
     width: 100%;
 }
 
-/* ==========================================================================
-   Modern Glass Navbar
-   ========================================================================== */
+/* --- Modern Glass Navbar --- */
 .navbar-custom {
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(12px);
@@ -473,9 +467,7 @@ body {
     border: 1px solid rgba(2, 132, 199, 0.4);
 }
 
-/* ==========================================================================
-   Cards & Panels
-   ========================================================================== */
+/* --- Cards & Panels --- */
 .card {
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -493,15 +485,13 @@ body {
     color: var(--dark-blue);
 }
 
-/* ==========================================================================
-   Buttons
-   ========================================================================== */
+/* --- Buttons --- */
 .btn {
-    border-radius: 10px;
+    border-radius: 8px;
     font-weight: 600;
     font-size: 0.9rem;
-    padding: 0.55rem 1.15rem;
-    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -509,42 +499,48 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-    border: none;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    background-color: var(--primary, #0284c7);
+    border: 1px solid var(--primary, #0284c7);
+    color: #ffffff;
+    box-shadow: none;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
-    transform: translateY(-1px);
+    background-color: var(--primary-dark, #0369a1);
+    border-color: var(--primary-dark, #0369a1);
+    color: #ffffff;
+    box-shadow: none;
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border: none;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    background-color: #059669;
+    border: 1px solid #059669;
+    color: #ffffff;
+    box-shadow: none;
 }
 
 .btn-success:hover {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    transform: translateY(-1px);
+    background-color: #047857;
+    border-color: #047857;
+    color: #ffffff;
+    box-shadow: none;
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-    border: none;
-    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
+    background-color: #e11d48;
+    border: 1px solid #e11d48;
+    color: #ffffff;
+    box-shadow: none;
 }
 
 .btn-danger:hover {
-    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
-    transform: translateY(-1px);
+    background-color: #be123c;
+    border-color: #be123c;
+    color: #ffffff;
+    box-shadow: none;
 }
 
-/* ==========================================================================
-   Form Controls
-   ========================================================================== */
+/* --- Form Controls --- */
 .form-control, .form-select {
     border-radius: 10px;
     border: 1px solid #cbd5e1;
@@ -566,9 +562,7 @@ body {
     margin-bottom: 0.4rem;
 }
 
-/* ==========================================================================
-   Badges & Pills
-   ========================================================================== */
+/* --- Badges & Pills --- */
 .badge-soft {
     font-weight: 600;
     font-size: 0.78rem;
@@ -615,9 +609,7 @@ body {
     border: 1px solid #e2e8f0;
 }
 
-/* ==========================================================================
-   Tables
-   ========================================================================== */
+/* --- Tables --- */
 .table-custom {
     margin-bottom: 0;
 }
@@ -645,17 +637,13 @@ body {
     background-color: #f8fafc;
 }
 
-/* ==========================================================================
-   Stat KPI Cards
-   ========================================================================== */
+/* --- Stat KPI Cards --- */
 .stat-card {
     background: #ffffff;
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    display: block;
     box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.03);
     transition: all 0.2s ease;
 }
@@ -668,11 +656,12 @@ body {
 .stat-icon {
     width: 48px;
     height: 48px;
+    min-width: 48px;
     border-radius: 12px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     flex-shrink: 0;
 }
 
@@ -682,9 +671,7 @@ body {
 .stat-icon.danger { background: #ffe4e6; color: #e11d48; }
 .stat-icon.info { background: #e0e7ff; color: #4f46e5; }
 
-/* ==========================================================================
-   Alerts & Notifications
-   ========================================================================== */
+/* --- Alerts & Notifications --- */
 .alert {
     border-radius: 16px;
     font-size: 0.925rem;
@@ -751,9 +738,7 @@ body {
     color: #475569;
 }
 
-/* ==========================================================================
-   Modals
-   ========================================================================== */
+/* --- Modals --- */
 .modal-content {
     border-radius: 20px;
     border: 1px solid var(--border-color);
@@ -774,9 +759,7 @@ body {
     padding: 1rem 1.5rem;
 }
 
-/* ==========================================================================
-   Footer
-   ========================================================================== */
+/* --- Footer --- */
 .footer-custom {
     background-color: #0f172a;
     color: #94a3b8;
@@ -796,9 +779,7 @@ body {
     color: #38bdf8;
 }
 
-/* ==========================================================================
-   Micro-interactions & Image Hover
-   ========================================================================== */
+/* --- Micro-interactions & Image Hover --- */
 .card-alat-img {
     position: relative;
     overflow: hidden;
@@ -814,9 +795,7 @@ body {
     transform: scale(1.06);
 }
 
-/* ==========================================================================
-   Horizontal Stepper Progress Tracker (Tracking Page)
-   ========================================================================== */
+/* --- Horizontal Stepper Progress Tracker (Tracking Page) --- */
 .stepper-wrapper {
     display: flex;
     justify-content: space-between;
@@ -916,9 +895,7 @@ body {
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
 }
 
-/* ==========================================================================
-   Medical Pass Digital Receipt Card (E-Karcis)
-   ========================================================================== */
+/* --- Medical Pass Digital Receipt Card (E-Karcis) --- */
 .medical-pass-card {
     background: #ffffff;
     border-radius: 20px;
@@ -939,9 +916,7 @@ body {
     border-radius: 18px 18px 0 0;
 }
 
-/* ==========================================================================
-   Overdue Pulse Animation & Alert Badges
-   ========================================================================== */
+/* --- Overdue Pulse Animation & Alert Badges --- */
 .badge-pulse-danger {
     animation: pulse-badge 1.5s infinite;
 }
@@ -957,9 +932,7 @@ body {
     border-left: 4px solid #ef4444 !important;
 }
 
-/* ==========================================================================
-   Modern Side Offcanvas Drawer (Cart)
-   ========================================================================== */
+/* --- Modern Side Offcanvas Drawer (Cart) --- */
 .offcanvas-cart {
     width: 440px !important;
     max-width: 90vw;
@@ -992,9 +965,7 @@ body {
     box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
 }
 
-/* ==========================================================================
-   Auth Split-Screen Layout
-   ========================================================================== */
+/* --- Auth Split-Screen Layout --- */
 .auth-split-wrapper {
     min-height: calc(100vh - 120px);
     display: flex;
@@ -1032,3 +1003,22 @@ body {
     pointer-events: none;
 }
 
+
+/* --- antislop Utilities (Mobile, Scroll, & Radius System) --- */
+.category-scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+.category-scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+@media (max-width: 575.98px) {
+    .hero-banner-prodi h1 {
+        font-size: 1.35rem;
+    }
+    .hero-banner-prodi p {
+        font-size: 0.88rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
