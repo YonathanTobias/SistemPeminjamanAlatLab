@@ -8,6 +8,7 @@ use App\Models\PeminjamanLab;
 use App\Models\PeminjamanLabDetail;
 use App\Models\PeminjamanRuangan;
 use App\Models\PengaturanLab;
+use App\Models\Ruangan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,8 @@ class LabController extends Controller
    // 1. Method indexPublik
     public function indexPublik(Request $request)
     {
+        $activeTab = $request->query('tab', 'alat'); // 'alat' atau 'ruangan'
+
         $query = AlatLab::query();
 
         if ($request->filled('search')) {
@@ -47,7 +50,11 @@ class LabController extends Controller
         // Ambil semua alat yang tersedia untuk katalog keranjang
         $allAlats = AlatLab::where('stok_tersedia', '>', 0)->get(['id', 'kode_alat', 'nama_alat', 'kategori', 'stok_tersedia', 'kondisi', 'gambar']);
 
-        return view('lab.katalog', compact('alats', 'stats', 'allAlats', 'kategoriList'));
+        // Ambil data ruangan laboratorium
+        $ruangans = Ruangan::where('status', '!=', 'Tidak Aktif')->get();
+        $totalRuangTersedia = $ruangans->where('status', 'Tersedia')->count();
+
+        return view('lab.katalog', compact('alats', 'stats', 'allAlats', 'kategoriList', 'ruangans', 'totalRuangTersedia', 'activeTab'));
     }
 
     // Lacak Status Peminjaman Publik (Tracking Stepper)

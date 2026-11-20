@@ -117,18 +117,18 @@
                     <!-- Left Nav (Public & Admin links) -->
                     <ul class="navbar-nav me-auto mb-2 mb-xl-0 gap-1 align-items-xl-center">
                         <li class="nav-item">
-                            <a class="nav-link-custom {{ request()->routeIs('lab.katalog') ? 'active' : '' }}" href="{{ route('lab.katalog') }}">
-                                <i class="bi bi-grid"></i> Alat Lab
+                            <a class="nav-link-custom {{ request()->routeIs('lab.katalog') && request('tab') !== 'ruangan' ? 'active' : '' }}" href="{{ route('lab.katalog', ['tab' => 'alat']) }}">
+                                <i class="bi bi-boxes"></i> Peminjaman Sarpras
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link-custom {{ request()->routeIs('lab.ruangan') ? 'active' : '' }}" href="{{ route('lab.ruangan') }}">
-                                <i class="bi bi-door-open"></i> Ruangan Lab
+                            <a class="nav-link-custom {{ request('tab') === 'ruangan' || request()->routeIs('lab.ruangan') ? 'active' : '' }}" href="{{ route('lab.katalog', ['tab' => 'ruangan']) }}">
+                                <i class="bi bi-door-open"></i> Peminjaman Ruangan
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request()->routeIs('lab.lacak') ? 'active' : '' }}" href="{{ route('lab.lacak') }}">
-                                <i class="bi bi-search-heart"></i> Lacak
+                                <i class="bi bi-search-heart"></i> Lacak Status
                             </a>
                         </li>
                         @auth
