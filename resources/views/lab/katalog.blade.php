@@ -94,11 +94,11 @@
     <div class="p-1 rounded-pill bg-white border shadow-sm d-inline-flex gap-1" style="max-width: 100%; overflow-x: auto;">
         <button type="button" id="btnTabAlat" class="btn rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 transition {{ ($activeTab !== 'ruangan') ? 'btn-primary text-white shadow-xs' : 'btn-light text-muted border-0 bg-transparent' }}" onclick="pilihLayanan('alat')">
             <i class="bi bi-boxes"></i>
-            <span>Peminjaman Aset Sarpras ({{ $stats['total_alat'] ?? 0 }} Item)</span>
+            <span>Peminjaman Alat Lab ({{ $stats['total_alat'] ?? 0 }} Item)</span>
         </button>
         <button type="button" id="btnTabRuangan" class="btn rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 transition {{ ($activeTab === 'ruangan') ? 'btn-primary text-white shadow-xs' : 'btn-light text-muted border-0 bg-transparent' }}" onclick="pilihLayanan('ruangan')">
             <i class="bi bi-door-open-fill"></i>
-            <span>Peminjaman Ruangan Kegiatan ({{ count($ruangans ?? []) }} Ruangan)</span>
+            <span>Peminjaman Ruangan Lab ({{ count($ruangans ?? []) }} Ruangan)</span>
         </button>
     </div>
 </div>

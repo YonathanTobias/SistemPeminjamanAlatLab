@@ -22,11 +22,11 @@
     <div class="p-1 rounded-pill bg-white border shadow-sm d-inline-flex gap-1" style="max-width: 100%; overflow-x: auto;">
         <a href="{{ route('admin.peminjaman.index') }}" class="btn rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 btn-primary text-white shadow-xs">
             <i class="bi bi-box-seam"></i>
-            <span>Peminjaman Aset Sarpras / Alat</span>
+            <span>Peminjaman Alat Lab</span>
         </a>
         <a href="{{ route('admin.ruangan.peminjaman') }}" class="btn rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 btn-light text-muted border-0 bg-transparent">
             <i class="bi bi-door-open-fill"></i>
-            <span>Peminjaman Ruangan Kegiatan</span>
+            <span>Peminjaman Ruangan Lab</span>
         </a>
     </div>
 </div>

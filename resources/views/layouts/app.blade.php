@@ -118,12 +118,12 @@
                     <ul class="navbar-nav me-auto mb-2 mb-xl-0 gap-1 align-items-xl-center">
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request()->routeIs('lab.katalog') && request('tab') !== 'ruangan' ? 'active' : '' }}" href="{{ route('lab.katalog', ['tab' => 'alat']) }}">
-                                <i class="bi bi-boxes"></i> Peminjaman Sarpras
+                                <i class="bi bi-boxes"></i> Alat Lab
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link-custom {{ request('tab') === 'ruangan' || request()->routeIs('lab.ruangan') ? 'active' : '' }}" href="{{ route('lab.katalog', ['tab' => 'ruangan']) }}">
-                                <i class="bi bi-door-open"></i> Peminjaman Ruangan
+                                <i class="bi bi-door-open"></i> Ruangan Lab
                             </a>
                         </li>
                         <li class="nav-item">
