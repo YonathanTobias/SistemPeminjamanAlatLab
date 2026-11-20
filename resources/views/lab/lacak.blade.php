@@ -8,9 +8,16 @@
             <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold mb-2">
                 <i class="bi bi-radar"></i> Live Tracking & E-Receipt
             </span>
-            <h2 class="fw-bold text-dark mb-1">Lacak Status Peminjaman Alat Lab</h2>
-            <p class="text-muted small mb-0">Pantau proses verifikasi pengajuan alat dan dapatkan bukti digital (QR Code) untuk pengambilan di laboratorium.</p>
+            <h2 class="fw-bold text-dark mb-1">Lacak Status Peminjaman Lab</h2>
+            <p class="text-muted small mb-0">Pantau proses verifikasi pengajuan alat praktikum maupun ruangan laboratorium dengan QR Code digital.</p>
         </div>
+
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-xs mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <!-- Search Box -->
         <div class="card border-0 rounded-4 shadow-sm mb-4">
@@ -20,7 +27,7 @@
                         <span class="input-group-text bg-white border-end-0 text-primary">
                             <i class="bi bi-search"></i>
                         </span>
-                        <input type="text" name="q" class="form-control border-start-0 border-end-0" placeholder="Ketik Kode Transaksi (contoh: {{ $pengaturan->prodi_prefix ?? 'LAB' }}-{{ date('Ymd') }}-001) atau NIM Anda..." value="{{ $search ?? '' }}" required autofocus>
+                        <input type="text" name="q" class="form-control border-start-0 border-end-0" placeholder="Ketik Kode Transaksi (contoh: LAB-... atau RNG-...) atau NIM Anda..." value="{{ $search ?? '' }}" required autofocus>
                         <button class="btn btn-primary px-4 fw-bold" type="submit">
                             <i class="bi bi-arrow-right-circle-fill"></i> Lacak Sekarang
                         </button>
@@ -30,189 +37,87 @@
         </div>
 
         @if($search)
-            @if($peminjamans->isNotEmpty())
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-dark mb-0">
-                        <i class="bi bi-card-checklist text-primary"></i> Ditemukan {{ $peminjamans->count() }} Riwayat Pengajuan
-                    </h5>
+            @php
+                $totalAlat = $peminjamans->count();
+                $totalRuang = $peminjamanRuangans->count();
+                $totalSemua = $totalAlat + $totalRuang;
+            @endphp
+
+            @if($totalSemua > 0)
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-card-checklist text-primary"></i> Ditemukan {{ $totalSemua }} Riwayat Pengajuan
+                        </h5>
+                        <small class="text-muted">Kata kunci: <strong>"{{ $search }}"</strong></small>
+                    </div>
                     <a href="{{ route('lab.lacak') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-arrow-counterclockwise"></i> Bersihkan Pencarian
                     </a>
                 </div>
 
-                @foreach($peminjamans as $item)
-                    <div class="card border-0 rounded-4 shadow-sm mb-4 overflow-hidden">
-                        <!-- Card Header Status -->
-                        <div class="p-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom hero-banner-prodi text-white">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-white text-dark fw-bold px-3 py-2 fs-6">
-                                    {{ $item->kode_transaksi ?? ('TRX-' . $item->id) }}
-                                </span>
-                                <span class="text-white-50 small">Diajukan: {{ $item->created_at ? $item->created_at->format('d M Y, H:i') : '-' }} WIB</span>
-                            </div>
-                            <div>
-                                @if($item->status == 'Disetujui')
-                                    <span class="badge bg-success px-3 py-2 fs-6">
-                                        <i class="bi bi-check-circle-fill"></i> DISETUJUI / SIAP DIAMBIL
-                                    </span>
-                                @elseif($item->status == 'Dikembalikan')
-                                    <span class="badge bg-info text-dark px-3 py-2 fs-6">
-                                        <i class="bi bi-check2-all"></i> TELAH DIKEMBALIKAN
-                                    </span>
-                                @elseif($item->status == 'Ditolak')
-                                    <span class="badge bg-danger px-3 py-2 fs-6">
-                                        <i class="bi bi-x-circle-fill"></i> DITOLAK
-                                    </span>
-                                @else
-                                    <span class="badge bg-warning text-dark px-3 py-2 fs-6">
-                                        <i class="bi bi-hourglass-split"></i> MENUNGGU VERIFIKASI
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
+                <!-- Nav Tabs Filter Jenis Peminjaman -->
+                <ul class="nav nav-pills mb-4 gap-2 bg-light p-2 rounded-4 border" id="trackingTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4 fw-semibold {{ ($tab === 'semua' || (!$totalRuang && $totalAlat)) ? 'active' : '' }}" id="semua-tab" data-bs-toggle="pill" data-bs-target="#tab-semua" type="button" role="tab">
+                            <i class="bi bi-grid-fill me-1"></i> Semua Pengajuan ({{ $totalSemua }})
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4 fw-semibold {{ ($tab === 'alat') ? 'active' : '' }}" id="alat-tab" data-bs-toggle="pill" data-bs-target="#tab-alat" type="button" role="tab">
+                            <i class="bi bi-box-seam me-1"></i> Alat Praktikum ({{ $totalAlat }})
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4 fw-semibold {{ ($tab === 'ruangan' || (!$totalAlat && $totalRuang)) ? 'active' : '' }}" id="ruangan-tab" data-bs-toggle="pill" data-bs-target="#tab-ruangan" type="button" role="tab">
+                            <i class="bi bi-door-open-fill me-1"></i> Ruang Laboratorium ({{ $totalRuang }})
+                        </button>
+                    </li>
+                </ul>
 
-                        <div class="card-body p-4">
-                            <!-- Visual Stepper Progress Tracker -->
-                            <div class="mb-4 p-4 bg-light rounded-4 border">
-                                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-bezier2 text-primary"></i> Progres Status Peminjaman:</h6>
-                                
-                                @php
-                                    $status = $item->status;
-                                    $step1Class = 'completed';
-                                    $step2Class = ($status == 'Ditolak') ? 'rejected' : (($status == 'Menunggu') ? 'active' : 'completed');
-                                    $step3Class = ($status == 'Disetujui') ? 'active' : (($status == 'Dikembalikan') ? 'completed' : '');
-                                    $step4Class = ($status == 'Dikembalikan') ? 'completed' : '';
-                                    
-                                    $lineWidth = '0%';
-                                    if ($status == 'Menunggu') $lineWidth = '25%';
-                                    elseif ($status == 'Disetujui') $lineWidth = '65%';
-                                    elseif ($status == 'Dikembalikan') $lineWidth = '100%';
-                                    elseif ($status == 'Ditolak') $lineWidth = '33%';
-                                @endphp
+                <div class="tab-content" id="trackingTabsContent">
+                    <!-- TAB SEMUA -->
+                    <div class="tab-pane fade {{ ($tab === 'semua' || (!$totalRuang && $totalAlat)) ? 'show active' : '' }}" id="tab-semua" role="tabpanel">
+                        {{-- Card Peminjaman Ruangan --}}
+                        @foreach($peminjamanRuangans as $itemRuang)
+                            @include('lab.partials.card-lacak-ruangan', ['item' => $itemRuang])
+                        @endforeach
 
-                                <div class="stepper-wrapper">
-                                    <div class="stepper-progress-line" style="width: {{ $lineWidth }}; {{ $status == 'Ditolak' ? 'background: #ef4444;' : '' }}"></div>
-                                    
-                                    <!-- Step 1 -->
-                                    <div class="stepper-step {{ $step1Class }}">
-                                        <div class="stepper-circle">
-                                            <i class="bi bi-send-check"></i>
-                                        </div>
-                                        <div class="stepper-title">1. Diajukan</div>
-                                        <div class="stepper-sub">Form Terkirim</div>
-                                    </div>
-
-                                    <!-- Step 2 -->
-                                    <div class="stepper-step {{ $step2Class }}">
-                                        <div class="stepper-circle">
-                                            <i class="bi {{ $status == 'Ditolak' ? 'bi-x-lg' : 'bi-shield-check' }}"></i>
-                                        </div>
-                                        <div class="stepper-title">{{ $status == 'Ditolak' ? '2. Ditolak' : '2. Verifikasi' }}</div>
-                                        <div class="stepper-sub">{{ $status == 'Menunggu' ? 'Sedang Diperiksa' : ($status == 'Ditolak' ? 'Permohonan Ditolak' : 'Disetujui Laboran') }}</div>
-                                    </div>
-
-                                    <!-- Step 3 -->
-                                    <div class="stepper-step {{ $step3Class }}">
-                                        <div class="stepper-circle">
-                                            <i class="bi bi-box-seam"></i>
-                                        </div>
-                                        <div class="stepper-title">3. Dipakai</div>
-                                        <div class="stepper-sub">{{ $status == 'Disetujui' ? 'Siap Diambil' : ($status == 'Dikembalikan' ? 'Selesai Dipakai' : 'Menunggu') }}</div>
-                                    </div>
-
-                                    <!-- Step 4 -->
-                                    <div class="stepper-step {{ $step4Class }}">
-                                        <div class="stepper-circle">
-                                            <i class="bi bi-check2-all"></i>
-                                        </div>
-                                        <div class="stepper-title">4. Selesai</div>
-                                        <div class="stepper-sub">{{ $status == 'Dikembalikan' ? 'Alat Kembali' : 'Belum Kembali' }}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row g-4 align-items-center">
-                                <!-- Data Identitas & Paket Alat -->
-                                <div class="col-md-7">
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6">
-                                            <span class="text-muted small d-block">Nama Peminjam:</span>
-                                            <strong class="text-dark">{{ $item->nama_peminjam }}</strong>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <span class="text-muted small d-block">NIM / NIP & Prodi:</span>
-                                            <strong class="text-dark">{{ $item->nim_nip }} ({{ $item->prodi }})</strong>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <span class="text-muted small d-block">Jadwal Pinjam:</span>
-                                            <span class="text-dark fw-medium"><i class="bi bi-calendar-event text-success"></i> {{ \Carbon\Carbon::parse($item->tgl_pinjam)->format('d M Y') }} s/d {{ \Carbon\Carbon::parse($item->tgl_kembali_rencana)->format('d M Y') }}</span>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <span class="text-muted small d-block">Keperluan:</span>
-                                            <span class="text-dark fw-medium">{{ $item->keperluan ?? 'Praktikum Laboratorium' }}</span>
-                                        </div>
-                                    </div>
-
-                                    @if($item->catatan)
-                                        <div class="alert alert-warning py-2 px-3 small rounded-3 mb-3">
-                                            <i class="bi bi-info-circle-fill me-1"></i> <strong>Catatan Laboran:</strong> {{ $item->catatan }}
-                                        </div>
-                                    @endif
-
-                                    <!-- List Paket Alat -->
-                                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-boxes text-primary"></i> Daftar Paket Peralatan Medis ({{ $item->details->sum('jumlah_pinjam') }} Unit):</h6>
-                                    <div class="d-flex flex-wrap gap-2 mb-3">
-                                        @foreach($item->details as $d)
-                                            <div class="p-2 px-3 bg-white border rounded-3 shadow-xs d-flex align-items-center gap-2">
-                                                <i class="bi bi-box-seam text-primary"></i>
-                                                <div>
-                                                    <span class="fw-semibold text-dark small d-block">{{ $d->alat->nama_alat ?? 'Alat Dihapus' }}</span>
-                                                    <small class="text-muted">{{ $d->alat->kode_alat ?? '-' }} &bull; <strong>{{ $d->jumlah_pinjam }} Unit</strong></small>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                <!-- E-Receipt Medical Pass Card -->
-                                <div class="col-md-5 text-center">
-                                    <div class="medical-pass-card shadow-sm position-relative text-start">
-                                        <div class="medical-pass-header d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <span class="badge bg-white text-primary rounded-pill px-2 py-1 small fw-bold" style="font-size: 0.68rem;">E-KARCIS PRAKTIKUM</span>
-                                                <div class="fw-bold mt-1 text-white small">{{ $pengaturan->nama_institusi ?? 'STIKES Panti Waluya Malang' }}</div>
-                                            </div>
-                                            <i class="bi bi-qr-code fs-3 text-white-50"></i>
-                                        </div>
-                                        
-                                        <div class="p-3 text-center">
-                                            <!-- Container QR Code -->
-                                            <div class="d-flex justify-content-center my-2">
-                                                <div id="qrcode-{{ $item->id }}" class="qr-code-canvas p-2 bg-white rounded-3 border shadow-xs" data-qr-text="{{ $item->kode_transaksi }}"></div>
-                                            </div>
-                                            
-                                            <strong class="d-block text-dark fs-6 font-monospace mb-1">{{ $item->kode_transaksi }}</strong>
-                                            <small class="text-muted d-block mb-3" style="font-size: 0.72rem;">Tunjukkan QR Code ini ke petugas laboran saat mengambil & mengembalikan alat.</small>
-                                            
-                                            <div class="d-flex gap-2">
-                                                <button type="button" class="btn btn-sm btn-outline-primary w-100 rounded-pill" onclick="window.print()">
-                                                    <i class="bi bi-printer"></i> Cetak Karcis
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{-- Card Peminjaman Alat --}}
+                        @foreach($peminjamans as $itemAlat)
+                            @include('lab.partials.card-lacak-alat', ['item' => $itemAlat])
+                        @endforeach
                     </div>
-                @endforeach
+
+                    <!-- TAB ALAT SAJA -->
+                    <div class="tab-pane fade {{ ($tab === 'alat') ? 'show active' : '' }}" id="tab-alat" role="tabpanel">
+                        @forelse($peminjamans as $itemAlat)
+                            @include('lab.partials.card-lacak-alat', ['item' => $itemAlat])
+                        @empty
+                            <div class="card border-0 rounded-4 shadow-sm p-4 text-center">
+                                <p class="text-muted mb-0">Tidak ada pengajuan peminjaman alat untuk pencarian ini.</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <!-- TAB RUANGAN SAJA -->
+                    <div class="tab-pane fade {{ ($tab === 'ruangan' || (!$totalAlat && $totalRuang)) ? 'show active' : '' }}" id="tab-ruangan" role="tabpanel">
+                        @forelse($peminjamanRuangans as $itemRuang)
+                            @include('lab.partials.card-lacak-ruangan', ['item' => $itemRuang])
+                        @empty
+                            <div class="card border-0 rounded-4 shadow-sm p-4 text-center">
+                                <p class="text-muted mb-0">Tidak ada pengajuan peminjaman ruangan untuk pencarian ini.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
             @else
                 <div class="card border-0 rounded-4 shadow-sm p-5 text-center">
                     <div class="mb-3">
                         <i class="bi bi-search text-muted opacity-50" style="font-size: 3.5rem;"></i>
                     </div>
                     <h5 class="fw-bold text-dark mb-1">Data Peminjaman Tidak Ditemukan</h5>
-                    <p class="text-muted small mb-3">Tidak ditemukan transaksi dengan kata kunci: <strong>"{{ $search }}"</strong>. Pastikan Kode Transaksi atau NIM sudah benar.</p>
+                    <p class="text-muted small mb-3">Tidak ditemukan transaksi alat maupun ruangan dengan kata kunci: <strong>"{{ $search }}"</strong>. Pastikan Kode Transaksi (LAB-... atau RNG-...) atau NIM sudah sesuai.</p>
                     <div>
                         <a href="{{ route('lab.lacak') }}" class="btn btn-outline-primary btn-sm px-4">
                             <i class="bi bi-arrow-counterclockwise"></i> Coba Lagi
@@ -229,7 +134,7 @@
                             <i class="bi bi-1-circle-fill"></i>
                         </div>
                         <h6 class="fw-bold text-dark">Kirim Pengajuan</h6>
-                        <p class="text-muted small mb-0">Pilih peralatan medis dari katalog dan kirimkan permohonan melalui keranjang praktikum.</p>
+                        <p class="text-muted small mb-0">Pilih peralatan atau ruangan laboratorium, lalu kirimkan formulir booking secara online.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -238,7 +143,7 @@
                             <i class="bi bi-2-circle-fill"></i>
                         </div>
                         <h6 class="fw-bold text-dark">Lacak Kode Transaksi</h6>
-                        <p class="text-muted small mb-0">Masukkan Kode TRX atau NIM untuk mengecek persetujuan dari petugas laboran secara real-time.</p>
+                        <p class="text-muted small mb-0">Masukkan Kode TRX (LAB-... atau RNG-...) atau NIM untuk memeriksa status verifikasi dari laboran.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -247,7 +152,7 @@
                             <i class="bi bi-3-circle-fill"></i>
                         </div>
                         <h6 class="fw-bold text-dark">Tunjukkan E-Receipt QR</h6>
-                        <p class="text-muted small mb-0">Bawa QR Code bukti digital ke laboratorium untuk verifikasi cepat saat serah terima alat.</p>
+                        <p class="text-muted small mb-0">Gunakan QR Code bukti digital pada tiket untuk verifikasi langsung saat serah terima alat atau kunci ruangan.</p>
                     </div>
                 </div>
             </div>

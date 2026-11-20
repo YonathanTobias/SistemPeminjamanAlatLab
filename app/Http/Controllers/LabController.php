@@ -6,6 +6,7 @@ use App\Models\AlatLab;
 use App\Models\KategoriAlat;
 use App\Models\PeminjamanLab;
 use App\Models\PeminjamanLabDetail;
+use App\Models\PeminjamanRuangan;
 use App\Models\PengaturanLab;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -53,17 +54,27 @@ class LabController extends Controller
     public function lacakPeminjaman(Request $request)
     {
         $search = $request->query('q') ?? $request->query('search');
+        $tab = $request->query('tab', 'semua'); // 'semua', 'alat', 'ruangan'
         $peminjamans = collect();
+        $peminjamanRuangans = collect();
 
         if ($search) {
+            $keyword = trim($search);
+
             $peminjamans = PeminjamanLab::with('details.alat')
-                ->where('kode_transaksi', 'like', '%' . trim($search) . '%')
-                ->orWhere('nim_nip', 'like', '%' . trim($search) . '%')
+                ->where('kode_transaksi', 'like', '%' . $keyword . '%')
+                ->orWhere('nim_nip', 'like', '%' . $keyword . '%')
+                ->latest()
+                ->get();
+
+            $peminjamanRuangans = PeminjamanRuangan::with('ruangan')
+                ->where('kode_transaksi', 'like', '%' . $keyword . '%')
+                ->orWhere('nim_nip', 'like', '%' . $keyword . '%')
                 ->latest()
                 ->get();
         }
 
-        return view('lab.lacak', compact('peminjamans', 'search'));
+        return view('lab.lacak', compact('peminjamans', 'peminjamanRuangans', 'search', 'tab'));
     }
 
     // Form Pengajuan Pinjam Multi-Alat Publik (Keranjang Praktikum)

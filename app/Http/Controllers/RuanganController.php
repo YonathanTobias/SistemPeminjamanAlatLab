@@ -68,7 +68,8 @@ class RuanganController extends Controller
             'catatan' => $request->catatan,
         ]);
 
-        return redirect()->route('lab.ruangan')->with('success', 'Pengajuan peminjaman ruangan berhasil dikirim dengan Kode Transaksi: ' . $kodeTransaksi . '. Silakan pantau status persetujuan.');
+        return redirect()->route('lab.lacak', ['q' => $kodeTransaksi, 'tab' => 'ruangan'])
+            ->with('success', 'Pengajuan peminjaman ruangan berhasil dikirim dengan Kode: ' . $kodeTransaksi . '. Anda dapat langsung melacak statusnya di sini.');
     }
 
     // Admin: Kelola Master Data Ruangan
