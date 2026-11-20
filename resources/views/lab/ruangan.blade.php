@@ -11,13 +11,13 @@
                 </span>
                 <h1 class="display-6 fw-bold mb-2">Peminjaman Ruang Laboratorium</h1>
                 <p class="lead mb-0 opacity-90" style="font-size: 1rem;">
-                    Ajukan peminjaman ruangan laboratorium untuk kegiatan perkuliahan, praktikum mandiri, responsi, atau penelitian secara online.
+                    Pilih ruangan laboratorium untuk kegiatan perkuliahan, praktikum mandiri, responsi, atau penelitian, lalu isi formulir pengajuan via popup modal.
                 </p>
             </div>
             <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                <a href="#formBooking" class="btn btn-light btn-lg rounded-pill px-4 shadow-sm fw-bold">
-                    <i class="bi bi-calendar-plus me-1"></i> Form Pengajuan
-                </a>
+                <button type="button" class="btn btn-light btn-lg rounded-pill px-4 shadow-sm fw-bold" onclick="bukaModalPinjamRuangan()">
+                    <i class="bi bi-calendar-plus me-1"></i> Ajukan Peminjaman
+                </button>
             </div>
         </div>
     </div>
@@ -36,12 +36,20 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-xs" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Terdapat kesalahan pada isian formulir permohonan ruangan. Silakan periksa kembali.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <!-- Daftar Ruangan Tersedia -->
     <div class="row g-4 mb-5">
-        <div class="col-12">
-            <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h4 class="fw-bold mb-0 d-flex align-items-center gap-2">
                 <i class="bi bi-building text-primary"></i> Daftar Ruangan Laboratorium
             </h4>
+            <span class="text-muted small">Pilih salah satu ruangan untuk langsung membuka formulir pengajuan</span>
         </div>
         @forelse ($ruangans as $ruang)
             <div class="col-md-6 col-lg-4">
@@ -66,9 +74,15 @@
                             <small class="text-muted fw-semibold d-block mb-1">Fasilitas:</small>
                             <small class="text-dark">{{ $ruang->fasilitas ?? 'Standar Laboratorium' }}</small>
                         </div>
-                        <button type="button" class="btn btn-outline-primary w-100 rounded-pill btn-sm py-2 fw-semibold" onclick="pilihRuangan({{ $ruang->id }}, '{{ addslashes($ruang->nama_ruangan) }}')">
-                            <i class="bi bi-calendar-check me-1"></i> Pilih Ruangan Ini
-                        </button>
+                        @if ($ruang->status === 'Tersedia')
+                            <button type="button" class="btn btn-primary w-100 rounded-pill btn-sm py-2 fw-semibold shadow-sm" onclick="bukaModalPinjamRuangan({{ $ruang->id }}, '{{ addslashes($ruang->nama_ruangan) }} ({{ $ruang->kode_ruangan }}) - Kapasitas {{ $ruang->kapasitas }} Org')">
+                                <i class="bi bi-calendar-check me-1"></i> Ajukan Pinjam Ruangan
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-secondary w-100 rounded-pill btn-sm py-2 fw-semibold opacity-75" disabled>
+                                <i class="bi bi-lock me-1"></i> Ruangan {{ $ruang->status }}
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -82,116 +96,220 @@
             </div>
         @endforelse
     </div>
+</div>
 
-    <!-- Form Pengajuan Booking Ruangan -->
-    <div class="row justify-content-center" id="formBooking">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
-                    <h4 class="fw-bold mb-1">
-                        <i class="bi bi-pencil-square text-primary me-2"></i> Form Permohonan Peminjaman Ruang
-                    </h4>
-                    <p class="text-muted small">Isi data identitas dan jadwal penggunaan ruangan dengan lengkap.</p>
+<!-- MODAL FORM PENGAJUAN PINJAM RUANGAN -->
+<div class="modal fade" id="modalPinjamRuangan" tabindex="-1" aria-labelledby="modalPinjamRuanganLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <form action="{{ route('lab.ruangan.store') }}" method="POST" id="formPengajuanRuangan">
+                @csrf
+                
+                <div class="modal-header bg-light">
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="modalPinjamRuanganLabel">
+                            <i class="bi bi-calendar-check text-primary me-1"></i> Pengajuan Peminjaman Ruang Laboratorium
+                        </h5>
+                        <small class="text-muted">{{ $pengaturan->nama_institusi ?? 'STIKES Panti Waluya Malang' }}</small>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="card-body p-4">
-                    <form action="{{ route('lab.ruangan.store') }}" method="POST">
-                        @csrf
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <label class="form-label fw-semibold">Pilih Ruangan <span class="text-danger">*</span></label>
-                                <select name="ruangan_id" id="selectRuangan" class="form-select rounded-3 @error('ruangan_id') is-invalid @enderror" required>
-                                    <option value="">-- Pilih Laboratorium / Ruangan --</option>
-                                    @foreach ($ruangans as $ruang)
-                                        <option value="{{ $ruang->id }}" {{ old('ruangan_id') == $ruang->id ? 'selected' : '' }} {{ $ruang->status !== 'Tersedia' ? 'disabled' : '' }}>
-                                            {{ $ruang->nama_ruangan }} ({{ $ruang->kode_ruangan }}) - Kapasitas: {{ $ruang->kapasitas }} Orang {{ $ruang->status !== 'Tersedia' ? ' - '.$ruang->status : '' }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('ruangan_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Nama Lengkap Pemohon <span class="text-danger">*</span></label>
-                                <input type="text" name="nama_peminjam" class="form-control rounded-3 @error('nama_peminjam') is-invalid @enderror" value="{{ old('nama_peminjam') }}" placeholder="Nama Mahasiswa / Dosen" required>
-                                @error('nama_peminjam')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">NIM / NIP <span class="text-danger">*</span></label>
-                                <input type="text" name="nim_nip" class="form-control rounded-3 @error('nim_nip') is-invalid @enderror" value="{{ old('nim_nip') }}" placeholder="Nomor Induk Mahasiswa / Pegawai" required>
-                                @error('nim_nip')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Program Studi <span class="text-danger">*</span></label>
-                                <input type="text" name="prodi" class="form-control rounded-3 @error('prodi') is-invalid @enderror" value="{{ old('prodi') }}" placeholder="Contoh: D3 Keperawatan / S1 Farmasi" required>
-                                @error('prodi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Keperluan / Kegiatan <span class="text-danger">*</span></label>
-                                <input type="text" name="keperluan" class="form-control rounded-3 @error('keperluan') is-invalid @enderror" value="{{ old('keperluan') }}" placeholder="Contoh: Praktikum Mandiri / Ujian OSCE" required>
-                                @error('keperluan')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Tanggal Pinjam <span class="text-danger">*</span></label>
-                                <input type="date" name="tgl_pinjam" class="form-control rounded-3 @error('tgl_pinjam') is-invalid @enderror" value="{{ old('tgl_pinjam', date('Y-m-d')) }}" min="{{ date('Y-m-d') }}" required>
-                                @error('tgl_pinjam')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Jam Mulai <span class="text-danger">*</span></label>
-                                <input type="time" name="jam_mulai" class="form-control rounded-3 @error('jam_mulai') is-invalid @enderror" value="{{ old('jam_mulai', '08:00') }}" required>
-                                @error('jam_mulai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Jam Selesai <span class="text-danger">*</span></label>
-                                <input type="time" name="jam_selesai" class="form-control rounded-3 @error('jam_selesai') is-invalid @enderror" value="{{ old('jam_selesai', '10:00') }}" required>
-                                @error('jam_selesai')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Catatan / Keterangan Tambahan</label>
-                                <textarea name="catatan" rows="3" class="form-control rounded-3" placeholder="Informasi tambahan kebutuhan peralatan atau perkiraan peserta...">{{ old('catatan') }}</textarea>
-                            </div>
-
-                            <div class="col-12 mt-4 text-end">
-                                <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-sm">
-                                    <i class="bi bi-send-check me-1"></i> Kirim Pengajuan Ruangan
-                                </button>
-                            </div>
+                
+                <div class="modal-body p-4">
+                    <!-- Banner Info Ruangan Terpilih -->
+                    <div id="selectedRuanganBanner" class="alert alert-info border-0 rounded-3 py-2 px-3 mb-4 d-flex align-items-center gap-2 small">
+                        <i class="bi bi-info-circle-fill text-primary fs-5"></i>
+                        <div>
+                            <span>Ruangan yang dipilih: <strong id="selectedRuanganNama">-</strong></span>
                         </div>
-                    </form>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Pilihan Ruangan -->
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-door-open text-primary"></i> Pilih Laboratorium / Ruangan <span class="text-danger">*</span>
+                            </label>
+                            <select name="ruangan_id" id="modalSelectRuangan" class="form-select @error('ruangan_id') is-invalid @enderror" required onchange="updateSelectedRuanganBanner()">
+                                <option value="">-- Pilih Laboratorium / Ruangan --</option>
+                                @foreach ($ruangans as $ruang)
+                                    <option value="{{ $ruang->id }}" {{ old('ruangan_id') == $ruang->id ? 'selected' : '' }} {{ $ruang->status !== 'Tersedia' ? 'disabled' : '' }}>
+                                        {{ $ruang->nama_ruangan }} ({{ $ruang->kode_ruangan }}) - Kapasitas: {{ $ruang->kapasitas }} Orang {{ $ruang->status !== 'Tersedia' ? ' - '.$ruang->status : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('ruangan_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Biodata Pemohon -->
+                        <div class="col-12 pt-2">
+                            <h6 class="fw-bold text-dark mb-0">
+                                <i class="bi bi-person-lines-fill text-primary me-1"></i> Biodata Pemohon:
+                            </h6>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-person text-primary"></i> Nama Lengkap Pemohon <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="nama_peminjam" class="form-control @error('nama_peminjam') is-invalid @enderror" value="{{ old('nama_peminjam') }}" placeholder="Nama Mahasiswa / Dosen" required>
+                            @error('nama_peminjam')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-card-text text-primary"></i> NIM / NIP <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="nim_nip" class="form-control @error('nim_nip') is-invalid @enderror" value="{{ old('nim_nip') }}" placeholder="Contoh: 202401001" required>
+                            @error('nim_nip')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-mortarboard text-primary"></i> Program Studi / Tingkat <span class="text-danger">*</span>
+                            </label>
+                            <select name="prodi" class="form-select @error('prodi') is-invalid @enderror" required>
+                                <option value="">-- Pilih Program Studi --</option>
+                                <option value="D3 Keperawatan" {{ old('prodi') === 'D3 Keperawatan' ? 'selected' : '' }}>D3 Keperawatan</option>
+                                <option value="S1 Ilmu Keperawatan" {{ old('prodi') === 'S1 Ilmu Keperawatan' ? 'selected' : '' }}>S1 Ilmu Keperawatan</option>
+                                <option value="Profesi Ners" {{ old('prodi') === 'Profesi Ners' ? 'selected' : '' }}>Profesi Ners</option>
+                                <option value="D3 Rekam Medis & Info Kes" {{ old('prodi') === 'D3 Rekam Medis & Info Kes' ? 'selected' : '' }}>D3 Rekam Medis & Info Kes</option>
+                                <option value="S1 Farmasi" {{ old('prodi') === 'S1 Farmasi' ? 'selected' : '' }}>S1 Farmasi</option>
+                                <option value="Dosen / Instruktur Lab" {{ old('prodi') === 'Dosen / Instruktur Lab' ? 'selected' : '' }}>Dosen / Instruktur Lab</option>
+                            </select>
+                            @error('prodi')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-journal-medical text-primary"></i> Keperluan Praktikum / Kegiatan <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="keperluan" class="form-control @error('keperluan') is-invalid @enderror" value="{{ old('keperluan') }}" placeholder="Contoh: Praktikum Mandiri KMB, Responsi OSCE" required>
+                            @error('keperluan')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Jadwal Peminjaman -->
+                        <div class="col-12 pt-2">
+                            <h6 class="fw-bold text-dark mb-0">
+                                <i class="bi bi-clock-history text-primary me-1"></i> Jadwal Penggunaan:
+                            </h6>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-calendar-event text-primary"></i> Tanggal Pinjam <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" name="tgl_pinjam" class="form-control @error('tgl_pinjam') is-invalid @enderror" value="{{ old('tgl_pinjam', date('Y-m-d')) }}" min="{{ date('Y-m-d') }}" required>
+                            @error('tgl_pinjam')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-clock text-primary"></i> Jam Mulai <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" name="jam_mulai" class="form-control @error('jam_mulai') is-invalid @enderror" value="{{ old('jam_mulai', '08:00') }}" required>
+                            @error('jam_mulai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-clock-fill text-primary"></i> Jam Selesai <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" name="jam_selesai" class="form-control @error('jam_selesai') is-invalid @enderror" value="{{ old('jam_selesai', '10:00') }}" required>
+                            @error('jam_selesai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-chat-left-text text-primary"></i> Catatan / Kebutuhan Tambahan (Opsional)
+                            </label>
+                            <textarea name="catatan" rows="3" class="form-control" placeholder="Tuliskan jika ada kebutuhan peralatan tambahan, perkiraan jumlah peserta, dsb...">{{ old('catatan') }}</textarea>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="modal-footer bg-light d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm fw-bold">
+                        <i class="bi bi-send-check me-1"></i> Kirim Pengajuan Ruangan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-function pilihRuangan(id, nama) {
-    const select = document.getElementById('selectRuangan');
-    if (select) {
-        select.value = id;
-        document.getElementById('formBooking').scrollIntoView({ behavior: 'smooth' });
+let modalPinjamRuanganInstance = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modalEl = document.getElementById('modalPinjamRuangan');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+        modalPinjamRuanganInstance = new bootstrap.Modal(modalEl);
+    }
+
+    // Jika ada error validasi saat submit, otomatis buka kembali modalnya
+    @if ($errors->any())
+        if (modalPinjamRuanganInstance) {
+            modalPinjamRuanganInstance.show();
+        } else if (modalEl && typeof bootstrap !== 'undefined') {
+            new bootstrap.Modal(modalEl).show();
+        }
+    @endif
+
+    updateSelectedRuanganBanner();
+});
+
+function bukaModalPinjamRuangan(ruanganId = null, ruanganNama = null) {
+    const select = document.getElementById('modalSelectRuangan');
+    if (ruanganId && select) {
+        select.value = ruanganId;
+    }
+
+    updateSelectedRuanganBanner(ruanganNama);
+
+    const modalEl = document.getElementById('modalPinjamRuangan');
+    if (modalEl && typeof bootstrap !== 'undefined') {
+        if (!modalPinjamRuanganInstance) {
+            modalPinjamRuanganInstance = new bootstrap.Modal(modalEl);
+        }
+        modalPinjamRuanganInstance.show();
+    }
+}
+
+function updateSelectedRuanganBanner(customText = null) {
+    const select = document.getElementById('modalSelectRuangan');
+    const banner = document.getElementById('selectedRuanganBanner');
+    const label = document.getElementById('selectedRuanganNama');
+
+    if (!banner || !label) return;
+
+    if (customText) {
+        label.textContent = customText;
+        banner.classList.remove('d-none');
+    } else if (select && select.selectedIndex > 0 && select.value) {
+        label.textContent = select.options[select.selectedIndex].text;
+        banner.classList.remove('d-none');
+    } else {
+        label.textContent = 'Belum dipilih (silakan pilih ruangan pada menu dropdown di bawah)';
     }
 }
 </script>
