@@ -41,6 +41,14 @@
                 $totalAlat = $peminjamans->count();
                 $totalRuang = $peminjamanRuangans->count();
                 $totalSemua = $totalAlat + $totalRuang;
+
+                // Tentukan tab aktif default berdasarkan parameter atau ketersediaan data
+                $activeTab = $tab ?? 'semua';
+                if ($activeTab === 'ruangan' && $totalRuang === 0 && $totalAlat > 0) {
+                    $activeTab = 'alat';
+                } elseif ($activeTab === 'alat' && $totalAlat === 0 && $totalRuang > 0) {
+                    $activeTab = 'ruangan';
+                }
             @endphp
 
             @if($totalSemua > 0)
@@ -59,17 +67,17 @@
                 <!-- Nav Tabs Filter Jenis Peminjaman -->
                 <ul class="nav nav-pills mb-4 gap-2 bg-light p-2 rounded-4 border" id="trackingTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-pill px-4 fw-semibold {{ ($tab === 'semua' || (!$totalRuang && $totalAlat)) ? 'active' : '' }}" id="semua-tab" data-bs-toggle="pill" data-bs-target="#tab-semua" type="button" role="tab">
+                        <button class="nav-link rounded-pill px-4 fw-semibold {{ $activeTab === 'semua' ? 'active' : '' }}" id="semua-tab" data-bs-toggle="pill" data-bs-target="#tab-semua" type="button" role="tab" aria-controls="tab-semua" aria-selected="{{ $activeTab === 'semua' ? 'true' : 'false' }}">
                             <i class="bi bi-grid-fill me-1"></i> Semua Pengajuan ({{ $totalSemua }})
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-pill px-4 fw-semibold {{ ($tab === 'alat') ? 'active' : '' }}" id="alat-tab" data-bs-toggle="pill" data-bs-target="#tab-alat" type="button" role="tab">
+                        <button class="nav-link rounded-pill px-4 fw-semibold {{ $activeTab === 'alat' ? 'active' : '' }}" id="alat-tab" data-bs-toggle="pill" data-bs-target="#tab-alat" type="button" role="tab" aria-controls="tab-alat" aria-selected="{{ $activeTab === 'alat' ? 'true' : 'false' }}">
                             <i class="bi bi-box-seam me-1"></i> Alat Praktikum ({{ $totalAlat }})
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-pill px-4 fw-semibold {{ ($tab === 'ruangan' || (!$totalAlat && $totalRuang)) ? 'active' : '' }}" id="ruangan-tab" data-bs-toggle="pill" data-bs-target="#tab-ruangan" type="button" role="tab">
+                        <button class="nav-link rounded-pill px-4 fw-semibold {{ $activeTab === 'ruangan' ? 'active' : '' }}" id="ruangan-tab" data-bs-toggle="pill" data-bs-target="#tab-ruangan" type="button" role="tab" aria-controls="tab-ruangan" aria-selected="{{ $activeTab === 'ruangan' ? 'true' : 'false' }}">
                             <i class="bi bi-door-open-fill me-1"></i> Ruang Laboratorium ({{ $totalRuang }})
                         </button>
                     </li>
@@ -77,20 +85,18 @@
 
                 <div class="tab-content" id="trackingTabsContent">
                     <!-- TAB SEMUA -->
-                    <div class="tab-pane fade {{ ($tab === 'semua' || (!$totalRuang && $totalAlat)) ? 'show active' : '' }}" id="tab-semua" role="tabpanel">
-                        {{-- Card Peminjaman Ruangan --}}
+                    <div class="tab-pane fade {{ $activeTab === 'semua' ? 'show active' : '' }}" id="tab-semua" role="tabpanel" aria-labelledby="semua-tab">
                         @foreach($peminjamanRuangans as $itemRuang)
                             @include('lab.partials.card-lacak-ruangan', ['item' => $itemRuang])
                         @endforeach
 
-                        {{-- Card Peminjaman Alat --}}
                         @foreach($peminjamans as $itemAlat)
                             @include('lab.partials.card-lacak-alat', ['item' => $itemAlat])
                         @endforeach
                     </div>
 
                     <!-- TAB ALAT SAJA -->
-                    <div class="tab-pane fade {{ ($tab === 'alat') ? 'show active' : '' }}" id="tab-alat" role="tabpanel">
+                    <div class="tab-pane fade {{ $activeTab === 'alat' ? 'show active' : '' }}" id="tab-alat" role="tabpanel" aria-labelledby="alat-tab">
                         @forelse($peminjamans as $itemAlat)
                             @include('lab.partials.card-lacak-alat', ['item' => $itemAlat])
                         @empty
@@ -101,7 +107,7 @@
                     </div>
 
                     <!-- TAB RUANGAN SAJA -->
-                    <div class="tab-pane fade {{ ($tab === 'ruangan' || (!$totalAlat && $totalRuang)) ? 'show active' : '' }}" id="tab-ruangan" role="tabpanel">
+                    <div class="tab-pane fade {{ $activeTab === 'ruangan' ? 'show active' : '' }}" id="tab-ruangan" role="tabpanel" aria-labelledby="ruangan-tab">
                         @forelse($peminjamanRuangans as $itemRuang)
                             @include('lab.partials.card-lacak-ruangan', ['item' => $itemRuang])
                         @empty
