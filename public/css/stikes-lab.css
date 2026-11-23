@@ -1022,3 +1022,40 @@ body {
         margin-bottom: 1rem !important;
     }
 }
+
+/* --- Floating Cart Action Button --- */
+.floating-cart-btn {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    z-index: 1040 !important;
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.25) !important;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.floating-cart-btn:hover {
+    transform: translateY(-3px) scale(1.03) !important;
+    box-shadow: 0 15px 30px -4px rgba(0, 0, 0, 0.35) !important;
+}
+
+.floating-cart-btn:active {
+    transform: translateY(0) scale(0.98) !important;
+}
+
+@keyframes cartBadgePop {
+    0% { transform: translate(50%, -50%) scale(0.8); }
+    50% { transform: translate(50%, -50%) scale(1.3); }
+    100% { transform: translate(50%, -50%) scale(1); }
+}
+
+.animate-pop {
+    animation: cartBadgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (max-width: 575.98px) {
+    .floating-cart-btn {
+        bottom: 20px !important;
+        right: 20px !important;
+        padding: 0.65rem 1rem !important;
+    }
+}
