@@ -20,9 +20,9 @@
                                     </div>
                                 </div>
 
-                                <h3 class="fw-bold text-white mb-3">Portal Manajemen & Layanan Laboratorium</h3>
+                                <h3 class="fw-bold text-white mb-3">Layanan Laboratorium STIKES</h3>
                                 <p class="text-white-50 small mb-4">
-                                    Sistem terintegrasi untuk pengelolaan katalog peralatan medis, peminjaman paket multi-alat, verifikasi QR Code instan, dan pelaporan berkala.
+                                    Kelola peminjaman alat praktikum, cek ketersediaan stok, dan verifikasi tiket laboratorium dengan cepat.
                                 </p>
 
                                 <div class="d-flex flex-column gap-3 mb-4">
@@ -30,19 +30,19 @@
                                         <div class="p-2 rounded-circle text-info d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; background: rgba(255, 255, 255, 0.15);">
                                             <i class="bi bi-qr-code-scan"></i>
                                         </div>
-                                        <span>Verifikasi Cepat dengan QR Code Scanner</span>
+                                        <span>Verifikasi peminjaman dengan QR Code</span>
                                     </div>
                                     <div class="d-flex align-items-center gap-3 text-white-50 small">
                                         <div class="p-2 rounded-circle text-success d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; background: rgba(255, 255, 255, 0.15);">
                                             <i class="bi bi-boxes"></i>
                                         </div>
-                                        <span>Manajemen Stok & Logistik Alat Medis</span>
+                                        <span>Pemantauan ketersediaan alat praktikum</span>
                                     </div>
                                     <div class="d-flex align-items-center gap-3 text-white-50 small">
                                         <div class="p-2 rounded-circle text-warning d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; background: rgba(255, 255, 255, 0.15);">
                                             <i class="bi bi-file-earmark-pdf"></i>
                                         </div>
-                                        <span>Ekspor Laporan PDF & Rekapitulasi CSV</span>
+                                        <span>Unduh laporan berkala format PDF & Excel</span>
                                     </div>
                                 </div>
                             </div>

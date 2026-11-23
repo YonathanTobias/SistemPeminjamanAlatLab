@@ -46,7 +46,6 @@ function addToCart(btn) {
 
     saveCart(cart);
 
-    // SweetAlert2 Toast Feedback
     Toast.fire({
         icon: 'success',
         title: `+ ${nama} dimasukkan ke keranjang!`
@@ -242,7 +241,6 @@ function validateCartSubmission() {
         }
         return false;
     }
-    // Bersihkan keranjang saat formulir sukses dikirim
     setTimeout(() => {
         localStorage.removeItem(CART_STORAGE_KEY);
         updateCartUI();

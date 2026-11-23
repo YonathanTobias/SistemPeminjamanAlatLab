@@ -95,6 +95,7 @@
             box-shadow: 0 0 16px {{ $theme['badge_soft'] }} !important;
         }
     </style>
+    @stack('styles')
 </head>
 <body>
     <div id="app">

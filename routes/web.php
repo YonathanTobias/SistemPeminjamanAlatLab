@@ -58,10 +58,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::put('/kategori/{id}', [LabController::class, 'updateKategori'])->name('admin.kategori.update');
     Route::delete('/kategori/{id}', [LabController::class, 'destroyKategori'])->name('admin.kategori.destroy');
 
-    // 3. Halaman Kelola Laporan
+    // 3. Halaman Kelola Laporan & KIR
     Route::get('/laporan', [LabController::class, 'adminLaporan'])->name('admin.laporan.index');
     Route::get('/laporan/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.laporan.pdf');
     Route::get('/laporan/export-csv', [LabController::class, 'exportLaporanCsv'])->name('admin.laporan.csv');
+    Route::get('/laporan/kir/pdf', [LabController::class, 'cetakKirPdf'])->name('admin.laporan.kir.pdf');
+    Route::get('/laporan/kir/excel', [LabController::class, 'exportAsetLabExcel'])->name('admin.laporan.kir.excel');
+    Route::post('/laporan/kir/ttd', [LabController::class, 'updateTtdKir'])->name('admin.laporan.kir.ttd');
 
     // 4. Cetak PDF
     Route::get('/peminjaman/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.peminjaman.pdf');

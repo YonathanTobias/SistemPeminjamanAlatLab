@@ -14,7 +14,7 @@ class PengaturanLab extends Model
 
     public static function getPengaturan()
     {
-        return self::firstOrCreate(
+        $p = self::firstOrCreate(
             ['id' => 1],
             [
                 'nama_sistem'       => 'Sistem Peminjaman Alat Lab',
@@ -23,11 +23,29 @@ class PengaturanLab extends Model
                 'unit_laboratorium' => 'Unit Laboratorium Keperawatan Medikal Bedah & OSCE Center',
                 'kepala_lab'        => 'Ns. Wening Prabawati, M.Kep.',
                 'nip_kepala_lab'    => '198205142010122001',
+                'nama_ketua'        => 'apt. Wida Padminingsih, S.Farm., M.Farm.',
+                'nip_ketua'         => 'NIDN. 0725048201',
+                'nama_kabag_sarpras'=> 'Petrus Tobias, S.Kom.',
+                'nip_kabag_sarpras' => 'NIP. 2021.08.045',
+                'kota_dokumen'      => 'Malang',
+                'tanggal_dokumen'   => date('Y-m-d'),
                 'alamat_institusi'  => 'Jl. Yulius Usman No.62, Kasin, Kec. Klojen, Kota Malang, Jawa Timur 65117',
                 'kontak_lab'        => '(0341) 369003',
                 'logo_path'         => 'images/logo-stikes.png',
             ]
         );
+
+        if (empty($p->nama_ketua)) {
+            $p->nama_ketua = 'apt. Wida Padminingsih, S.Farm., M.Farm.';
+            $p->nip_ketua = 'NIDN. 0725048201';
+            $p->nama_kabag_sarpras = 'Petrus Tobias, S.Kom.';
+            $p->nip_kabag_sarpras = 'NIP. 2021.08.045';
+            $p->kota_dokumen = 'Malang';
+            $p->tanggal_dokumen = date('Y-m-d');
+            $p->save();
+        }
+
+        return $p;
     }
 
     public function getThemeColorsAttribute()

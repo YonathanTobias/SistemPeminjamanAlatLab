@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AsetLabExport;
 use Carbon\Carbon;
 
 class LabController extends Controller
@@ -407,34 +409,144 @@ class LabController extends Controller
 
     public function adminLaporan(Request $request)
     {
-        $query = PeminjamanLab::with('details.alat');
+        $pengaturan = PengaturanLab::getPengaturan();
 
-        // Filter berdasarkan tanggal mulai
+        // 1. Data Peminjaman Alat Lab
+        $queryPinjam = PeminjamanLab::with('details.alat');
         if ($request->filled('tgl_mulai')) {
-            $query->whereDate('tgl_pinjam', '>=', $request->tgl_mulai);
+            $queryPinjam->whereDate('tgl_pinjam', '>=', $request->tgl_mulai);
         }
-
-        // Filter berdasarkan tanggal selesai
         if ($request->filled('tgl_selesai')) {
-            $query->whereDate('tgl_pinjam', '<=', $request->tgl_selesai);
+            $queryPinjam->whereDate('tgl_pinjam', '<=', $request->tgl_selesai);
         }
-
-        // Filter berdasarkan status
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $queryPinjam->where('status', $request->status);
         }
-
-        // Ambil data terbaru dengan paginasi
-        $peminjaman = $query->latest()->paginate(10)->withQueryString();
+        $peminjaman = $queryPinjam->latest()->paginate(10, ['*'], 'page_peminjaman')->withQueryString();
 
         $stats = [
-            'total' => PeminjamanLab::count(),
-            'menunggu' => PeminjamanLab::where('status', 'Menunggu')->count(),
-            'disetujui' => PeminjamanLab::where('status', 'Disetujui')->count(),
+            'total'        => PeminjamanLab::count(),
+            'menunggu'     => PeminjamanLab::where('status', 'Menunggu')->count(),
+            'disetujui'    => PeminjamanLab::where('status', 'Disetujui')->count(),
             'dikembalikan' => PeminjamanLab::where('status', 'Dikembalikan')->count(),
         ];
 
-        return view('admin.laporan.index', compact('peminjaman', 'stats'));
+        // 2. Data KIR & Alat Lab
+        $queryAlat = AlatLab::query();
+        if ($request->filled('kategori_kir') && $request->kategori_kir !== '') {
+            $queryAlat->where('kategori', $request->kategori_kir);
+        }
+        $alats = $queryAlat->orderBy('nama_alat', 'asc')->get();
+
+        $kategoriList = KategoriAlat::orderBy('nama_kategori')->get();
+        if ($kategoriList->isEmpty()) {
+            $kategoriList = AlatLab::distinct()->whereNotNull('kategori')->pluck('kategori')->map(function($kat) {
+                return (object)['nama_kategori' => $kat];
+            });
+        }
+
+        $statsKir = [
+            'total_alat'     => AlatLab::count(),
+            'total_unit'     => AlatLab::sum('stok_total'),
+            'total_tersedia' => AlatLab::sum('stok_tersedia'),
+            'kondisi_baik'   => AlatLab::where('kondisi', 'Baik')->count(),
+            'kondisi_rusak'  => AlatLab::where('kondisi', '!=', 'Baik')->count(),
+        ];
+
+        // 3. Data Peminjaman Ruangan
+        $queryRuangan = PeminjamanRuangan::with('ruangan');
+        if ($request->filled('tgl_mulai_ruangan')) {
+            $queryRuangan->whereDate('tgl_pinjam', '>=', $request->tgl_mulai_ruangan);
+        }
+        if ($request->filled('tgl_selesai_ruangan')) {
+            $queryRuangan->whereDate('tgl_pinjam', '<=', $request->tgl_selesai_ruangan);
+        }
+        if ($request->filled('status_ruangan')) {
+            $queryRuangan->where('status', $request->status_ruangan);
+        }
+        $peminjamanRuangans = $queryRuangan->latest()->paginate(10, ['*'], 'page_ruangan')->withQueryString();
+
+        $ruangans = Ruangan::all();
+
+        return view('admin.laporan.index', compact(
+            'peminjaman',
+            'stats',
+            'alats',
+            'kategoriList',
+            'statsKir',
+            'pengaturan',
+            'peminjamanRuangans',
+            'ruangans'
+        ));
+    }
+
+    // Update Pejabat Penandatangan Dokumen KIR
+    public function updateTtdKir(Request $request)
+    {
+        $request->validate([
+            'nama_ketua'         => 'required|string|max:255',
+            'nip_ketua'          => 'nullable|string|max:100',
+            'nama_kabag_sarpras' => 'required|string|max:255',
+            'nip_kabag_sarpras'  => 'nullable|string|max:100',
+            'kepala_lab'         => 'required|string|max:255',
+            'nip_kepala_lab'     => 'nullable|string|max:100',
+            'kota_dokumen'       => 'nullable|string|max:100',
+            'tanggal_dokumen'    => 'nullable|date',
+        ]);
+
+        $pengaturan = PengaturanLab::getPengaturan();
+        $pengaturan->update([
+            'nama_ketua'         => $request->nama_ketua,
+            'nip_ketua'          => $request->nip_ketua,
+            'nama_kabag_sarpras' => $request->nama_kabag_sarpras,
+            'nip_kabag_sarpras'  => $request->nip_kabag_sarpras,
+            'kepala_lab'         => $request->kepala_lab,
+            'nip_kepala_lab'     => $request->nip_kepala_lab,
+            'kota_dokumen'       => $request->kota_dokumen ?? 'Malang',
+            'tanggal_dokumen'    => $request->tanggal_dokumen ?? date('Y-m-d'),
+        ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Pejabat penandatangan KIR berhasil disimpan secara permanen!'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Pejabat penandatangan KIR berhasil disimpan secara permanen!');
+    }
+
+    // Export Excel Aset Alat Lab (KIR)
+    public function exportAsetLabExcel(Request $request)
+    {
+        $kategori = $request->kategori;
+        $filename = 'KIR_Alat_Lab_' . ($kategori ? str_replace(' ', '_', $kategori) : 'Global') . '_' . date('Ymd_His') . '.xlsx';
+
+        return Excel::download(new AsetLabExport($kategori), $filename);
+    }
+
+    // Cetak PDF Kartu Inventaris Alat Lab (KIR)
+    public function cetakKirPdf(Request $request)
+    {
+        $kategoriSelected = $request->kategori;
+        $query = AlatLab::query();
+
+        if ($kategoriSelected) {
+            $query->where('kategori', $kategoriSelected);
+        }
+
+        $alats = $query->orderBy('nama_alat', 'asc')->get();
+        $pengaturan = PengaturanLab::getPengaturan();
+
+        if ($request->filled('tanggal_dokumen')) {
+            $pengaturan->tanggal_dokumen = $request->tanggal_dokumen;
+        }
+
+        $pdf = Pdf::loadView('admin.laporan.kir_pdf', compact('alats', 'pengaturan', 'kategoriSelected'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'KIR_Alat_Lab_' . ($kategoriSelected ? str_replace(' ', '_', $kategoriSelected) : 'Semua') . '_' . date('Ymd') . '.pdf';
+        return $pdf->stream($filename);
     }
 
     // Export Laporan ke Excel CSV Resmi (dengan UTF-8 BOM)
@@ -529,8 +641,9 @@ class LabController extends Controller
         }
 
         $peminjaman = $query->latest()->get();
+        $pengaturan = PengaturanLab::getPengaturan();
 
-        $pdf = Pdf::loadView('admin.laporan.pdf', compact('peminjaman'));
+        $pdf = Pdf::loadView('admin.laporan.pdf', compact('peminjaman', 'pengaturan'));
         return $pdf->stream('laporan-peminjaman-lab.pdf');
     }
 

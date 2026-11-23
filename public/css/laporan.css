@@ -1,0 +1,150 @@
+/* Pusat Laporan dan Kartu Inventaris Ruangan (KIR) Alat Lab Stylesheet */
+
+.card-stat-modern {
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-stat-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Tab Navigasi Laporan */
+#pills-tab-laporan {
+    background: #f1f5f9;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 9999px;
+    padding: 5px;
+}
+
+#pills-tab-laporan .nav-link {
+    border-radius: 9999px !important;
+    color: #475569;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 0.55rem 1.25rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#pills-tab-laporan .nav-link:hover:not(.active) {
+    color: var(--primary, #0284c7);
+    background: rgba(2, 132, 199, 0.08);
+}
+
+#pills-tab-laporan .nav-link.active {
+    background: var(--primary, #0284c7) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+[data-bs-theme="dark"] #pills-tab-laporan {
+    background: rgba(30, 41, 59, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="dark"] #pills-tab-laporan .nav-link {
+    color: #94a3b8;
+}
+
+[data-bs-theme="dark"] #pills-tab-laporan .nav-link:hover:not(.active) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-bs-theme="dark"] #pills-tab-laporan .nav-link.active {
+    background: var(--primary, #0284c7) !important;
+    color: #ffffff !important;
+}
+
+/* Badge Kondisi Alat Lab */
+.badge-kondisi-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 0.28rem 0.65rem;
+    border-radius: 6px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+.kondisi-baik {
+    background-color: rgba(16, 185, 129, 0.14);
+    color: #059669;
+}
+.kondisi-ringan {
+    background-color: rgba(217, 119, 6, 0.14);
+    color: #b45309;
+}
+.kondisi-berat {
+    background-color: rgba(239, 68, 68, 0.14);
+    color: #dc2626;
+}
+
+/* Print Document Hidden on Screen */
+.kir-print-document {
+    display: none;
+}
+
+/* CSS Khusus Cetak Print A4 (Format Presisi Kertas A4 HVS) */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm 12mm 12mm 12mm;
+    }
+    header, footer, nav, .navbar-custom, .footer-custom, .no-print, .d-print-none, .stat-card, form, .modal, .alert, .nav-pills, .card {
+        display: none !important;
+    }
+    .kir-print-document {
+        display: none !important;
+    }
+    body.printing-kir #printDocKIR {
+        display: block !important;
+        width: 100%;
+        color: #000000 !important;
+        background: #ffffff !important;
+    }
+    body.printing-pinjam #printDocPinjam {
+        display: block !important;
+        width: 100%;
+        color: #000000 !important;
+        background: #ffffff !important;
+    }
+    .table-kir-print {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 8pt;
+        line-height: 1.25;
+        margin-bottom: 12px;
+    }
+    .table-kir-print thead {
+        display: table-header-group;
+    }
+    .table-kir-print tbody {
+        display: table-row-group;
+    }
+    .table-kir-print tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+    .table-kir-print th, .table-kir-print td {
+        border: 1px solid #000000;
+        padding: 4px 5px;
+        vertical-align: middle;
+    }
+    .table-kir-print th {
+        background-color: #f2f2f2 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-weight: bold;
+        text-align: center;
+        font-size: 8pt;
+        letter-spacing: 0.02em;
+    }
+    .kir-ttd-container {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-top: 18px;
+    }
+}
