@@ -183,6 +183,9 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center gap-1">
+                                    <button type="button" class="btn btn-outline-info btn-sm rounded-pill px-2 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalTrackingAlat{{ $alat->id }}" title="Tracking & Riwayat Transaksi Peminjaman">
+                                        <i class="bi bi-clock-history"></i>
+                                    </button>
                                     <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-2 shadow-xs" data-bs-toggle="modal" data-bs-target="#modalEditAlat{{ $alat->id }}" title="Edit Alat">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
@@ -357,6 +360,129 @@
                         <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tracking Peminjaman Alat -->
+    <div class="modal fade" id="modalTrackingAlat{{ $alat->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header hero-banner-prodi text-white">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0">
+                            <i class="bi bi-clock-history me-1"></i> Tracking Peminjaman Alat
+                        </h5>
+                        <small class="text-white-50">{{ $alat->nama_alat }} ({{ $alat->kode_alat }})</small>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body p-4">
+                    @php
+                        $activeLoans = $alat->peminjamanDetails->filter(function($d) {
+                            return $d->peminjaman && $d->peminjaman->status === 'Disetujui';
+                        });
+                        $totalDipinjamAktif = $activeLoans->sum('jumlah_pinjam');
+                    @endphp
+
+                    <!-- Summary Cards -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-sm-4">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small fw-semibold">Stok Total Unit</div>
+                                <div class="fs-4 fw-bold text-dark">{{ $alat->stok_total }} <span class="fs-6 fw-normal">Unit</span></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small fw-semibold">Tersedia di Rak</div>
+                                <div class="fs-4 fw-bold text-success">{{ $alat->stok_tersedia }} <span class="fs-6 fw-normal">Unit</span></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="p-3 bg-light rounded-3 border text-center">
+                                <div class="text-muted small fw-semibold">Sedang Dipinjam</div>
+                                <div class="fs-4 fw-bold text-primary">{{ $totalDipinjamAktif }} <span class="fs-6 fw-normal">Unit</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Heading -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-receipt-cutoff text-primary me-1"></i> Daftar Transaksi Peminjaman:
+                        </h6>
+                        <span class="badge bg-light text-secondary border">Total {{ $alat->peminjamanDetails->count() }} Transaksi</span>
+                    </div>
+
+                    @if($alat->peminjamanDetails->isEmpty())
+                        <div class="text-center py-4 border rounded-3 bg-light">
+                            <i class="bi bi-info-circle text-muted fs-3 mb-2 d-block"></i>
+                            <p class="text-muted small mb-0">Alat ini belum pernah tercatat dalam transaksi peminjaman.</p>
+                        </div>
+                    @else
+                        <div class="table-responsive border rounded-3 overflow-hidden">
+                            <table class="table table-hover align-middle mb-0" style="font-size: 0.85rem;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3 py-2">Kode Transaksi</th>
+                                        <th class="py-2">Peminjam</th>
+                                        <th class="text-center py-2">Jumlah</th>
+                                        <th class="py-2">Jadwal Pinjam</th>
+                                        <th class="text-center py-2">Status</th>
+                                        <th class="text-end pe-3 py-2">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($alat->peminjamanDetails->sortByDesc('id') as $detail)
+                                        @php $trx = $detail->peminjaman; @endphp
+                                        @if($trx)
+                                            <tr>
+                                                <td class="ps-3 fw-bold text-primary">
+                                                    {{ $trx->kode_transaksi }}
+                                                </td>
+                                                <td>
+                                                    <div class="fw-semibold text-dark">{{ $trx->nama_peminjam }}</div>
+                                                    <small class="text-muted">{{ $trx->nim_nip }} ({{ $trx->prodi }})</small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-primary-subtle text-primary fw-bold px-2 py-1">
+                                                        {{ $detail->jumlah_pinjam }} Unit
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="small text-dark">{{ date('d M Y', strtotime($trx->tgl_pinjam)) }}</div>
+                                                    <small class="text-muted">Kembali: {{ date('d M Y', strtotime($trx->tgl_kembali_rencana)) }}</small>
+                                                </td>
+                                                <td class="text-center">
+                                                    @if($trx->status === 'Disetujui')
+                                                        <span class="badge bg-warning text-dark"><i class="bi bi-box-arrow-right"></i> Sedang Dipinjam</span>
+                                                    @elseif($trx->status === 'Menunggu')
+                                                        <span class="badge bg-secondary"><i class="bi bi-hourglass-split"></i> Menunggu ACC</span>
+                                                    @elseif($trx->status === 'Dikembalikan')
+                                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Selesai Kembali</span>
+                                                    @elseif($trx->status === 'Ditolak')
+                                                        <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Ditolak</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-end pe-3">
+                                                    <a href="{{ route('admin.peminjaman.index', ['search' => $trx->kode_transaksi]) }}" class="btn btn-sm btn-light border py-1 px-2" title="Lihat di Menu Peminjaman" target="_blank">
+                                                        <i class="bi bi-box-arrow-up-right"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="modal-footer bg-light py-2">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Tutup</button>
+                </div>
             </div>
         </div>
     </div>

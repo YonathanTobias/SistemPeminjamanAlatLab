@@ -395,7 +395,7 @@ class LabController extends Controller
             $query->where('kategori', $request->kategori);
         }
 
-        $alats = $query->latest()->paginate(10)->withQueryString();
+        $alats = $query->with(['peminjamanDetails.peminjaman'])->latest()->paginate(10)->withQueryString();
 
         $stats = [
             'total_jenis' => AlatLab::count(),
