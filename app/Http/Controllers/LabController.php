@@ -658,29 +658,50 @@ class LabController extends Controller
     public function updatePengaturan(Request $request)
     {
         $request->validate([
-            'nama_sistem'       => 'required|string|max:255',
-            'nama_prodi'        => 'required|string|max:255',
-            'nama_institusi'    => 'required|string|max:255',
-            'unit_laboratorium' => 'required|string|max:255',
-            'kepala_lab'        => 'required|string|max:255',
-            'nip_kepala_lab'    => 'nullable|string|max:100',
-            'alamat_institusi'  => 'required|string|max:255',
-            'kontak_lab'        => 'nullable|string|max:100',
-            'logo'              => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'nama_sistem'        => 'required|string|max:255',
+            'nama_prodi'         => 'required|string|max:255',
+            'nama_institusi'     => 'required|string|max:255',
+            'unit_laboratorium'  => 'required|string|max:255',
+            'kepala_lab'         => 'required|string|max:255',
+            'nip_kepala_lab'     => 'nullable|string|max:100',
+            'nama_ketua'         => 'nullable|string|max:255',
+            'nip_ketua'          => 'nullable|string|max:100',
+            'nama_kabag_sarpras' => 'nullable|string|max:255',
+            'nip_kabag_sarpras'  => 'nullable|string|max:100',
+            'kota_dokumen'       => 'nullable|string|max:100',
+            'alamat_institusi'   => 'required|string|max:255',
+            'kontak_lab'         => 'nullable|string|max:100',
+            'logo'               => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
         ]);
 
         $pengaturan = PengaturanLab::getPengaturan();
 
         $data = [
-            'nama_sistem'       => $request->nama_sistem,
-            'nama_prodi'        => $request->nama_prodi,
-            'nama_institusi'    => $request->nama_institusi,
-            'unit_laboratorium' => $request->unit_laboratorium,
-            'kepala_lab'        => $request->kepala_lab,
-            'nip_kepala_lab'    => $request->nip_kepala_lab ?? '-',
-            'alamat_institusi'  => $request->alamat_institusi,
-            'kontak_lab'        => $request->kontak_lab,
+            'nama_sistem'        => $request->nama_sistem,
+            'nama_prodi'         => $request->nama_prodi,
+            'nama_institusi'     => $request->nama_institusi,
+            'unit_laboratorium'  => $request->unit_laboratorium,
+            'kepala_lab'         => $request->kepala_lab,
+            'nip_kepala_lab'     => $request->nip_kepala_lab ?? '-',
+            'alamat_institusi'   => $request->alamat_institusi,
+            'kontak_lab'         => $request->kontak_lab,
         ];
+
+        if ($request->filled('nama_ketua')) {
+            $data['nama_ketua'] = $request->nama_ketua;
+        }
+        if ($request->filled('nip_ketua')) {
+            $data['nip_ketua'] = $request->nip_ketua;
+        }
+        if ($request->filled('nama_kabag_sarpras')) {
+            $data['nama_kabag_sarpras'] = $request->nama_kabag_sarpras;
+        }
+        if ($request->filled('nip_kabag_sarpras')) {
+            $data['nip_kabag_sarpras'] = $request->nip_kabag_sarpras;
+        }
+        if ($request->filled('kota_dokumen')) {
+            $data['kota_dokumen'] = $request->kota_dokumen;
+        }
 
         // Handle upload logo baru jika ada
         if ($request->hasFile('logo')) {

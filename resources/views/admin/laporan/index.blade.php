@@ -577,11 +577,11 @@
                         <div class="row g-2">
                             <div class="col-md-7">
                                 <label class="form-label small text-muted mb-1">Nama Lengkap &amp; Gelar</label>
-                                <input type="text" name="nama_ketua" id="inputNamaKetua" class="form-control form-control-sm fw-semibold" value="{{ $pengaturan->nama_ketua ?? 'apt. Wida Padminingsih, S.Farm., M.Farm.' }}" required>
+                                <input type="text" name="nama_ketua" id="inputNamaKetua" class="form-control form-control-sm fw-semibold" value="{{ $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed' }}" required>
                             </div>
                             <div class="col-md-5">
-                                <label class="form-label small text-muted mb-1">NIP / NIDN</label>
-                                <input type="text" name="nip_ketua" id="inputNipKetua" class="form-control form-control-sm font-monospace" value="{{ $pengaturan->nip_ketua ?? 'NIDN. 0725048201' }}">
+                                <label class="form-label small text-muted mb-1">NIP</label>
+                                <input type="text" name="nip_ketua" id="inputNipKetua" class="form-control form-control-sm font-monospace" value="{{ $pengaturan->nip_ketua ?? '1283/A' }}">
                             </div>
                         </div>
                     </div>
@@ -748,8 +748,8 @@
                 <p class="mb-0" style="font-size: 0.85rem;">Mengetahui,</p>
                 <p class="fw-bold mb-0" style="font-size: 0.85rem;">Ketua STIKES Panti Waluya Malang</p>
                 <div style="height: 65px;"></div>
-                <p class="fw-bold mb-0 text-decoration-underline print-nama-ketua" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_ketua ?? 'apt. Wida Padminingsih, S.Farm., M.Farm.' }}</p>
-                <p class="mb-0 small font-monospace print-nip-ketua" style="font-size: 0.78rem;">{{ $pengaturan->nip_ketua ?? 'NIDN. 0725048201' }}</p>
+                <p class="fw-bold mb-0 text-decoration-underline print-nama-ketua" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed' }}</p>
+                <p class="mb-0 small font-monospace print-nip-ketua" style="font-size: 0.78rem;">NIP. {{ $pengaturan->nip_ketua ?? '1283/A' }}</p>
             </div>
         </div>
     </div>

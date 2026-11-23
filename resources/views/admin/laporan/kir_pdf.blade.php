@@ -226,8 +226,8 @@
                     <p style="margin: 0;">Mengetahui,</p>
                     <p style="margin: 0; font-weight: bold;">Ketua STIKES Panti Waluya Malang</p>
                     <div class="ttd-space"></div>
-                    <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $pengaturan->nama_ketua ?? 'apt. Wida Padminingsih, S.Farm., M.Farm.' }}</p>
-                    <p style="margin: 0; font-size: 7.8pt;">{{ $pengaturan->nip_ketua ?? 'NIDN. 0725048201' }}</p>
+                    <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed' }}</p>
+                    <p style="margin: 0; font-size: 7.8pt;">NIP. {{ $pengaturan->nip_ketua ?? '1283/A' }}</p>
                 </td>
             </tr>
         </table>

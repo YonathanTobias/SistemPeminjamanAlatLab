@@ -23,8 +23,8 @@ class PengaturanLab extends Model
                 'unit_laboratorium' => 'Unit Laboratorium Keperawatan Medikal Bedah & OSCE Center',
                 'kepala_lab'        => 'Ns. Wening Prabawati, M.Kep.',
                 'nip_kepala_lab'    => '198205142010122001',
-                'nama_ketua'        => 'apt. Wida Padminingsih, S.Farm., M.Farm.',
-                'nip_ketua'         => 'NIDN. 0725048201',
+                'nama_ketua'        => 'Wibowo, S.Kep., Ns. M.Biomed',
+                'nip_ketua'         => '1283/A',
                 'nama_kabag_sarpras'=> 'Petrus Tobias, S.Kom.',
                 'nip_kabag_sarpras' => 'NIP. 2021.08.045',
                 'kota_dokumen'      => 'Malang',
@@ -36,8 +36,8 @@ class PengaturanLab extends Model
         );
 
         if (empty($p->nama_ketua)) {
-            $p->nama_ketua = 'apt. Wida Padminingsih, S.Farm., M.Farm.';
-            $p->nip_ketua = 'NIDN. 0725048201';
+            $p->nama_ketua = 'Wibowo, S.Kep., Ns. M.Biomed';
+            $p->nip_ketua = '1283/A';
             $p->nama_kabag_sarpras = 'Petrus Tobias, S.Kom.';
             $p->nip_kabag_sarpras = 'NIP. 2021.08.045';
             $p->kota_dokumen = 'Malang';

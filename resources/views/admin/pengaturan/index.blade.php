@@ -115,27 +115,61 @@
             </div>
         </div>
 
-        <!-- 3. Pejabat Pengesahan Dokumen PDF -->
+        <!-- 3. Pejabat Pengesahan Dokumen PDF & KIR -->
         <div class="col-lg-6">
             <div class="card border-0 rounded-4 shadow-sm h-100">
                 <div class="card-header-clean d-flex align-items-center gap-2">
                     <i class="bi bi-file-earmark-person text-primary fs-5"></i>
-                    <span>Pengesahan Dokumen & Laporan PDF</span>
+                    <span>Pengesahan Dokumen Laporan &amp; KIR</span>
                 </div>
                 <div class="card-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-dark">
-                            <i class="bi bi-person-check text-primary"></i> Nama Kepala Unit Laboratorium
+                            <i class="bi bi-hospital text-danger"></i> Kepala Unit Laboratorium
                         </label>
-                        <input type="text" id="inp_kepala_lab" name="kepala_lab" class="form-control" value="{{ old('kepala_lab', $pengaturan->kepala_lab ?? 'Ns. Wening Prabawati, M.Kep.') }}" placeholder="Nama beserta gelar akademik" required>
-                        <div class="form-text small">Nama yang tercetak pada kolom tanda tangan laporan PDF.</div>
+                        <div class="row g-2">
+                            <div class="col-7">
+                                <input type="text" id="inp_kepala_lab" name="kepala_lab" class="form-control form-control-sm" value="{{ old('kepala_lab', $pengaturan->kepala_lab ?? 'Ns. Wening Prabawati, M.Kep.') }}" placeholder="Nama beserta gelar" required>
+                            </div>
+                            <div class="col-5">
+                                <input type="text" id="inp_nip_kepala_lab" name="nip_kepala_lab" class="form-control form-control-sm font-monospace" value="{{ old('nip_kepala_lab', $pengaturan->nip_kepala_lab ?? '198205142010122001') }}" placeholder="NIP Kepala Lab">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-award text-primary"></i> Ketua STIKES Panti Waluya (Mengetahui)
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-7">
+                                <input type="text" id="inp_nama_ketua" name="nama_ketua" class="form-control form-control-sm" value="{{ old('nama_ketua', $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed') }}" placeholder="Nama Ketua STIKES">
+                            </div>
+                            <div class="col-5">
+                                <input type="text" id="inp_nip_ketua" name="nip_ketua" class="form-control form-control-sm font-monospace" value="{{ old('nip_ketua', $pengaturan->nip_ketua ?? '1283/A') }}" placeholder="NIP Ketua">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">
+                            <i class="bi bi-building-gear text-success"></i> Kepala Bagian Sarpras
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-7">
+                                <input type="text" id="inp_nama_kabag" name="nama_kabag_sarpras" class="form-control form-control-sm" value="{{ old('nama_kabag_sarpras', $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.') }}" placeholder="Nama Kabag Sarpras">
+                            </div>
+                            <div class="col-5">
+                                <input type="text" id="inp_nip_kabag" name="nip_kabag_sarpras" class="form-control form-control-sm font-monospace" value="{{ old('nip_kabag_sarpras', $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045') }}" placeholder="NIP Kabag Sarpras">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-0">
                         <label class="form-label fw-bold small text-dark">
-                            <i class="bi bi-card-heading text-primary"></i> NIP / NIK Kepala Lab
+                            <i class="bi bi-geo text-secondary"></i> Kota Pengesahan Dokumen
                         </label>
-                        <input type="text" id="inp_nip_kepala_lab" name="nip_kepala_lab" class="form-control" value="{{ old('nip_kepala_lab', $pengaturan->nip_kepala_lab ?? '198205142010122001') }}" placeholder="Nomor Induk Pegawai">
+                        <input type="text" id="inp_kota_dokumen" name="kota_dokumen" class="form-control form-control-sm" value="{{ old('kota_dokumen', $pengaturan->kota_dokumen ?? 'Malang') }}" placeholder="Contoh: Malang">
                     </div>
                 </div>
             </div>
