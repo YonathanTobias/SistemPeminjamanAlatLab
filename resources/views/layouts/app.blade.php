@@ -41,8 +41,12 @@
             --primary-light: {{ $theme['primary_light'] }};
         }
         .navbar-custom {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1030 !important;
             background: {{ $theme['navbar_bg'] }} !important;
             border-bottom: 1px solid {{ $theme['navbar_border'] }} !important;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25) !important;
         }
         .footer-custom {
             background: {{ $theme['navbar_bg'] }} !important;
