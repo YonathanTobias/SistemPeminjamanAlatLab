@@ -586,10 +586,10 @@
                         </div>
                     </div>
 
-                    <!-- Baris 2: Kepala Sarana & Prasarana -->
+                    <!-- Baris 2: Kepala Program Studi S1 Keperawatan & Profesi Ners -->
                     <div class="card bg-light border-0 rounded-3 p-3 mb-3">
                         <h6 class="fw-bold text-dark mb-2.5">
-                            <i class="bi bi-building-gear text-success me-1.5"></i> 2. Kepala Bagian Sarana &amp; Prasarana
+                            <i class="bi bi-mortarboard-fill text-success me-1.5"></i> 2. Kepala Program Studi S1 Keperawatan &amp; Profesi Ners
                         </h6>
                         <div class="row g-2">
                             <div class="col-md-7">
@@ -732,10 +732,10 @@
                 <p class="mb-0 small font-monospace print-nip-lab" style="font-size: 0.78rem;">NIP. {{ $pengaturan->nip_kepala_lab ?? '198205142010122001' }}</p>
             </div>
 
-            <!-- 2. Kepala Bagian Sarpras (Kanan) -->
+            <!-- 2. Kepala Program Studi (Kanan) -->
             <div style="width: 290px;">
                 <p class="mb-0 print-tgl-dokumen" style="font-size: 0.85rem;">{{ $pengaturan->kota_dokumen ?? 'Malang' }}, {{ \Carbon\Carbon::parse($pengaturan->tanggal_dokumen ?? date('Y-m-d'))->locale('id')->translatedFormat('d F Y') }}</p>
-                <p class="fw-bold mb-0" style="font-size: 0.85rem;">Kepala Bagian Sarana &amp; Prasarana,</p>
+                <p class="fw-bold mb-0" style="font-size: 0.85rem;">Kepala Program Studi S1 Keperawatan &amp; Profesi Ners,</p>
                 <div style="height: 65px;"></div>
                 <p class="fw-bold mb-0 text-decoration-underline print-nama-kabag" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.' }}</p>
                 <p class="mb-0 small font-monospace print-nip-kabag" style="font-size: 0.78rem;">{{ $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045' }}</p>

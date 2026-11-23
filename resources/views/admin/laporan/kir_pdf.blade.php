@@ -215,7 +215,7 @@
                 <td style="width: 10%;"></td>
                 <td style="width: 45%;">
                     <p style="margin: 0;">{{ $pengaturan->kota_dokumen ?? 'Malang' }}, {{ \Carbon\Carbon::parse($pengaturan->tanggal_dokumen ?? date('Y-m-d'))->locale('id')->translatedFormat('d F Y') }}</p>
-                    <p style="margin: 0; font-weight: bold;">Kepala Bagian Sarana &amp; Prasarana,</p>
+                    <p style="margin: 0; font-weight: bold;">Kepala Program Studi S1 Keperawatan &amp; Profesi Ners,</p>
                     <div class="ttd-space"></div>
                     <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.' }}</p>
                     <p style="margin: 0; font-size: 7.8pt;">{{ $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045' }}</p>

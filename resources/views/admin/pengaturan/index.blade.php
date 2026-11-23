@@ -153,14 +153,14 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-dark">
-                            <i class="bi bi-building-gear text-success"></i> Kepala Bagian Sarpras
+                            <i class="bi bi-mortarboard text-success"></i> Kepala Program Studi S1 Keperawatan &amp; Profesi Ners
                         </label>
                         <div class="row g-2">
                             <div class="col-7">
-                                <input type="text" id="inp_nama_kabag" name="nama_kabag_sarpras" class="form-control form-control-sm" value="{{ old('nama_kabag_sarpras', $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.') }}" placeholder="Nama Kabag Sarpras">
+                                <input type="text" id="inp_nama_kabag" name="nama_kabag_sarpras" class="form-control form-control-sm" value="{{ old('nama_kabag_sarpras', $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.') }}" placeholder="Nama Kaprodi beserta gelar">
                             </div>
                             <div class="col-5">
-                                <input type="text" id="inp_nip_kabag" name="nip_kabag_sarpras" class="form-control form-control-sm font-monospace" value="{{ old('nip_kabag_sarpras', $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045') }}" placeholder="NIP Kabag Sarpras">
+                                <input type="text" id="inp_nip_kabag" name="nip_kabag_sarpras" class="form-control form-control-sm font-monospace" value="{{ old('nip_kabag_sarpras', $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045') }}" placeholder="NIP Kaprodi">
                             </div>
                         </div>
                     </div>
