@@ -313,11 +313,19 @@
     </div>
 </div>
 
-<!-- FLOATING CIRCULAR CART BUTTON (POJOK KANAN BAWAH) -->
-<button type="button" id="floatingCartBtn" class="floating-cart-btn btn btn-primary shadow-lg" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart" style="{{ ($activeTab === 'ruangan') ? 'display: none !important;' : '' }}" title="Buka Keranjang Praktikum">
-    <div class="position-relative d-inline-flex align-items-center justify-content-center">
-        <i class="bi bi-cart3 fs-4"></i>
-        <span id="cartBadgeCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white shadow-sm" style="font-size: 0.72rem; padding: 0.3em 0.55em;">
+<!-- FLOATING CIRCULAR CART BUTTON (POJOK KANAN BAWAH - GAYA LAB FARMASI) -->
+<button type="button" 
+        id="floatingCartBtn" 
+        class="floating-cart-btn btn btn-primary shadow-lg d-flex align-items-center justify-content-center" 
+        data-bs-toggle="offcanvas" 
+        data-bs-target="#offcanvasCart" 
+        aria-controls="offcanvasCart" 
+        title="Buka Keranjang Peminjaman Alat"
+        aria-label="Keranjang Peminjaman Alat"
+        style="{{ ($activeTab === 'ruangan') ? 'display: none !important;' : '' }}">
+    <div class="position-relative d-flex align-items-center justify-content-center">
+        <i class="bi bi-cart3 fs-3 text-white"></i>
+        <span id="cartBadgeCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white shadow-sm" style="font-size: 0.72rem; min-width: 22px; height: 22px; padding: 2px 6px;">
             0
         </span>
     </div>
