@@ -378,5 +378,10 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // Sinkronisasi otomatis stok_tersedia seluruh alat sesuai transaksi yang aktif
+        foreach (AlatLab::all() as $alat) {
+            $alat->syncStok();
+        }
     }
 }

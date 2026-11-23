@@ -255,6 +255,7 @@ class LabController extends Controller
         }
 
         $alat->update($data);
+        $alat->syncStok();
 
         return back()->with('success', "Data alat [{$alat->nama_alat}] berhasil diperbarui!");
     }
@@ -276,9 +277,8 @@ class LabController extends Controller
                 return redirect()->back()->with('info', 'Tidak ada perubahan status.');
             }
 
-            // 1. Status diubah menjadi Disetujui
-            if ($statusBaru === 'Disetujui') {
-                // Periksa stok seluruh item terlebih dahulu
+            // Jika status baru adalah Disetujui (dan sebelumnya belum disetujui), cek kecukupan stok
+            if ($statusBaru === 'Disetujui' && $statusLama !== 'Disetujui') {
                 foreach ($peminjaman->details as $detail) {
                     if (!$detail->alat || $detail->alat->stok_tersedia < $detail->jumlah_pinjam) {
                         $namaAlat = $detail->alat->nama_alat ?? 'Alat';
@@ -286,40 +286,26 @@ class LabController extends Controller
                         return redirect()->back()->with('error', "Stok alat {$namaAlat} tidak mencukupi! (Tersedia: {$tersedia}, Diminta: {$detail->jumlah_pinjam})");
                     }
                 }
-                // Kurangi stok untuk tiap item alat
-                foreach ($peminjaman->details as $detail) {
-                    $detail->alat->decrement('stok_tersedia', $detail->jumlah_pinjam);
-                }
             }
 
-            // 2. Status diubah menjadi Dikembalikan
+            // Simpan status baru & waktu realisasi pengembalian
+            $peminjaman->status = $statusBaru;
             if ($statusBaru === 'Dikembalikan') {
-                if ($statusLama === 'Disetujui') {
-                    foreach ($peminjaman->details as $detail) {
-                        if ($detail->alat) {
-                            $detail->alat->increment('stok_tersedia', $detail->jumlah_pinjam);
-                        }
-                    }
-                }
                 $peminjaman->tgl_kembali_realisasi = now();
             }
-
-            // 3. Pembatalan/Penolakan setelah sempat disetujui
-            if (($statusBaru === 'Ditolak' || $statusBaru === 'Menunggu') && $statusLama === 'Disetujui') {
-                foreach ($peminjaman->details as $detail) {
-                    if ($detail->alat) {
-                        $detail->alat->increment('stok_tersedia', $detail->jumlah_pinjam);
-                    }
-                }
-            }
-
-            $peminjaman->status = $statusBaru;
             if ($request->filled('catatan')) {
                 $peminjaman->catatan = $request->catatan;
             }
             $peminjaman->save();
 
-            return redirect()->back()->with('success', "Status transaksi peminjaman [{$peminjaman->kode_transaksi}] berhasil diperbarui menjadi {$statusBaru}.");
+            // Sinkronisasi otomatis stok seluruh alat yang terlibat dalam peminjaman ini
+            foreach ($peminjaman->details as $detail) {
+                if ($detail->alat) {
+                    $detail->alat->syncStok();
+                }
+            }
+
+            return redirect()->back()->with('success', "Status transaksi peminjaman [{$peminjaman->kode_transaksi}] berhasil diperbarui menjadi {$statusBaru}. Stok alat telah diperbarui otomatis.");
         });
     }
 

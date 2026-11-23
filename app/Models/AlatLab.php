@@ -26,4 +26,21 @@ class AlatLab extends Model
     {
         return $this->hasMany(PeminjamanLabDetail::class, 'alat_lab_id');
     }
+
+    /**
+     * Sinkronisasi otomatis stok_tersedia berdasarkan stok_total dikurangi transaksi yang sedang dipinjam (Disetujui).
+     */
+    public function syncStok()
+    {
+        $sedangDipinjam = PeminjamanLabDetail::where('alat_lab_id', $this->id)
+            ->whereHas('peminjaman', function($q) {
+                $q->where('status', 'Disetujui');
+            })
+            ->sum('jumlah_pinjam');
+
+        $this->stok_tersedia = max(0, $this->stok_total - $sedangDipinjam);
+        $this->save();
+
+        return $this->stok_tersedia;
+    }
 }
