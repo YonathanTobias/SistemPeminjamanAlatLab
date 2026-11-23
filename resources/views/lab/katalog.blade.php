@@ -418,6 +418,12 @@
             <form action="{{ route('lab.pinjam.store') }}" method="POST" id="formCheckoutPinjam" onsubmit="return validateCartSubmission()">
                 @csrf
                 
+                {{-- Anti-Bot Honeypot (Perangkap Bot Otomatis) --}}
+                <div style="position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+                    <input type="text" name="hp_field" tabindex="-1" autocomplete="off" value="">
+                    <input type="hidden" name="form_loaded_at" value="{{ time() }}">
+                </div>
+                
                 <div class="modal-header bg-light">
                     <div>
                         <h5 class="modal-title fw-bold text-dark mb-0" id="modalKeranjangPinjamLabel">

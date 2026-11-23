@@ -89,7 +89,12 @@ class LabController extends Controller
     // Form Pengajuan Pinjam Multi-Alat Publik (Keranjang Praktikum)
     public function storePeminjamanPublik(Request $request)
     {
-        // 0. Deteksi Dini Payload SQL Injection & Scanner Keamanan Otomatis
+        // 0. Honeypot Anti-Bot & Time-Trap Check
+        if ($request->filled('hp_field') || ($request->filled('form_loaded_at') && (time() - (int)$request->form_loaded_at < 1))) {
+            return back()->with('error', 'Aktivitas pengisian formulir otomatis terdeteksi. Silakan coba kembali secara manual.')->withInput();
+        }
+
+        // 0.1 Deteksi Dini Payload SQL Injection & Scanner Keamanan Otomatis
         $suspectFields = [$request->nama_peminjam, $request->nim_nip, $request->prodi, $request->keperluan];
         $sqlInjectionPattern = '/(\b(select|sleep|pg_sleep|benchmark|dbms_pipe|waitfor|delay|union\s+select|information_schema|load_file|into\s+outfile|chr\s*\()\b|--|\/\*|\*\/|@@)/i';
 
