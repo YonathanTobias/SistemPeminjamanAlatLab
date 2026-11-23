@@ -8,12 +8,12 @@ use App\Http\Controllers\Auth\RegisterController;
 
 // Halaman Katalog Alat Lab (Publik)
 Route::get('/', [LabController::class, 'indexPublik'])->name('lab.katalog');
-Route::post('/lab/pinjam', [LabController::class, 'storePeminjamanPublik'])->name('lab.pinjam.store');
+Route::post('/lab/pinjam', [LabController::class, 'storePeminjamanPublik'])->middleware('throttle:10,1')->name('lab.pinjam.store');
 Route::get('/lacak', [LabController::class, 'lacakPeminjaman'])->name('lab.lacak');
 
 // Halaman Peminjaman Ruangan (Publik)
 Route::get('/ruangan', [RuanganController::class, 'indexPublik'])->name('lab.ruangan');
-Route::post('/ruangan/pinjam', [RuanganController::class, 'storeBookingPublik'])->name('lab.ruangan.store');
+Route::post('/ruangan/pinjam', [RuanganController::class, 'storeBookingPublik'])->middleware('throttle:10,1')->name('lab.ruangan.store');
 
 // Auth (Register publik ditutup)
 Auth::routes([

@@ -89,18 +89,31 @@ class LabController extends Controller
     // Form Pengajuan Pinjam Multi-Alat Publik (Keranjang Praktikum)
     public function storePeminjamanPublik(Request $request)
     {
+        // 0. Deteksi Dini Payload SQL Injection & Scanner Keamanan Otomatis
+        $suspectFields = [$request->nama_peminjam, $request->nim_nip, $request->prodi, $request->keperluan];
+        $sqlInjectionPattern = '/(\b(select|sleep|pg_sleep|benchmark|dbms_pipe|waitfor|delay|union\s+select|information_schema|load_file|into\s+outfile|chr\s*\()\b|--|\/\*|\*\/|@@)/i';
+
+        foreach ($suspectFields as $val) {
+            if ($val && preg_match($sqlInjectionPattern, $val)) {
+                return back()->with('error', 'Karakter atau kata kunci tidak valid terdeteksi pada isian formulir. Pengajuan ditolak demi keamanan sistem!')->withInput();
+            }
+        }
+
         $request->validate([
-            'nama_peminjam'       => 'required|string|max:255',
-            'nim_nip'             => 'required|string|max:50',
+            'nama_peminjam'       => ['required', 'string', 'max:150', 'regex:/^[a-zA-Z\s.,\'\-]+$/u'],
+            'nim_nip'             => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9\/\.\-]+$/'],
             'prodi'               => 'required|string|max:100',
             'keperluan'           => 'nullable|string|max:255',
             'tgl_pinjam'          => 'required|date',
             'tgl_kembali_rencana' => 'required|date|after_or_equal:tgl_pinjam',
             'items'               => 'required_without:alat_lab_id|array|min:1',
             'items.*.alat_lab_id' => 'required_with:items|exists:alat_labs,id',
-            'items.*.jumlah'      => 'required_with:items|integer|min:1',
+            'items.*.jumlah'      => 'required_with:items|integer|min:1|max:1000',
             'alat_lab_id'         => 'nullable|exists:alat_labs,id',
-            'jumlah_pinjam'       => 'nullable|integer|min:1',
+            'jumlah_pinjam'       => 'nullable|integer|min:1|max:1000',
+        ], [
+            'nama_peminjam.regex' => 'Nama peminjam hanya boleh berisi huruf dan karakter nama yang valid (tidak boleh mengandung simbol aneh atau script).',
+            'nim_nip.regex'       => 'NIM/NIP hanya boleh berisi huruf, angka, garis miring, atau tanda hubung.',
         ]);
 
         return DB::transaction(function () use ($request) {
