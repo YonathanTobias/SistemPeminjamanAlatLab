@@ -35,7 +35,7 @@ class RuanganController extends Controller
         $request->validate([
             'ruangan_id'    => 'required|exists:ruangans,id',
             'nama_peminjam' => ['required', 'string', 'max:150', 'regex:/^[a-zA-Z\s.,\'\-]+$/u'],
-            'nim_nip'       => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9\/\.\-]+$/'],
+            'nim_nip'       => ['required', 'string', 'max:50', 'regex:/^[a-zA-Z0-9\/\.\-\s]+$/'],
             'prodi'         => 'required|string|max:100',
             'keperluan'     => 'required|string|max:255',
             'tgl_pinjam'    => 'required|date|after_or_equal:today',
