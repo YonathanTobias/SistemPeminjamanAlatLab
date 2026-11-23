@@ -144,11 +144,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     let kota = formTtd.querySelector('[name="kota_dokumen"]').value;
 
                     document.querySelectorAll('.print-nama-ketua').forEach(el => el.innerText = namaKetua);
-                    document.querySelectorAll('.print-nip-ketua').forEach(el => el.innerText = nipKetua);
+                    document.querySelectorAll('.print-nip-ketua').forEach(el => el.innerText = (nipKetua.startsWith('NIP') || nipKetua.startsWith('NIDN')) ? nipKetua : 'NIP. ' + nipKetua);
                     document.querySelectorAll('.print-nama-kabag').forEach(el => el.innerText = namaKabag);
-                    document.querySelectorAll('.print-nip-kabag').forEach(el => el.innerText = nipKabag);
+                    document.querySelectorAll('.print-nip-kabag').forEach(el => el.innerText = (nipKabag.startsWith('NIP') || nipKabag.startsWith('NIDN')) ? nipKabag : 'NIP. ' + nipKabag);
                     document.querySelectorAll('.print-nama-lab').forEach(el => el.innerText = namaKepalaLab);
-                    document.querySelectorAll('.print-nip-lab').forEach(el => el.innerText = 'NIP. ' + nipKepalaLab);
+                    document.querySelectorAll('.print-nip-lab').forEach(el => el.innerText = (nipKepalaLab.startsWith('NIP') || nipKepalaLab.startsWith('NIDN')) ? nipKepalaLab : 'NIP. ' + nipKepalaLab);
 
                     // Tutup modal
                     let modalEl = document.getElementById('modalPengaturanTTD');

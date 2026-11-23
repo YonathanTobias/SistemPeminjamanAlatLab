@@ -722,36 +722,53 @@
 
     <!-- TANDA TANGAN RESMI 3 PIHAK -->
     <div class="kir-ttd-container mt-4 pt-2" style="font-family: 'Times New Roman', Times, serif;">
-        <div class="d-flex justify-content-between align-items-start text-center">
-            <!-- 1. Kepala Unit Laboratorium (Kiri) -->
-            <div style="width: 290px;">
-                <p class="mb-0 invisible" style="font-size: 0.85rem;" aria-hidden="true">&nbsp;</p>
-                <p class="fw-bold mb-0" style="font-size: 0.85rem;">Kepala Unit Laboratorium,</p>
-                <div style="height: 65px;"></div>
-                <p class="fw-bold mb-0 text-decoration-underline print-nama-lab" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->kepala_lab ?? 'Ns. Wening Prabawati, M.Kep.' }}</p>
-                <p class="mb-0 small font-monospace print-nip-lab" style="font-size: 0.78rem;">NIP. {{ $pengaturan->nip_kepala_lab ?? '198205142010122001' }}</p>
-            </div>
-
-            <!-- 2. Kepala Program Studi (Kanan) -->
-            <div style="width: 290px;">
-                <p class="mb-0 print-tgl-dokumen" style="font-size: 0.85rem;">{{ $pengaturan->kota_dokumen ?? 'Malang' }}, {{ \Carbon\Carbon::parse($pengaturan->tanggal_dokumen ?? date('Y-m-d'))->locale('id')->translatedFormat('d F Y') }}</p>
-                <p class="fw-bold mb-0" style="font-size: 0.85rem;">Kepala Program Studi S1 Keperawatan &amp; Profesi Ners,</p>
-                <div style="height: 65px;"></div>
-                <p class="fw-bold mb-0 text-decoration-underline print-nama-kabag" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.' }}</p>
-                <p class="mb-0 small font-monospace print-nip-kabag" style="font-size: 0.78rem;">{{ $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045' }}</p>
-            </div>
-        </div>
-
-        <!-- Baris 2: Ketua STIKES (Tengah Bawah) -->
-        <div class="d-flex justify-content-center text-center mt-4">
-            <div style="width: 340px;">
-                <p class="mb-0" style="font-size: 0.85rem;">Mengetahui,</p>
-                <p class="fw-bold mb-0" style="font-size: 0.85rem;">Ketua STIKES Panti Waluya Malang</p>
-                <div style="height: 65px;"></div>
-                <p class="fw-bold mb-0 text-decoration-underline print-nama-ketua" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed' }}</p>
-                <p class="mb-0 small font-monospace print-nip-ketua" style="font-size: 0.78rem;">NIP. {{ $pengaturan->nip_ketua ?? '1283/A' }}</p>
-            </div>
-        </div>
+        <table class="w-100" style="border: none; border-collapse: collapse;">
+            <!-- Baris 1: Jabatan & Tanggal (Vertical-align: bottom agar sejajar) -->
+            <tr>
+                <td style="width: 45%; vertical-align: bottom; text-align: center; border: none; padding: 0;">
+                    <p class="fw-bold mb-0" style="font-size: 0.85rem;">Kepala Unit Laboratorium,</p>
+                </td>
+                <td style="width: 10%; border: none;"></td>
+                <td style="width: 45%; vertical-align: bottom; text-align: center; border: none; padding: 0;">
+                    <p class="mb-0 print-tgl-dokumen" style="font-size: 0.85rem;">{{ $pengaturan->kota_dokumen ?? 'Malang' }}, {{ \Carbon\Carbon::parse($pengaturan->tanggal_dokumen ?? date('Y-m-d'))->locale('id')->translatedFormat('d F Y') }}</p>
+                    <p class="fw-bold mb-0" style="font-size: 0.85rem;">Kepala Program Studi S1 Keperawatan &amp; Profesi Ners,</p>
+                </td>
+            </tr>
+            <!-- Baris 2: Spasi TTD -->
+            <tr>
+                <td style="height: 60px; border: none;"></td>
+                <td style="border: none;"></td>
+                <td style="height: 60px; border: none;"></td>
+            </tr>
+            <!-- Baris 3: Nama & NIP (Vertical-align: top agar garis bawah 100% lurus) -->
+            <tr>
+                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                    <p class="fw-bold mb-0 text-decoration-underline print-nama-lab" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->kepala_lab ?? 'Ns. Wening Prabawati, M.Kep.' }}</p>
+                    <p class="mb-0 small font-monospace print-nip-lab" style="font-size: 0.78rem;">NIP. {{ $pengaturan->nip_kepala_lab ?? '198205142010122001' }}</p>
+                </td>
+                <td style="border: none;"></td>
+                <td style="width: 45%; vertical-align: top; text-align: center; border: none; padding: 0;">
+                    <p class="fw-bold mb-0 text-decoration-underline print-nama-kabag" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.' }}</p>
+                    <p class="mb-0 small font-monospace print-nip-kabag" style="font-size: 0.78rem;">{{ $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045' }}</p>
+                </td>
+            </tr>
+            <!-- Baris 4: Mengetahui, Ketua STIKES (Tengah Bawah) -->
+            <tr>
+                <td colspan="3" style="padding-top: 20px; text-align: center; border: none;">
+                    <p class="mb-0" style="font-size: 0.85rem;">Mengetahui,</p>
+                    <p class="fw-bold mb-0" style="font-size: 0.85rem;">Ketua STIKES Panti Waluya Malang</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="height: 60px; border: none;"></td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: center; border: none; padding: 0;">
+                    <p class="fw-bold mb-0 text-decoration-underline print-nama-ketua" style="font-size: 0.85rem; white-space: nowrap;">{{ $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed' }}</p>
+                    <p class="mb-0 small font-monospace print-nip-ketua" style="font-size: 0.78rem;">NIP. {{ $pengaturan->nip_ketua ?? '1283/A' }}</p>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 @endsection

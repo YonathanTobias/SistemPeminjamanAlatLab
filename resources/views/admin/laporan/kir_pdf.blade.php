@@ -202,30 +202,48 @@
 
     <!-- TANDA TANGAN (3 PIHAK RESMI) -->
     <div class="ttd-wrapper">
-        <!-- Baris 1: PJ Unit Lab (Kiri) & Kepala Bagian Sarpras (Kanan) -->
-        <table class="ttd-table">
+        <table class="ttd-table" style="width: 100%; border-collapse: collapse;">
+            <!-- Baris 1: Jabatan & Tanggal (Vertical-align: bottom agar rata bawah sejajar) -->
             <tr>
-                <td style="width: 45%;">
-                    <p style="margin: 0;">&nbsp;</p>
+                <td style="width: 45%; vertical-align: bottom; text-align: center;">
                     <p style="margin: 0; font-weight: bold;">Kepala Unit Laboratorium,</p>
-                    <div class="ttd-space"></div>
+                </td>
+                <td style="width: 10%;"></td>
+                <td style="width: 45%; vertical-align: bottom; text-align: center;">
+                    <p style="margin: 0 0 2px 0;">{{ $pengaturan->kota_dokumen ?? 'Malang' }}, {{ \Carbon\Carbon::parse($pengaturan->tanggal_dokumen ?? date('Y-m-d'))->locale('id')->translatedFormat('d F Y') }}</p>
+                    <p style="margin: 0; font-weight: bold;">Kepala Program Studi S1 Keperawatan &amp; Profesi Ners,</p>
+                </td>
+            </tr>
+            <!-- Baris 2: Spasi Tanda Tangan Fisik -->
+            <tr>
+                <td style="height: 55px;"></td>
+                <td></td>
+                <td style="height: 55px;"></td>
+            </tr>
+            <!-- Baris 3: Nama & NIP (Vertical-align: top agar garis bawah nama 100% lurus presisi) -->
+            <tr>
+                <td style="width: 45%; vertical-align: top; text-align: center;">
                     <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $pengaturan->kepala_lab ?? 'Ns. Wening Prabawati, M.Kep.' }}</p>
                     <p style="margin: 0; font-size: 7.8pt;">NIP. {{ $pengaturan->nip_kepala_lab ?? '198205142010122001' }}</p>
                 </td>
-                <td style="width: 10%;"></td>
-                <td style="width: 45%;">
-                    <p style="margin: 0;">{{ $pengaturan->kota_dokumen ?? 'Malang' }}, {{ \Carbon\Carbon::parse($pengaturan->tanggal_dokumen ?? date('Y-m-d'))->locale('id')->translatedFormat('d F Y') }}</p>
-                    <p style="margin: 0; font-weight: bold;">Kepala Program Studi S1 Keperawatan &amp; Profesi Ners,</p>
-                    <div class="ttd-space"></div>
+                <td></td>
+                <td style="width: 45%; vertical-align: top; text-align: center;">
                     <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $pengaturan->nama_kabag_sarpras ?? 'Petrus Tobias, S.Kom.' }}</p>
                     <p style="margin: 0; font-size: 7.8pt;">{{ $pengaturan->nip_kabag_sarpras ?? 'NIP. 2021.08.045' }}</p>
                 </td>
             </tr>
+            <!-- Baris 4: Mengetahui, Ketua STIKES (Tengah Bawah) -->
             <tr>
-                <td colspan="3" style="padding-top: 15px;">
+                <td colspan="3" style="padding-top: 18px; text-align: center;">
                     <p style="margin: 0;">Mengetahui,</p>
                     <p style="margin: 0; font-weight: bold;">Ketua STIKES Panti Waluya Malang</p>
-                    <div class="ttd-space"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="height: 55px;"></td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: center;">
                     <p style="margin: 0; font-weight: bold; text-decoration: underline;">{{ $pengaturan->nama_ketua ?? 'Wibowo, S.Kep., Ns. M.Biomed' }}</p>
                     <p style="margin: 0; font-size: 7.8pt;">NIP. {{ $pengaturan->nip_ketua ?? '1283/A' }}</p>
                 </td>
