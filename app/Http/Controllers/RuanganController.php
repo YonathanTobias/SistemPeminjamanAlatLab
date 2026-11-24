@@ -7,6 +7,7 @@ use App\Models\PeminjamanRuangan;
 use App\Models\PengaturanLab;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class RuanganController extends Controller
 {
@@ -200,5 +201,48 @@ class RuanganController extends Controller
         ]);
 
         return back()->with('success', 'Status peminjaman ruangan berhasil diperbarui menjadi: ' . $request->status);
+    }
+
+    // Admin: Cetak Laporan PDF Rekapitulasi Peminjaman Ruangan
+    public function cetakLaporanPdf(Request $request)
+    {
+        $query = PeminjamanRuangan::with('ruangan');
+
+        // Filter Tahun
+        $tahunDipilih = $request->get('tahun', date('Y'));
+        if ($tahunDipilih && $tahunDipilih !== 'semua') {
+            $query->whereYear('tgl_pinjam', $tahunDipilih);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('tgl_mulai')) {
+            $query->whereDate('tgl_pinjam', '>=', $request->tgl_mulai);
+        }
+        if ($request->filled('tgl_selesai')) {
+            $query->whereDate('tgl_pinjam', '<=', $request->tgl_selesai);
+        }
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_transaksi', 'like', '%' . $request->search . '%')
+                  ->orWhere('nama_peminjam', 'like', '%' . $request->search . '%')
+                  ->orWhere('nim_nip', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('ruangan', function ($rq) use ($request) {
+                      $rq->where('nama_ruangan', 'like', '%' . $request->search . '%');
+                  });
+            });
+        }
+
+        $peminjamanRuangans = $query->orderBy('tgl_pinjam', 'desc')->get();
+        $pengaturan = PengaturanLab::getPengaturan();
+
+        $tahunLabel = ($tahunDipilih === 'semua') ? 'Semua_Tahun' : 'Tahun_' . $tahunDipilih;
+        $filename = 'Laporan_Peminjaman_Ruangan_' . $tahunLabel . '_' . date('Ymd') . '.pdf';
+
+        $pdf = Pdf::loadView('admin.ruangan.pdf', compact('peminjamanRuangans', 'pengaturan', 'tahunDipilih'));
+        return $pdf->stream($filename);
     }
 }

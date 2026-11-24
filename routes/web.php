@@ -44,6 +44,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/ruangan/{id}', [RuanganController::class, 'destroyRuangan'])->name('admin.ruangan.destroy');
 
     Route::get('/peminjaman-ruangan', [RuanganController::class, 'adminPeminjamanRuangan'])->name('admin.ruangan.peminjaman');
+    Route::get('/peminjaman-ruangan/cetak-pdf', [RuanganController::class, 'cetakLaporanPdf'])->name('admin.ruangan.peminjaman.pdf');
     Route::post('/peminjaman-ruangan/{id}/status', [RuanganController::class, 'updateStatusPeminjaman'])->name('admin.ruangan.peminjaman.status');
 
     // 2. Halaman Kelola Alat Lab & Kategori Praktikum
@@ -61,6 +62,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // 3. Halaman Kelola Laporan & KIR
     Route::get('/laporan', [LabController::class, 'adminLaporan'])->name('admin.laporan.index');
     Route::get('/laporan/cetak-pdf', [LabController::class, 'cetakLaporanPdf'])->name('admin.laporan.pdf');
+    Route::get('/laporan/ruangan/pdf', [RuanganController::class, 'cetakLaporanPdf'])->name('admin.laporan.ruangan.pdf');
     Route::get('/laporan/export-csv', [LabController::class, 'exportLaporanCsv'])->name('admin.laporan.csv');
     Route::get('/laporan/kir/pdf', [LabController::class, 'cetakKirPdf'])->name('admin.laporan.kir.pdf');
     Route::get('/laporan/kir/excel', [LabController::class, 'exportAsetLabExcel'])->name('admin.laporan.kir.excel');

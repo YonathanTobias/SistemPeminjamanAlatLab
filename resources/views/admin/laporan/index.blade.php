@@ -534,7 +534,12 @@
                     <i class="bi bi-door-open text-primary fs-5"></i>
                     <h6 class="fw-bold mb-0 text-dark">Rekapitulasi Peminjaman / Booking Ruang Laboratorium</h6>
                 </div>
-                <span class="badge badge-soft-secondary font-monospace">{{ $peminjamanRuangans->total() }} Transaksi Ruangan</span>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ route('admin.ruangan.peminjaman.pdf', request()->query()) }}" target="_blank" class="btn btn-danger btn-sm px-3 shadow-xs fw-bold" title="Cetak Rekapitulasi PDF Peminjaman Ruangan">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Cetak PDF
+                    </a>
+                    <span class="badge badge-soft-secondary font-monospace">{{ $peminjamanRuangans->total() }} Transaksi Ruangan</span>
+                </div>
             </div>
 
             <div class="table-responsive">

@@ -7,9 +7,14 @@
             <h3 class="fw-bold mb-1"><i class="bi bi-door-open text-primary me-2"></i> Kelola Peminjaman Ruangan Lab</h3>
             <p class="text-muted small mb-0">Verifikasi pengajuan penggunaan ruangan laboratorium dari mahasiswa dan dosen.</p>
         </div>
-        <a href="{{ route('admin.ruangan.index') }}" class="btn btn-outline-primary rounded-pill px-4 btn-sm">
-            <i class="bi bi-building me-1"></i> Data Master Ruangan
-        </a>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="{{ route('admin.ruangan.peminjaman.pdf', request()->query()) }}" target="_blank" class="btn btn-danger rounded-pill px-3.5 btn-sm shadow-xs fw-bold">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Cetak PDF
+            </a>
+            <a href="{{ route('admin.ruangan.index') }}" class="btn btn-outline-primary rounded-pill px-4 btn-sm">
+                <i class="bi bi-building me-1"></i> Data Master Ruangan
+            </a>
+        </div>
     </div>
 
     <!-- Switch/Tab Pill Bersebelahan Layanan Peminjaman Admin -->
@@ -86,7 +91,12 @@
                     <span class="badge bg-primary-subtle text-primary border">Tahun {{ $tahunDipilih ?? date('Y') }}</span>
                 @endif
             </div>
-            <span class="badge badge-soft-secondary font-monospace">{{ $peminjamans->total() }} Transaksi</span>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('admin.ruangan.peminjaman.pdf', request()->query()) }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3 shadow-xs fw-bold" title="Cetak Rekapitulasi PDF">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Cetak PDF
+                </a>
+                <span class="badge badge-soft-secondary font-monospace">{{ $peminjamans->total() }} Transaksi</span>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
