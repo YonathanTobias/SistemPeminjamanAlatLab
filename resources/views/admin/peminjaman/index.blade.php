@@ -164,23 +164,23 @@
     <div class="card-body p-3 p-md-4">
         <form action="{{ route('admin.peminjaman.index') }}" method="GET" class="row g-2.5 align-items-end">
             <!-- 1. Tahun Transaksi -->
-            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+            <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4 col-sm-6">
                 <label class="filter-label">
                     <i class="bi bi-calendar-event text-primary"></i> Tahun Transaksi
                 </label>
-                <select name="tahun" class="form-select filter-control fw-semibold" onchange="this.form.submit()">
-                    <option value="{{ date('Y') }}" {{ $tahunDipilih == date('Y') ? 'selected' : '' }}>Tahun {{ date('Y') }} (Tahun Ini)</option>
+                <select name="tahun" class="form-select filter-control fw-semibold" onchange="this.form.submit()" title="Filter Berdasarkan Tahun Transaksi">
+                    <option value="{{ date('Y') }}" {{ $tahunDipilih == date('Y') ? 'selected' : '' }}>{{ date('Y') }} (Tahun Ini)</option>
                     @foreach($yearsList as $yr)
                         @if($yr != date('Y'))
                             <option value="{{ $yr }}" {{ $tahunDipilih == $yr ? 'selected' : '' }}>Tahun {{ $yr }}</option>
                         @endif
                     @endforeach
-                    <option value="semua" {{ $tahunDipilih === 'semua' ? 'selected' : '' }}>Semua Tahun (Arsip)</option>
+                    <option value="semua" {{ $tahunDipilih === 'semua' ? 'selected' : '' }}>Semua Arsip</option>
                 </select>
             </div>
 
             <!-- 2. Cari Kode / Peminjam -->
-            <div class="col-xl-3 col-lg-3 col-md-8 col-sm-6">
+            <div class="col-xxl-3 col-xl-3 col-lg-8 col-md-8 col-sm-6">
                 <label class="filter-label">
                     <i class="bi bi-search text-primary"></i> Cari Kode / Peminjam
                 </label>
@@ -191,7 +191,7 @@
             </div>
 
             <!-- 3. Tgl Mulai Pinjam -->
-            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+            <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-6">
                 <label class="filter-label">
                     <i class="bi bi-calendar3 text-primary"></i> Tgl Mulai Pinjam
                 </label>
@@ -199,7 +199,7 @@
             </div>
 
             <!-- 4. Tgl Selesai -->
-            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+            <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-6">
                 <label class="filter-label">
                     <i class="bi bi-calendar-check text-primary"></i> Tgl Selesai
                 </label>
@@ -207,7 +207,7 @@
             </div>
 
             <!-- 5. Status -->
-            <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+            <div class="col-xxl-2 col-xl-2 col-lg-3 col-md-3 col-sm-6">
                 <label class="filter-label">
                     <i class="bi bi-funnel text-primary"></i> Status
                 </label>
@@ -221,7 +221,7 @@
             </div>
 
             <!-- 6. Tombol Aksi -->
-            <div class="col-xl-1 col-lg-1 col-md-4 col-sm-6">
+            <div class="col-xxl-1 col-xl-1 col-lg-3 col-md-3 col-sm-6">
                 <label class="filter-label d-none d-md-flex">&nbsp;</label>
                 <div class="d-flex gap-1 w-100">
                     <button type="submit" class="btn btn-primary filter-control flex-grow-1 px-2 d-flex align-items-center justify-content-center shadow-xs" title="Terapkan Filter">
@@ -258,7 +258,6 @@
                 </span>
             @endif
         </div>
-    </div>
     </div>
     
     <div class="card-body p-0">

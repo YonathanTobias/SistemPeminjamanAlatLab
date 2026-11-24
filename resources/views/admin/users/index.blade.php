@@ -64,8 +64,8 @@
             <div class="col-md-4">
                 <select name="role" class="form-select form-select-sm">
                     <option value="">-- Semua Hak Akses / Role --</option>
-                    <option value="admin_it" {{ request('role') == 'admin_it' ? 'selected' : '' }}>🛡️ Admin IT</option>
-                    <option value="laboran" {{ request('role') == 'laboran' ? 'selected' : '' }}>🔬 Petugas Laboran</option>
+                    <option value="admin_it" {{ request('role') == 'admin_it' ? 'selected' : '' }}>Admin IT</option>
+                    <option value="laboran" {{ request('role') == 'laboran' ? 'selected' : '' }}>Petugas Laboran</option>
                 </select>
             </div>
             <div class="col-md-2 d-flex gap-1">

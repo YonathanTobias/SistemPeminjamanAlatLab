@@ -148,31 +148,31 @@
 
                     <!-- Sisi Kanan: Tanggal TTD, Atur TTD, Cetak KIR A4, Export PDF, Export Excel -->
                     <div class="col-xxl-7 col-xl-8 col-12">
-                        <div class="d-flex align-items-center justify-content-xl-end gap-2 flex-wrap flex-sm-nowrap">
+                        <div class="d-flex align-items-center justify-content-start justify-content-xl-end gap-1.5 flex-wrap flex-xl-nowrap">
                             <!-- Quick Tanggal TTD -->
-                            <div class="d-inline-flex align-items-center gap-1.5 bg-light border rounded-3 px-2 py-1.5 flex-shrink-0" title="Tanggal TTD Dokumen KIR">
-                                <span class="text-muted small fw-semibold text-nowrap">Tgl TTD:</span>
-                                <input type="date" id="quickTanggalKIR" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold font-monospace" style="width: 110px; font-size: 0.8rem; box-shadow: none;" value="{{ $pengaturan->tanggal_dokumen ? \Carbon\Carbon::parse($pengaturan->tanggal_dokumen)->format('Y-m-d') : date('Y-m-d') }}" onchange="handleQuickDateKIR(this)" aria-label="Tanggal Dokumen">
+                            <div class="d-inline-flex align-items-center gap-1 bg-light border rounded-3 px-2 py-1.5 flex-shrink-0" title="Tanggal TTD Dokumen KIR">
+                                <span class="text-muted small fw-semibold text-nowrap" style="font-size: 0.78rem;">Tgl TTD:</span>
+                                <input type="date" id="quickTanggalKIR" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold font-monospace" style="width: 105px; font-size: 0.78rem; box-shadow: none;" value="{{ $pengaturan->tanggal_dokumen ? \Carbon\Carbon::parse($pengaturan->tanggal_dokumen)->format('Y-m-d') : date('Y-m-d') }}" onchange="handleQuickDateKIR(this)" aria-label="Tanggal Dokumen">
                             </div>
 
                             <!-- Atur Penandatangan -->
-                            <button type="button" class="btn btn-outline-primary btn-sm fw-semibold px-2.5 py-2 rounded-3 d-inline-flex align-items-center text-nowrap shadow-xs flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalPengaturanTTD">
+                            <button type="button" class="btn btn-outline-primary btn-sm fw-semibold px-2 py-1.5 rounded-3 d-inline-flex align-items-center text-nowrap shadow-xs flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalPengaturanTTD">
                                 <i class="bi bi-pen me-1"></i> <span>Atur TTD</span>
                             </button>
 
                             <!-- Cetak Lembar KIR Langsung A4 -->
-                            <button type="button" onclick="triggerPrintTab('kir')" class="btn btn-dark btn-sm fw-bold px-2.5 py-2 rounded-3 d-inline-flex align-items-center gap-1 shadow-sm text-nowrap flex-shrink-0" title="Cetak Dokumen KIR Format HVS A4">
+                            <button type="button" onclick="triggerPrintTab('kir')" class="btn btn-dark btn-sm fw-bold px-2.5 py-1.5 rounded-3 d-inline-flex align-items-center gap-1 shadow-sm text-nowrap flex-shrink-0" title="Cetak Dokumen KIR Format HVS A4">
                                 <i class="bi bi-printer"></i>
                                 <span>Cetak KIR</span>
                             </button>
 
                             <!-- Button Group Export (PDF & Excel) -->
                             <div class="btn-group shadow-xs flex-shrink-0" role="group" aria-label="Export Dokumen">
-                                <a href="{{ route('admin.laporan.kir.pdf', ['kategori' => request('kategori_kir')]) }}" target="_blank" class="btn btn-danger btn-sm fw-bold px-2.5 py-2 d-inline-flex align-items-center gap-1 text-nowrap" title="Unduh format PDF dokumen KIR resmi">
+                                <a href="{{ route('admin.laporan.kir.pdf', ['kategori' => request('kategori_kir')]) }}" target="_blank" class="btn btn-danger btn-sm fw-bold px-2.5 py-1.5 d-inline-flex align-items-center gap-1 text-nowrap" title="Unduh format PDF dokumen KIR resmi">
                                     <i class="bi bi-file-earmark-pdf-fill"></i>
                                     <span>PDF</span>
                                 </a>
-                                <a href="{{ route('admin.laporan.kir.excel', ['kategori' => request('kategori_kir')]) }}" class="btn btn-success btn-sm fw-bold px-2.5 py-2 d-inline-flex align-items-center gap-1 text-nowrap" title="Unduh rekap inventaris ke spreadsheet Excel .xlsx">
+                                <a href="{{ route('admin.laporan.kir.excel', ['kategori' => request('kategori_kir')]) }}" class="btn btn-success btn-sm fw-bold px-2.5 py-1.5 d-inline-flex align-items-center gap-1 text-nowrap" title="Unduh rekap inventaris ke spreadsheet Excel .xlsx">
                                     <i class="bi bi-file-earmark-excel-fill"></i>
                                     <span>Excel</span>
                                 </a>
@@ -354,12 +354,13 @@
             <div class="card-body p-3 p-md-4">
                 <form action="{{ route('admin.laporan.index') }}" method="GET" class="row g-2.5 align-items-end">
                     <input type="hidden" name="tab" value="peminjaman">
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    <!-- 1. Tahun Laporan -->
+                    <div class="col-xxl-2 col-xl-2 col-lg-4 col-md-4 col-sm-6">
                         <label class="filter-label">
                             <i class="bi bi-calendar-event text-primary"></i> Tahun Laporan
                         </label>
-                        <select name="tahun" class="form-select filter-control fw-semibold" onchange="this.form.submit()">
-                            <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>Tahun {{ date('Y') }} (Tahun Ini)</option>
+                        <select name="tahun" class="form-select filter-control fw-semibold" onchange="this.form.submit()" title="Filter Berdasarkan Tahun Laporan">
+                            <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>{{ date('Y') }} (Tahun Ini)</option>
                             @if(isset($yearsList))
                                 @foreach($yearsList as $yr)
                                     @if($yr != date('Y'))
@@ -367,34 +368,42 @@
                                     @endif
                                 @endforeach
                             @endif
-                            <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>Semua Tahun (Arsip)</option>
+                            <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>Semua Arsip</option>
                         </select>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+
+                    <!-- 2. Periode Mulai Pinjam -->
+                    <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-4 col-sm-6">
                         <label class="filter-label">
                             <i class="bi bi-calendar3 text-primary"></i> Periode Mulai Pinjam
                         </label>
                         <input type="date" name="tgl_mulai" class="form-control filter-control" value="{{ request('tgl_mulai') }}">
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+
+                    <!-- 3. Periode Selesai Pinjam -->
+                    <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-4 col-sm-6">
                         <label class="filter-label">
                             <i class="bi bi-calendar-check text-primary"></i> Periode Selesai Pinjam
                         </label>
                         <input type="date" name="tgl_selesai" class="form-control filter-control" value="{{ request('tgl_selesai') }}">
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+
+                    <!-- 4. Filter Status -->
+                    <div class="col-xxl-2 col-xl-2 col-lg-6 col-md-6 col-sm-6">
                         <label class="filter-label">
                             <i class="bi bi-funnel text-primary"></i> Filter Status
                         </label>
                         <select name="status" class="form-select filter-control">
                             <option value="">-- Semua Status --</option>
-                            <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>⏳ Menunggu</option>
-                            <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
-                            <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>🔄 Dikembalikan</option>
-                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
+                            <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
+                            <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="Dikembalikan" {{ request('status') == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
+                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                         </select>
                     </div>
-                    <div class="col-xl-2 col-lg-12 col-md-8 col-sm-12 d-flex gap-2">
+
+                    <!-- 5. Tombol Filter & Reset -->
+                    <div class="col-xxl-2 col-xl-2 col-lg-6 col-md-6 col-sm-6 d-flex gap-2">
                         <label class="filter-label d-none d-xl-flex">&nbsp;</label>
                         <button type="submit" class="btn btn-primary filter-control flex-grow-1 shadow-xs">
                             <i class="bi bi-filter"></i> Filter
