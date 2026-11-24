@@ -37,10 +37,23 @@
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-3">
             <form action="{{ route('admin.ruangan.peminjaman') }}" method="GET" class="row g-2 align-items-center">
-                <div class="col-md-5">
-                    <input type="text" name="search" class="form-control rounded-pill" placeholder="Cari Kode Transaksi, Nama, atau NIM/NIP..." value="{{ request('search') }}">
+                <div class="col-md-3">
+                    <select name="tahun" class="form-select rounded-pill fw-semibold" onchange="this.form.submit()">
+                        <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>📅 Tahun {{ date('Y') }} (Tahun Ini)</option>
+                        @if(isset($yearsList))
+                            @foreach($yearsList as $yr)
+                                @if($yr != date('Y'))
+                                    <option value="{{ $yr }}" {{ ($tahunDipilih ?? '') == $yr ? 'selected' : '' }}>📅 Tahun {{ $yr }}</option>
+                                @endif
+                            @endforeach
+                        @endif
+                        <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>🌐 Semua Tahun (Arsip)</option>
+                    </select>
                 </div>
                 <div class="col-md-4">
+                    <input type="text" name="search" class="form-control rounded-pill" placeholder="Cari Kode Transaksi, Nama, atau NIM/NIP..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-3">
                     <select name="status" class="form-select rounded-pill">
                         <option value="">-- Semua Status --</option>
                         <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
@@ -49,12 +62,12 @@
                         <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                     </select>
                 </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 flex-grow-1">
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary rounded-pill px-3 flex-grow-1">
                         <i class="bi bi-funnel me-1"></i> Filter
                     </button>
-                    @if (request('search') || request('status'))
-                        <a href="{{ route('admin.ruangan.peminjaman') }}" class="btn btn-light rounded-pill px-3">Reset</a>
+                    @if (request('search') || request('status') || request('tahun') === 'semua' || (request('tahun') && request('tahun') != date('Y')))
+                        <a href="{{ route('admin.ruangan.peminjaman') }}" class="btn btn-light rounded-pill px-3" title="Reset ke Default Tahun Ini">Reset</a>
                     @endif
                 </div>
             </form>

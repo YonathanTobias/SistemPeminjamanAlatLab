@@ -132,7 +132,14 @@
 
     <!-- Judul Laporan -->
     <div class="doc-title">
-        <h3>Laporan Rekapitulasi Transaksi Peminjaman Alat Praktikum</h3>
+        <h3>
+            Laporan Rekapitulasi Peminjaman Alat Praktikum
+            @if(isset($tahunDipilih) && $tahunDipilih !== 'semua')
+                — Tahun {{ $tahunDipilih }}
+            @else
+                — Rekapitulasi Seluruh Arsip Transaksi
+            @endif
+        </h3>
         <p>Dicetak pada: {{ date('d-m-Y H:i') }} WIB &bull; Total Transaksi: {{ $peminjaman->count() }} Data</p>
     </div>
 

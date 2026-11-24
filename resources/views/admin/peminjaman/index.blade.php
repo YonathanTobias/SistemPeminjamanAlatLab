@@ -131,6 +131,18 @@
 <div class="card border-0 rounded-4 shadow-sm mb-4">
     <div class="card-body p-3 p-md-4">
         <form action="{{ route('admin.peminjaman.index') }}" method="GET" class="row g-2 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label small text-muted mb-1">Tahun Transaksi</label>
+                <select name="tahun" class="form-select form-select-sm fw-semibold" onchange="this.form.submit()">
+                    <option value="{{ date('Y') }}" {{ $tahunDipilih == date('Y') ? 'selected' : '' }}>📅 Tahun {{ date('Y') }} (Tahun Ini)</option>
+                    @foreach($yearsList as $yr)
+                        @if($yr != date('Y'))
+                            <option value="{{ $yr }}" {{ $tahunDipilih == $yr ? 'selected' : '' }}>📅 Tahun {{ $yr }}</option>
+                        @endif
+                    @endforeach
+                    <option value="semua" {{ $tahunDipilih === 'semua' ? 'selected' : '' }}>🌐 Semua Tahun (Arsip)</option>
+                </select>
+            </div>
             <div class="col-md-3">
                 <label class="form-label small text-muted mb-1">Cari Kode / Peminjam</label>
                 <div class="input-group input-group-sm">
@@ -138,12 +150,12 @@
                     <input type="text" name="search" class="form-control form-control-sm" placeholder="Kode Pinjam, Nama, NIM" value="{{ request('search') }}">
                 </div>
             </div>
-            <div class="col-md-3">
-                <label class="form-label small text-muted mb-1">Tanggal Mulai Pinjam</label>
+            <div class="col-md-2">
+                <label class="form-label small text-muted mb-1">Tgl Mulai Pinjam</label>
                 <input type="date" name="tgl_mulai" class="form-control form-control-sm" value="{{ request('tgl_mulai') }}">
             </div>
-            <div class="col-md-3">
-                <label class="form-label small text-muted mb-1">Tanggal Selesai</label>
+            <div class="col-md-2">
+                <label class="form-label small text-muted mb-1">Tgl Selesai</label>
                 <input type="date" name="tgl_selesai" class="form-control form-control-sm" value="{{ request('tgl_selesai') }}">
             </div>
             <div class="col-md-2">
@@ -160,8 +172,8 @@
                 <button type="submit" class="btn btn-sm btn-primary w-100" title="Terapkan Filter">
                     <i class="bi bi-funnel-fill"></i>
                 </button>
-                @if(request()->anyFilled(['search', 'tgl_mulai', 'tgl_selesai', 'status']))
-                    <a href="{{ route('admin.peminjaman.index') }}" class="btn btn-sm btn-outline-secondary" title="Reset Filter">
+                @if(request()->anyFilled(['search', 'tgl_mulai', 'tgl_selesai', 'status']) || request('tahun') === 'semua' || (request('tahun') && request('tahun') != date('Y')))
+                    <a href="{{ route('admin.peminjaman.index') }}" class="btn btn-sm btn-outline-secondary" title="Reset ke Default Tahun Ini">
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </a>
                 @endif
@@ -172,12 +184,25 @@
 
 <!-- Table Card -->
 <div class="card border-0 rounded-4 shadow-sm mb-4 overflow-hidden">
-    <div class="card-header-clean d-flex justify-content-between align-items-center">
+    <div class="card-header-clean d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
             <i class="bi bi-clipboard2-check text-primary fs-5"></i>
-            <span>Daftar Transaksi Peminjaman Praktikum</span>
+            <span class="fw-bold">Daftar Transaksi Peminjaman Praktikum</span>
+            @if($tahunDipilih === 'semua')
+                <span class="badge bg-secondary border">Arsip: Semua Tahun</span>
+            @else
+                <span class="badge bg-primary-subtle text-primary border">Tahun {{ $tahunDipilih }}</span>
+            @endif
         </div>
-        <span class="badge badge-soft-secondary">{{ $peminjaman->total() }} Transaksi</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge badge-soft-secondary">{{ $peminjaman->total() }} Transaksi</span>
+            @if(isset($stats['total_arsip']) && $stats['total_arsip'] != $peminjaman->total())
+                <span class="badge bg-light text-muted border small" title="Total keseluruhan data dari seluruh tahun di database">
+                    Total Arsip: {{ $stats['total_arsip'] }}
+                </span>
+            @endif
+        </div>
+    </div>
     </div>
     
     <div class="card-body p-0">

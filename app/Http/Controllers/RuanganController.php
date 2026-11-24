@@ -144,7 +144,29 @@ class RuanganController extends Controller
     // Admin: Kelola Booking Ruangan & Update Status
     public function adminPeminjamanRuangan(Request $request)
     {
+        // Ambil daftar tahun dinamis dari data transaksi ruangan di database
+        $yearsFromDb = PeminjamanRuangan::selectRaw('YEAR(tgl_pinjam) as year')
+            ->whereNotNull('tgl_pinjam')
+            ->distinct()
+            ->pluck('year')
+            ->map(fn($y) => (int)$y)
+            ->filter(fn($y) => $y > 2000)
+            ->toArray();
+
+        $currentYear = (int) date('Y');
+        if (!in_array($currentYear, $yearsFromDb)) {
+            $yearsFromDb[] = $currentYear;
+        }
+        rsort($yearsFromDb);
+        $yearsList = array_values(array_unique($yearsFromDb));
+
+        $tahunDipilih = $request->get('tahun', (string) $currentYear);
+
         $query = PeminjamanRuangan::with('ruangan');
+
+        if ($tahunDipilih !== 'semua') {
+            $query->whereYear('tgl_pinjam', $tahunDipilih);
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -161,7 +183,7 @@ class RuanganController extends Controller
         $peminjamans = $query->latest()->paginate(15)->withQueryString();
         $pengaturan = PengaturanLab::first();
 
-        return view('admin.ruangan.peminjaman', compact('peminjamans', 'pengaturan'));
+        return view('admin.ruangan.peminjaman', compact('peminjamans', 'pengaturan', 'yearsList', 'tahunDipilih'));
     }
 
     public function updateStatusPeminjaman(Request $request, $id)

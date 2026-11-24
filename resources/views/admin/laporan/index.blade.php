@@ -333,6 +333,22 @@
             <div class="card-body p-4">
                 <form action="{{ route('admin.laporan.index') }}" method="GET" class="row g-3 align-items-end">
                     <input type="hidden" name="tab" value="peminjaman">
+                    <div class="col-md-2">
+                        <label class="form-label small text-muted mb-1">
+                            <i class="bi bi-calendar-event text-primary"></i> Tahun Laporan
+                        </label>
+                        <select name="tahun" class="form-select form-select-sm fw-semibold" onchange="this.form.submit()">
+                            <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>📅 Tahun {{ date('Y') }} (Tahun Ini)</option>
+                            @if(isset($yearsList))
+                                @foreach($yearsList as $yr)
+                                    @if($yr != date('Y'))
+                                        <option value="{{ $yr }}" {{ ($tahunDipilih ?? '') == $yr ? 'selected' : '' }}>📅 Tahun {{ $yr }}</option>
+                                    @endif
+                                @endforeach
+                            @endif
+                            <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>🌐 Semua Tahun (Arsip)</option>
+                        </select>
+                    </div>
                     <div class="col-md-3">
                         <label class="form-label small text-muted mb-1">
                             <i class="bi bi-calendar3 text-primary"></i> Periode Mulai Pinjam
@@ -345,7 +361,7 @@
                         </label>
                         <input type="date" name="tgl_selesai" class="form-control form-control-sm" value="{{ request('tgl_selesai') }}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label small text-muted mb-1">
                             <i class="bi bi-funnel text-primary"></i> Filter Status
                         </label>
@@ -357,12 +373,12 @@
                             <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                         </select>
                     </div>
-                    <div class="col-md-3 d-flex gap-2">
+                    <div class="col-md-2 d-flex gap-2">
                         <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
                             <i class="bi bi-filter"></i> Filter Data
                         </button>
-                        @if(request()->hasAny(['tgl_mulai', 'tgl_selesai', 'status']))
-                            <a href="{{ route('admin.laporan.index') }}?tab=peminjaman" class="btn btn-sm btn-outline-secondary" title="Reset Filter">
+                        @if(request()->hasAny(['tgl_mulai', 'tgl_selesai', 'status']) || request('tahun') === 'semua' || (request('tahun') && request('tahun') != date('Y')))
+                            <a href="{{ route('admin.laporan.index') }}?tab=peminjaman" class="btn btn-sm btn-outline-secondary" title="Reset ke Default Tahun Ini">
                                 <i class="bi bi-arrow-counterclockwise"></i>
                             </a>
                         @endif
@@ -377,6 +393,11 @@
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-receipt text-primary fs-5"></i>
                     <h6 class="fw-bold mb-0 text-dark">Daftar Transaksi Peminjaman Alat Praktikum</h6>
+                    @if(($tahunDipilih ?? '') === 'semua')
+                        <span class="badge bg-secondary border">Arsip: Semua Tahun</span>
+                    @else
+                        <span class="badge bg-primary-subtle text-primary border">Tahun {{ $tahunDipilih ?? date('Y') }}</span>
+                    @endif
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ route('admin.laporan.csv', request()->query()) }}" class="btn btn-success btn-sm px-3 shadow-xs">
