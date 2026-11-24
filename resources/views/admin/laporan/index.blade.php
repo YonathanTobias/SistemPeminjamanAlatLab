@@ -329,15 +329,36 @@
         </div>
 
         <!-- Filter Card Peminjaman -->
+        <style>
+            .filter-label {
+                font-size: 0.78rem;
+                font-weight: 700;
+                color: #475569;
+                margin-bottom: 0.35rem;
+                display: flex;
+                align-items: center;
+                gap: 0.35rem;
+                height: 18px;
+                white-space: nowrap;
+            }
+            .filter-control {
+                height: 38px !important;
+                font-size: 0.85rem !important;
+                border-radius: 0.5rem !important;
+            }
+            [data-bs-theme="dark"] .filter-label {
+                color: #cbd5e1 !important;
+            }
+        </style>
         <div class="card border-0 rounded-4 shadow-sm mb-4 no-print">
-            <div class="card-body p-4">
-                <form action="{{ route('admin.laporan.index') }}" method="GET" class="row g-3 align-items-end">
+            <div class="card-body p-3 p-md-4">
+                <form action="{{ route('admin.laporan.index') }}" method="GET" class="row g-2.5 align-items-end">
                     <input type="hidden" name="tab" value="peminjaman">
-                    <div class="col-md-2">
-                        <label class="form-label small text-muted mb-1">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                        <label class="filter-label">
                             <i class="bi bi-calendar-event text-primary"></i> Tahun Laporan
                         </label>
-                        <select name="tahun" class="form-select form-select-sm fw-semibold" onchange="this.form.submit()">
+                        <select name="tahun" class="form-select filter-control fw-semibold" onchange="this.form.submit()">
                             <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>📅 Tahun {{ date('Y') }} (Tahun Ini)</option>
                             @if(isset($yearsList))
                                 @foreach($yearsList as $yr)
@@ -349,23 +370,23 @@
                             <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>🌐 Semua Tahun (Arsip)</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted mb-1">
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <label class="filter-label">
                             <i class="bi bi-calendar3 text-primary"></i> Periode Mulai Pinjam
                         </label>
-                        <input type="date" name="tgl_mulai" class="form-control form-control-sm" value="{{ request('tgl_mulai') }}">
+                        <input type="date" name="tgl_mulai" class="form-control filter-control" value="{{ request('tgl_mulai') }}">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label small text-muted mb-1">
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <label class="filter-label">
                             <i class="bi bi-calendar-check text-primary"></i> Periode Selesai Pinjam
                         </label>
-                        <input type="date" name="tgl_selesai" class="form-control form-control-sm" value="{{ request('tgl_selesai') }}">
+                        <input type="date" name="tgl_selesai" class="form-control filter-control" value="{{ request('tgl_selesai') }}">
                     </div>
-                    <div class="col-md-2">
-                        <label class="form-label small text-muted mb-1">
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                        <label class="filter-label">
                             <i class="bi bi-funnel text-primary"></i> Filter Status
                         </label>
-                        <select name="status" class="form-select form-select-sm">
+                        <select name="status" class="form-select filter-control">
                             <option value="">-- Semua Status --</option>
                             <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>⏳ Menunggu</option>
                             <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>✅ Disetujui</option>
@@ -373,12 +394,13 @@
                             <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>❌ Ditolak</option>
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex gap-2">
-                        <button type="submit" class="btn btn-sm btn-primary flex-grow-1">
-                            <i class="bi bi-filter"></i> Filter Data
+                    <div class="col-xl-2 col-lg-12 col-md-8 col-sm-12 d-flex gap-2">
+                        <label class="filter-label d-none d-xl-flex">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary filter-control flex-grow-1 shadow-xs">
+                            <i class="bi bi-filter"></i> Filter
                         </button>
                         @if(request()->hasAny(['tgl_mulai', 'tgl_selesai', 'status']) || request('tahun') === 'semua' || (request('tahun') && request('tahun') != date('Y')))
-                            <a href="{{ route('admin.laporan.index') }}?tab=peminjaman" class="btn btn-sm btn-outline-secondary" title="Reset ke Default Tahun Ini">
+                            <a href="{{ route('admin.laporan.index') }}?tab=peminjaman" class="btn btn-outline-secondary filter-control px-3" title="Reset ke Default Tahun Ini">
                                 <i class="bi bi-arrow-counterclockwise"></i>
                             </a>
                         @endif
