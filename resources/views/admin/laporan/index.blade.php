@@ -359,15 +359,15 @@
                             <i class="bi bi-calendar-event text-primary"></i> Tahun Laporan
                         </label>
                         <select name="tahun" class="form-select filter-control fw-semibold" onchange="this.form.submit()">
-                            <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>📅 Tahun {{ date('Y') }} (Tahun Ini)</option>
+                            <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>Tahun {{ date('Y') }} (Tahun Ini)</option>
                             @if(isset($yearsList))
                                 @foreach($yearsList as $yr)
                                     @if($yr != date('Y'))
-                                        <option value="{{ $yr }}" {{ ($tahunDipilih ?? '') == $yr ? 'selected' : '' }}>📅 Tahun {{ $yr }}</option>
+                                        <option value="{{ $yr }}" {{ ($tahunDipilih ?? '') == $yr ? 'selected' : '' }}>Tahun {{ $yr }}</option>
                                     @endif
                                 @endforeach
                             @endif
-                            <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>🌐 Semua Tahun (Arsip)</option>
+                            <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>Semua Tahun (Arsip)</option>
                         </select>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">

@@ -39,15 +39,15 @@
             <form action="{{ route('admin.ruangan.peminjaman') }}" method="GET" class="row g-2 align-items-center">
                 <div class="col-md-3">
                     <select name="tahun" class="form-select rounded-pill fw-semibold" onchange="this.form.submit()">
-                        <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>📅 Tahun {{ date('Y') }} (Tahun Ini)</option>
+                        <option value="{{ date('Y') }}" {{ ($tahunDipilih ?? date('Y')) == date('Y') ? 'selected' : '' }}>Tahun {{ date('Y') }} (Tahun Ini)</option>
                         @if(isset($yearsList))
                             @foreach($yearsList as $yr)
                                 @if($yr != date('Y'))
-                                    <option value="{{ $yr }}" {{ ($tahunDipilih ?? '') == $yr ? 'selected' : '' }}>📅 Tahun {{ $yr }}</option>
+                                    <option value="{{ $yr }}" {{ ($tahunDipilih ?? '') == $yr ? 'selected' : '' }}>Tahun {{ $yr }}</option>
                                 @endif
                             @endforeach
                         @endif
-                        <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>🌐 Semua Tahun (Arsip)</option>
+                        <option value="semua" {{ ($tahunDipilih ?? '') === 'semua' ? 'selected' : '' }}>Semua Tahun (Arsip)</option>
                     </select>
                 </div>
                 <div class="col-md-4">
