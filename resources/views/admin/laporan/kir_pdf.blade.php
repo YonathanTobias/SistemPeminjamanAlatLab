@@ -40,24 +40,27 @@
         }
         .kop-text h4 {
             margin: 0;
-            font-size: 11.5pt;
+            font-size: 11pt;
             letter-spacing: 0.03em;
-            line-height: 1.15;
+            line-height: 1.2;
             font-weight: bold;
+            color: #000;
             text-transform: uppercase;
         }
         .kop-text h3 {
-            margin: 1px 0 2px 0;
-            font-size: 13.5pt;
-            letter-spacing: 0.04em;
-            line-height: 1.15;
+            margin: 2px 0 3px 0;
+            font-size: 9.5pt;
+            letter-spacing: 0.02em;
+            line-height: 1.2;
             font-weight: bold;
+            color: #000;
             text-transform: uppercase;
         }
         .kop-text p {
-            margin: 0;
-            font-size: 7.8pt;
-            line-height: 1.2;
+            margin: 1px 0;
+            font-size: 7.2pt;
+            color: #222;
+            line-height: 1.25;
         }
 
         /* Dokumen Title */
@@ -142,10 +145,10 @@
                 @endif
             </td>
             <td class="kop-text">
-                <h4>SEKOLAH TINGGI ILMU KESEHATAN</h4>
-                <h3>PANTI WALUYA MALANG</h3>
-                <p>Jalan Yulius Usman No. 62 Malang &ndash; 65117 Telp (0341) 369003 Fax. 368737</p>
-                <p>Email : <u>stikes.pantiwaluyamlg@gmail.com</u>, website : <u>www.stikespantiwaluya.ac.id</u></p>
+                <h4>SEKOLAH TINGGI ILMU KESEHATAN PANTI WALUYA MALANG</h4>
+                <h3>PROGRAM STUDI {{ strtoupper(trim(preg_replace('/^(program\s+studi|prodi)\s+/i', '', $pengaturan->nama_prodi ?? 'S1 Keperawatan & Profesi Ners')) ?: 'S1 KEPERAWATAN & PROFESI NERS') }}</h3>
+                <p>Jl. Yulius Usman No. 62, Kasin, Kec. Klojen, Kota Malang, Jawa Timur 65117</p>
+                <p>Telp./Fax. (0341) 369003 / 369004 | Email: info@stikespantiwaluya.ac.id | Web: www.stikespantiwaluya.ac.id</p>
             </td>
             <td style="width: 70px;"></td>
         </tr>

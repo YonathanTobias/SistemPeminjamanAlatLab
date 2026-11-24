@@ -710,17 +710,17 @@
             <img src="{{ asset('images/logo-stikes.png') }}" alt="Logo STIKES" style="width: 68px; height: auto;" onerror="this.style.display='none'">
         </div>
         <div class="text-center flex-grow-1 px-2">
-            <h4 class="fw-bold mb-0 text-uppercase" style="font-size: 1.15rem; letter-spacing: 0.03em; line-height: 1.15; color: #000; font-family: 'Times New Roman', Times, serif;">
-                SEKOLAH TINGGI ILMU KESEHATAN
+            <h4 class="fw-bold mb-0 text-uppercase" style="font-size: 1.15rem; letter-spacing: 0.03em; line-height: 1.2; color: #000; font-family: 'Times New Roman', Times, serif;">
+                SEKOLAH TINGGI ILMU KESEHATAN PANTI WALUYA MALANG
             </h4>
-            <h3 class="fw-bold mb-0.5 text-uppercase" style="font-size: 1.38rem; letter-spacing: 0.04em; line-height: 1.15; color: #000; font-family: 'Times New Roman', Times, serif;">
-                PANTI WALUYA MALANG
-            </h3>
+            <h5 class="fw-bold mb-0.5 text-uppercase" style="font-size: 1.05rem; letter-spacing: 0.02em; line-height: 1.2; color: #000; font-family: 'Times New Roman', Times, serif;">
+                PROGRAM STUDI {{ strtoupper(trim(preg_replace('/^(program\s+studi|prodi)\s+/i', '', $pengaturan->nama_prodi ?? 'S1 Keperawatan & Profesi Ners')) ?: 'S1 KEPERAWATAN & PROFESI NERS') }}
+            </h5>
             <p class="mb-0 text-dark" style="font-size: 0.78rem; line-height: 1.2; font-family: 'Times New Roman', Times, serif;">
-                Jalan Yulius Usman No. 62 Malang &ndash; 65117 Telp (0341) 369003 Fax. 368737
+                Jl. Yulius Usman No. 62, Kasin, Kec. Klojen, Kota Malang, Jawa Timur 65117
             </p>
             <p class="mb-0 text-dark" style="font-size: 0.78rem; line-height: 1.2; font-family: 'Times New Roman', Times, serif;">
-                Email : <u>stikes.pantiwaluyamlg@gmail.com</u>, website : <u>www.stikespantiwaluya.ac.id</u>
+                Telp./Fax. (0341) 369003 / 369004 | Email: info@stikespantiwaluya.ac.id | Web: www.stikespantiwaluya.ac.id
             </p>
         </div>
         <div style="width: 75px;" class="flex-shrink-0"></div>

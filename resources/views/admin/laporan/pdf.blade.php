@@ -15,8 +15,8 @@
         /* Kop Surat Resmi */
         .kop-table {
             width: 100%;
-            border-bottom: 3px double #000;
-            padding-bottom: 8px;
+            border-bottom: 2.5px double #000;
+            padding-bottom: 5px;
             margin-bottom: 12px;
         }
         .kop-table td {
@@ -29,23 +29,27 @@
         }
         .kop-title h2 {
             margin: 0;
-            font-size: 13pt;
+            font-size: 11pt;
             font-weight: bold;
-            color: #0f172a;
+            color: #000;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
         }
         .kop-title h4 {
             margin: 2px 0 3px 0;
-            font-size: 10.5pt;
+            font-size: 9.5pt;
             font-weight: bold;
-            color: #0284c7;
+            color: #000;
             text-transform: uppercase;
+            letter-spacing: 0.2px;
+            line-height: 1.2;
         }
         .kop-title p {
-            margin: 0;
-            font-size: 7.5pt;
-            color: #555;
+            margin: 1px 0;
+            font-size: 7.2pt;
+            color: #222;
+            line-height: 1.25;
         }
 
         /* Document Title */
@@ -111,10 +115,10 @@
 </head>
 <body>
 
-    <!-- Kop Surat -->
+    <!-- Kop Surat Resmi -->
     <table class="kop-table">
         <tr>
-            <td style="width: 70px; text-align: center; vertical-align: middle; padding-bottom: 5px;">
+            <td style="width: 75px; text-align: center; vertical-align: middle; padding-bottom: 5px;">
                 @php
                     $logoFile = public_path($pengaturan->logo_path ?? 'images/logo-stikes.png');
                 @endphp
@@ -123,10 +127,12 @@
                 @endif
             </td>
             <td class="kop-title" style="text-align: center; vertical-align: middle;">
-                <h2>{{ $pengaturan->nama_institusi ?? 'STIKES Panti Waluya Malang' }}</h2>
-                <h4>{{ $pengaturan->unit_laboratorium ?? 'Unit Laboratorium Keperawatan' }} - {{ $pengaturan->nama_prodi ?? 'Prodi S1 Keperawatan' }}</h4>
-                <p>{{ $pengaturan->alamat_institusi ?? 'Jl. Yulius Usman No.62, Kasin, Kec. Klojen, Kota Malang' }} &bull; Telp: {{ $pengaturan->kontak_lab ?? '(0341) 369003' }}</p>
+                <h2>SEKOLAH TINGGI ILMU KESEHATAN PANTI WALUYA MALANG</h2>
+                <h4>PROGRAM STUDI {{ strtoupper(trim(preg_replace('/^(program\s+studi|prodi)\s+/i', '', $pengaturan->nama_prodi ?? 'S1 Keperawatan & Profesi Ners')) ?: 'S1 KEPERAWATAN & PROFESI NERS') }}</h4>
+                <p>Jl. Yulius Usman No. 62, Kasin, Kec. Klojen, Kota Malang, Jawa Timur 65117</p>
+                <p>Telp./Fax. (0341) 369003 / 369004 | Email: info@stikespantiwaluya.ac.id | Web: www.stikespantiwaluya.ac.id</p>
             </td>
+            <td style="width: 75px;"></td>
         </tr>
     </table>
 
