@@ -732,11 +732,10 @@
             KARTU INVENTARIS ALAT LABORATORIUM (KIR)
         </h5>
         <div class="fw-semibold small text-uppercase" style="font-family: 'Times New Roman', Times, serif; font-size: 0.82rem;">
-            UNIT : {{ strtoupper($pengaturan->unit_laboratorium ?? 'UNIT LABORATORIUM KEPERAWATAN & KESEHATAN') }}
             @if(request('kategori_kir'))
-                <br>KATEGORI PRAKTIKUM : {{ strtoupper(request('kategori_kir')) }}
+                KATEGORI PRAKTIKUM : {{ strtoupper(request('kategori_kir')) }}
             @else
-                <br>REKAPITULASI ASET SELURUH KATEGORI PRAKTIKUM (GLOBAL)
+                REKAPITULASI ASET SELURUH KATEGORI PRAKTIKUM (GLOBAL)
             @endif
         </div>
     </div>

@@ -158,11 +158,10 @@
     <div class="doc-header">
         <h4 class="doc-title">KARTU INVENTARIS ALAT LABORATORIUM (KIR)</h4>
         <div class="doc-subtitle">
-            UNIT : {{ strtoupper($pengaturan->unit_laboratorium ?? 'UNIT LABORATORIUM KEPERAWATAN & KESEHATAN') }}
             @if(!empty($kategoriSelected))
-                <br>KATEGORI : {{ strtoupper($kategoriSelected) }}
+                KATEGORI : {{ strtoupper($kategoriSelected) }}
             @else
-                <br>REKAPITULASI ASET SELURUH KATEGORI PRAKTIKUM (GLOBAL)
+                REKAPITULASI ASET SELURUH KATEGORI PRAKTIKUM (GLOBAL)
             @endif
         </div>
     </div>
