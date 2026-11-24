@@ -115,10 +115,10 @@
             <div class="card-body p-3">
                 <div class="row g-2.5 align-items-center justify-content-between">
                     <!-- Sisi Kiri: Filter Kategori & Search Bar -->
-                    <div class="col-xxl-5 col-xl-5 col-12">
+                    <div class="col-xxl-5 col-xl-4 col-12">
                         <div class="d-flex align-items-center gap-2 flex-wrap flex-sm-nowrap">
                             <!-- Filter Kategori -->
-                            <div style="flex: 1 1 auto; min-width: 180px;">
+                            <div style="flex: 1 1 auto; min-width: 170px;">
                                 <select name="kategori_kir" class="form-select text-truncate" onchange="window.location.href='{{ route('admin.laporan.index') }}?tab=kir&kategori_kir=' + encodeURIComponent(this.value)" title="Pilih Kategori untuk KIR">
                                     <option value="">-- SEMUA KATEGORI (REKAP GLOBAL) --</option>
                                     @foreach($kategoriList as $k)
@@ -133,7 +133,7 @@
                             </div>
 
                             <!-- Search Bar Realtime -->
-                            <div class="input-group" style="width: 200px; flex-shrink: 0;">
+                            <div class="input-group" style="width: 180px; flex-shrink: 0;">
                                 <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
                                 <input type="text" id="tableSearchKIR" class="form-control border-start-0 ps-1" placeholder="Cari nama/kode..." oninput="onKIRTableFilter()">
                                 <button class="btn btn-outline-secondary border-start-0 text-muted d-none" type="button" id="btnClearSearchKIR" onclick="clearKIRSearch()" title="Hapus"><i class="bi bi-x"></i></button>
@@ -147,36 +147,36 @@
                     </div>
 
                     <!-- Sisi Kanan: Tanggal TTD, Atur TTD, Cetak KIR A4, Export PDF, Export Excel -->
-                    <div class="col-xxl-7 col-xl-7 col-12">
-                        <div class="d-flex align-items-center justify-content-xl-end gap-2 flex-wrap">
+                    <div class="col-xxl-7 col-xl-8 col-12">
+                        <div class="d-flex align-items-center justify-content-xl-end gap-2 flex-wrap flex-sm-nowrap">
                             <!-- Quick Tanggal TTD -->
-                            <div class="d-inline-flex align-items-center gap-1.5 bg-light border rounded-3 px-2.5 py-1.5" title="Tanggal TTD Dokumen KIR">
+                            <div class="d-inline-flex align-items-center gap-1.5 bg-light border rounded-3 px-2 py-1.5 flex-shrink-0" title="Tanggal TTD Dokumen KIR">
                                 <span class="text-muted small fw-semibold text-nowrap">Tgl TTD:</span>
-                                <input type="date" id="quickTanggalKIR" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold font-monospace" style="width: 120px; font-size: 0.8rem; box-shadow: none;" value="{{ $pengaturan->tanggal_dokumen ? \Carbon\Carbon::parse($pengaturan->tanggal_dokumen)->format('Y-m-d') : date('Y-m-d') }}" onchange="handleQuickDateKIR(this)" aria-label="Tanggal Dokumen">
+                                <input type="date" id="quickTanggalKIR" class="form-control form-control-sm border-0 bg-transparent p-0 fw-bold font-monospace" style="width: 110px; font-size: 0.8rem; box-shadow: none;" value="{{ $pengaturan->tanggal_dokumen ? \Carbon\Carbon::parse($pengaturan->tanggal_dokumen)->format('Y-m-d') : date('Y-m-d') }}" onchange="handleQuickDateKIR(this)" aria-label="Tanggal Dokumen">
                             </div>
 
                             <!-- Atur Penandatangan -->
-                            <button type="button" class="btn btn-outline-primary btn-sm fw-semibold px-3 py-2 rounded-3 d-inline-flex align-items-center text-nowrap shadow-xs" data-bs-toggle="modal" data-bs-target="#modalPengaturanTTD">
+                            <button type="button" class="btn btn-outline-primary btn-sm fw-semibold px-2.5 py-2 rounded-3 d-inline-flex align-items-center text-nowrap shadow-xs flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalPengaturanTTD">
                                 <i class="bi bi-pen me-1"></i> <span>Atur TTD</span>
                             </button>
 
                             <!-- Cetak Lembar KIR Langsung A4 -->
-                            <button type="button" onclick="triggerPrintTab('kir')" class="btn btn-dark btn-sm fw-bold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-1.5 shadow-sm text-nowrap" title="Cetak Dokumen KIR Format HVS A4">
+                            <button type="button" onclick="triggerPrintTab('kir')" class="btn btn-dark btn-sm fw-bold px-2.5 py-2 rounded-3 d-inline-flex align-items-center gap-1 shadow-sm text-nowrap flex-shrink-0" title="Cetak Dokumen KIR Format HVS A4">
                                 <i class="bi bi-printer"></i>
-                                <span>Cetak KIR (A4)</span>
+                                <span>Cetak KIR</span>
                             </button>
 
-                            <!-- Export PDF Resmi -->
-                            <a href="{{ route('admin.laporan.kir.pdf', ['kategori' => request('kategori_kir')]) }}" target="_blank" class="btn btn-danger btn-sm fw-bold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-1.5 shadow-sm text-nowrap" title="Unduh format PDF dokumen KIR resmi">
-                                <i class="bi bi-file-earmark-pdf-fill"></i>
-                                <span>Export PDF</span>
-                            </a>
-
-                            <!-- Export Excel Resmi -->
-                            <a href="{{ route('admin.laporan.kir.excel', ['kategori' => request('kategori_kir')]) }}" class="btn btn-success btn-sm fw-bold px-3 py-2 rounded-3 d-inline-flex align-items-center gap-1.5 shadow-sm text-nowrap" title="Unduh rekap inventaris ke spreadsheet Excel .xlsx">
-                                <i class="bi bi-file-earmark-excel-fill"></i>
-                                <span>Export Excel</span>
-                            </a>
+                            <!-- Button Group Export (PDF & Excel) -->
+                            <div class="btn-group shadow-xs flex-shrink-0" role="group" aria-label="Export Dokumen">
+                                <a href="{{ route('admin.laporan.kir.pdf', ['kategori' => request('kategori_kir')]) }}" target="_blank" class="btn btn-danger btn-sm fw-bold px-2.5 py-2 d-inline-flex align-items-center gap-1 text-nowrap" title="Unduh format PDF dokumen KIR resmi">
+                                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                                    <span>PDF</span>
+                                </a>
+                                <a href="{{ route('admin.laporan.kir.excel', ['kategori' => request('kategori_kir')]) }}" class="btn btn-success btn-sm fw-bold px-2.5 py-2 d-inline-flex align-items-center gap-1 text-nowrap" title="Unduh rekap inventaris ke spreadsheet Excel .xlsx">
+                                    <i class="bi bi-file-earmark-excel-fill"></i>
+                                    <span>Excel</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
